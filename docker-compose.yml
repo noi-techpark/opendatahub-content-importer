@@ -1,0 +1,13 @@
+services:
+  rabbitpusher:
+    image: ${DOCKER_REGISTRY-}rabbitpusher
+    build:
+      context: .
+      dockerfile: RabbitPusher/Dockerfile
+
+  rabbitlistener:
+    image: ${DOCKER_REGISTRY-}rabbitlistener
+    build:
+      context: .
+      dockerfile: RabbitListener/Dockerfile
+
