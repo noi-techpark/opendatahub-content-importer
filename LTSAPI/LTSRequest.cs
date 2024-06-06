@@ -4,6 +4,8 @@ using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Net.NetworkInformation;
+using Helper;
 
 namespace LTSAPI
 {
@@ -13,12 +15,12 @@ namespace LTSAPI
         string baseurl;
         Dictionary<string,string>? parameters;
         string endpoint;
+        bool getallpages = false;
 
-        public LtsApi(LTSCredentials _credentials, Dictionary<string, string>? _parameters) 
+        public LtsApi(LTSCredentials _credentials) 
         {
             this.baseurl = "https://go.lts.it/api/v1";
-            this.credentials = _credentials;
-            this.parameters = _parameters;
+            this.credentials = _credentials;                        
         }
 
         private async Task<HttpResponseMessage> LTSRESTRequest()
@@ -45,55 +47,153 @@ namespace LTSAPI
             }
         }
 
-        private async Task<JObject> ParseResponseToJObject(HttpResponseMessage response)
+        private async Task<List<JObject>> RequestAndParseToJObject()
         {
+            var response = await LTSRESTRequest();
+
             if (response.StatusCode == HttpStatusCode.OK)
             {
+                var jobjectlist = new List<JObject>() { };
+
                 var contentstr = await response.Content.ReadAsStringAsync();
 
-                return (JObject)JsonConvert.DeserializeObject(contentstr);
+                if (String.IsNullOrEmpty(contentstr))
+                {
+                    jobjectlist.Add(new JObject(new { error = true, message = "LTS Api error", exception = "No data from api" }));
+                    return jobjectlist;
+                }
+
+                var contentjson = (JObject)JsonConvert.DeserializeObject(contentstr);
+
+                if (contentjson == null)
+                {
+                    jobjectlist.Add(new JObject(new { error = true, message = "LTS Api error ", exception = "Deserialization failed" }));
+                    return jobjectlist;
+                }
+
+                jobjectlist.Add(contentjson);
+
+                //Get all Pages and add the response
+                if (getallpages)
+                {
+                    var pagesquantity = (string)contentjson["paging"]["pagesQuantity"];
+                    int.TryParse(pagesquantity, out int pagesquantityint);
+
+                    var currentpage = (string)contentjson["paging"]["pageNumber"];
+                    int.TryParse(currentpage, out int currentpageint);
+
+                    if(currentpageint < pagesquantityint)
+                    {
+                        //Add page parameter
+                        parameters.TryAddOrUpdate("page[number]", (currentpageint + 1).ToString());
+                        //Request again
+                        jobjectlist.AddRange(await RequestAndParseToJObject());
+                    }                  
+                }
+
+                return jobjectlist;
             }
             else
             {
-                return new JObject(new { error = true, message = "LTS Api error ", exception = await response.Content.ReadAsStringAsync() });
+                return new List<JObject>() { new JObject(new { error = true, message = "LTS Api error ", exception = await response.Content.ReadAsStringAsync() }) };
             }
         }
+        
 
-        public async Task<JObject> AccommodationAmenitiesRequest()
+        #region Accommodation
+
+        public async Task<List<JObject>> AccommodationAmenitiesRequest(Dictionary<string, string>? _parameters, bool _getallpages)
         {
-            endpoint = "amenities";            
-            return await ParseResponseToJObject(await LTSRESTRequest());            
+            endpoint = "amenities";
+            parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
+            getallpages = _getallpages;
+
+
+            return await RequestAndParseToJObject();            
         }
 
-        public async Task<JObject> AccommodationCategoriesRequest()
+        public async Task<List<JObject>> AccommodationCategoriesRequest(Dictionary<string, string>? _parameters, bool _getallpages)
         {
             endpoint = "accommodations/categories";
-            return await ParseResponseToJObject(await LTSRESTRequest());
+            parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
+            getallpages = _getallpages;
+
+            return await RequestAndParseToJObject();
         }
 
-        public async Task<JObject> AccommodationTypesRequest()
+        public async Task<List<JObject>> AccommodationTypesRequest(Dictionary<string, string>? _parameters, bool _getallpages)
         {
             endpoint = "accommodations/types";
-            return await ParseResponseToJObject(await LTSRESTRequest());
+            parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
+            getallpages = _getallpages;
+
+            return await RequestAndParseToJObject();
         }
 
-        public async Task<JObject> AccommodationListRequest()
+        public async Task<List<JObject>> AccommodationListRequest(Dictionary<string, string>? _parameters, bool _getallpages)
         {
             endpoint = "accommodations";
-            return await ParseResponseToJObject(await LTSRESTRequest());
+            parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
+            getallpages = _getallpages;
+
+            return await RequestAndParseToJObject();
         }
 
-        public async Task<JObject> AccommodationSingleRequest(string id)
+        public async Task<List<JObject>> AccommodationSingleRequest(string id, Dictionary<string, string>? _parameters)
         {
             endpoint = "accommodations/" + id;
-            return await ParseResponseToJObject(await LTSRESTRequest());
+            parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
+            getallpages = false;
+
+            return await RequestAndParseToJObject();
         }
 
-        public async Task<JObject> AccommodationDeleteRequest()
+        public async Task<List<JObject>> AccommodationDeleteRequest(Dictionary<string, string>? _parameters, bool _getallpages)
         {
             endpoint = "accommodations/deleted";
-            return await ParseResponseToJObject(await LTSRESTRequest());
+            parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
+            getallpages = _getallpages;
+
+            return await RequestAndParseToJObject();
         }
+
+        #endregion
+
+        #region Poi
+
+        #endregion
+
+        #region Activity
+
+        #endregion
+
+        #region Gastronomy
+
+        #endregion
+
+        #region Beacon
+
+        #endregion
+
+        #region Event
+
+        #endregion
+
+        #region Venue
+
+        #endregion
+
+        #region Webcam
+
+        #endregion
+
+        #region WeatherSnow
+
+        #endregion        
+
+        #region Tag
+
+        #endregion
     }
 
     public class LTSCredentials

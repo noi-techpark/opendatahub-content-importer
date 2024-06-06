@@ -64,7 +64,7 @@ namespace RabbitPusher
                                  body: messagebody);
 
 
-            Console.WriteLine($" [x] Sent message");
+            Console.WriteLine($"Sent message to { provider }" );
         }
     }
 

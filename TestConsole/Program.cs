@@ -2,6 +2,7 @@
 using Amazon.Runtime.Internal.Transform;
 using LTSAPI;
 using Microsoft.Extensions.Configuration;
+using RabbitPusher;
 
 Console.WriteLine("Test!");
 var builder = new ConfigurationBuilder()
@@ -17,11 +18,18 @@ var ltsidm = config.GetSection("LTSApiIDM");
 LtsApi ltsapi = new LtsApi(new LTSCredentials() { 
     ltsclientid = ltsidm.GetSection("xltsclientid").Value, 
     username = ltsidm.GetSection("username").Value, 
-    password = ltsidm.GetSection("password").Value }, 
-    null);
+    password = ltsidm.GetSection("password").Value }
+    );
 
-var myobject = await ltsapi.AccommodationAmenitiesRequest();
+RabbitMQSend rabbitsend = new RabbitMQSend(config.GetConnectionString("RabbitConnection"));
 
-Console.WriteLine(myobject["success"]);
+var ltsamenities = await ltsapi.AccommodationAmenitiesRequest(null, true);
+rabbitsend.Send("lts/accommodationamenities", ltsamenities);
+
+var ltscategories = await ltsapi.AccommodationCategoriesRequest(null, true);
+rabbitsend.Send("lts/accommodationcategories", ltscategories);
+
+var ltstypes = await ltsapi.AccommodationTypesRequest(null, true);
+rabbitsend.Send("lts/accommodationtypes", ltstypes);
 
 Console.ReadLine();
