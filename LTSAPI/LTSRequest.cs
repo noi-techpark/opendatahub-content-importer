@@ -98,68 +98,57 @@ namespace LTSAPI
                 return new List<JObject>() { new JObject(new { error = true, message = "LTS Api error ", exception = await response.Content.ReadAsStringAsync() }) };
             }
         }
-        
+
+        private async Task<List<JObject>> LTSRequestMethod(string _endpoint, Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            endpoint = _endpoint;
+            parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
+            getallpages = _getallpages;
+
+            return await RequestAndParseToJObject();
+        }
+
 
         #region Accommodation
 
         public async Task<List<JObject>> AccommodationAmenitiesRequest(Dictionary<string, string>? _parameters, bool _getallpages)
-        {
-            endpoint = "amenities";
-            parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
-            getallpages = _getallpages;
-
-
-            return await RequestAndParseToJObject();            
+        {            
+            return await LTSRequestMethod("amenities", _parameters, _getallpages);
         }
 
         public async Task<List<JObject>> AccommodationCategoriesRequest(Dictionary<string, string>? _parameters, bool _getallpages)
         {
-            endpoint = "accommodations/categories";
-            parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
-            getallpages = _getallpages;
-
-            return await RequestAndParseToJObject();
+            return await LTSRequestMethod("accommodations/categories", _parameters, _getallpages);
         }
 
         public async Task<List<JObject>> AccommodationTypesRequest(Dictionary<string, string>? _parameters, bool _getallpages)
-        {
-            endpoint = "accommodations/types";
-            parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
-            getallpages = _getallpages;
-
-            return await RequestAndParseToJObject();
+        {            
+            return await LTSRequestMethod("accommodations/types", _parameters, _getallpages);
         }
 
         public async Task<List<JObject>> AccommodationListRequest(Dictionary<string, string>? _parameters, bool _getallpages)
-        {
-            endpoint = "accommodations";
-            parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
-            getallpages = _getallpages;
-
-            return await RequestAndParseToJObject();
+        {            
+            return await LTSRequestMethod("accommodations", _parameters, _getallpages);
         }
 
         public async Task<List<JObject>> AccommodationSingleRequest(string id, Dictionary<string, string>? _parameters)
         {
-            endpoint = "accommodations/" + id;
-            parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
-            getallpages = false;
-
-            return await RequestAndParseToJObject();
+            return await LTSRequestMethod("accommodations/" + id, _parameters, false);            
         }
 
         public async Task<List<JObject>> AccommodationDeleteRequest(Dictionary<string, string>? _parameters, bool _getallpages)
-        {
-            endpoint = "accommodations/deleted";
-            parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
-            getallpages = _getallpages;
-
-            return await RequestAndParseToJObject();
+        {            
+            return await LTSRequestMethod("accommodations/deleted", _parameters, _getallpages);
         }
 
         #endregion
 
         #region Poi
+
+        public async Task<List<JObject>> PoiListRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("pointofinterests", _parameters, _getallpages);
+        }
 
         #endregion
 

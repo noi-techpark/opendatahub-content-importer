@@ -21,15 +21,15 @@ LtsApi ltsapi = new LtsApi(new LTSCredentials() {
     password = ltsidm.GetSection("password").Value }
     );
 
-RabbitMQSend rabbitsend = new RabbitMQSend(config.GetConnectionString("RabbitConnection"));
+//RabbitMQSend rabbitsend = new RabbitMQSend(config.GetConnectionString("RabbitConnection"));
 
 var ltsamenities = await ltsapi.AccommodationAmenitiesRequest(null, true);
-rabbitsend.Send("lts/accommodationamenities", ltsamenities);
+//rabbitsend.Send("lts/accommodationamenities", ltsamenities);
 
 var ltscategories = await ltsapi.AccommodationCategoriesRequest(null, true);
-rabbitsend.Send("lts/accommodationcategories", ltscategories);
+//rabbitsend.Send("lts/accommodationcategories", ltscategories);
 
 var ltstypes = await ltsapi.AccommodationTypesRequest(null, true);
-rabbitsend.Send("lts/accommodationtypes", ltstypes);
+//rabbitsend.Send("lts/accommodationtypes", ltstypes);
 
 Console.ReadLine();
