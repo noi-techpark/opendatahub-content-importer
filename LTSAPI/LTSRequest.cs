@@ -231,6 +231,7 @@ namespace LTSAPI
 
     public class LTSQueryStrings
     {
+        //generic
         public string? fields { get; set; }
         public string? sort { get; set; }
         public string? language { get; set; }
@@ -240,12 +241,17 @@ namespace LTSAPI
         public int? page_size { get; set; }
 
         public string? filter_language { get; set; }
+        public bool? filter_onlyActive { get; set; }
+        public string? filter_rids { get; set; }
+        public DateTime? filter_lastUpdate { get; set; }
+        public string? filter_categoryRids { get; set; }
+        public string? filter_districtRids { get; set; }
+        public string? filter_searchTerm { get; set; }
 
         //accommodation
         public string? filter_tourismOrganizationRids { get; set; }
         public string? filter_marketingGroupRids { get; set; }
-        public bool? filter_onlySuedtirolInfoActive { get; set; }
-        public string? filter_districtRids { get; set; }
+        public bool? filter_onlySuedtirolInfoActive { get; set; }        
         public int? filter_minAltitude { get; set; }
         public int? filter_maxAltitude { get; set; }
         public string? filter_representationMode { get; set; }
@@ -254,8 +260,7 @@ namespace LTSAPI
         public string? filter_roomGroup_amenityRids { get; set; }
         public string? filter_typeRids { get; set; }
         public bool? filter_hasRooms { get; set; }
-        public bool? filter_hasApartments { get; set; }
-        public string? filter_categoryRids { get; set; }
+        public bool? filter_hasApartments { get; set; }        
         public string? filter_holidayPackageRids { get; set; }
         public string? filter_addressGroupRids { get; set; }
         public bool? filter_onlyBookable { get; set; }
@@ -265,23 +270,49 @@ namespace LTSAPI
         public bool? filter_allowedMarketingGroupRids { get; set; }
         public string? filter_allowedTourismOrganizationRids { get; set; }
 
+        //event
+
+        public string? filter_posId { get; set; }
+        public string? filter_startDate { get; set; }
+        public string? filter_endDate { get; set; }
+        public int? filter_publisherSettingMinImportanceRate { get; set; }        
+        public string? filter_zoneRids { get; set; }        
+        public string? filter_organizerRids { get; set; }
+        public bool? filter_onlyVisibleInEventFinder { get; set; }
+
         //poi
 
         public bool? filter_hasFreeEntry { get; set; }
         public bool? filter_isOpen { get; set; }
-        public bool? filter_onlyActive { get; set; }
-        public bool? filter_favouriteFor { get; set; }
-        public string? filter_searchTerm { get; set; }
+        
+        public bool? filter_favouriteFor { get; set; }        
         public string? filter_tagRids { get; set; }
         public string? filter_ownerRids { get; set; }
-        public string? filter_areaRids { get; set; }
-        public string? filter_rids { get; set; }
-        public DateTime? filter_lastUpdate { get; set; }
+        public string? filter_areaRids { get; set; }        
 
         public string? filter_aroundPosition_ { get; set; }
         public string? filter_coordinates_example { get; set; }
         public string? filter_radiusInMeters { get; set; }
-        
+
+        //activity
+        public bool? filter_isIlluminated { get; set; }
+        public bool? filter_hasRental { get; set; }
+        public bool? filter_isPrepared { get; set; }
+
+        public int? filter_rating_minStamina { get; set; }
+        public int? filter_rating_maxStamina { get; set; }
+        public int? filter_rating_minExperience { get; set; }
+        public int? filter_rating_maxExperience { get; set; }
+        public int? filter_rating_minLandscape { get; set; }
+        public int? filter_rating_maxLandscape { get; set; }
+        public int? filter_rating_minDifficulty { get; set; }
+        public int? filter_rating_maxDifficulty { get; set; }
+        public int? filter_rating_minTechnique { get; set; }
+        public int? filter_rating_maxTechnique { get; set; }
+        public int? filter_rating_minViaFerrataTechnique { get; set; }
+        public int? filter_rating_maxViaFerrataTechnique { get; set; }
+        public int? filter_rating_minScaleUIAATechnique { get; set; }
+        public int? filter_rating_maxScaleUIAATechnique { get; set; }
     }
     
 }
