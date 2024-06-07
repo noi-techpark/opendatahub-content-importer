@@ -230,7 +230,9 @@ namespace LTSAPI
     }
 
     public class LTSQueryStrings
-    {        
+    {
+        public string? fields { get; set; }
+        public string? sort { get; set; }
         public string? language { get; set; }
 
         public int? page_number { get; set; }
@@ -238,6 +240,48 @@ namespace LTSAPI
         public int? page_size { get; set; }
 
         public string? filter_language { get; set; }
+
+        //accommodation
+        public string? filter_tourismOrganizationRids { get; set; }
+        public string? filter_marketingGroupRids { get; set; }
+        public bool? filter_onlySuedtirolInfoActive { get; set; }
+        public string? filter_districtRids { get; set; }
+        public int? filter_minAltitude { get; set; }
+        public int? filter_maxAltitude { get; set; }
+        public string? filter_representationMode { get; set; }
+        public string? filter_mealPlanRids { get; set; }
+        public string? filter_amenityRids { get; set; }
+        public string? filter_roomGroup_amenityRids { get; set; }
+        public string? filter_typeRids { get; set; }
+        public bool? filter_hasRooms { get; set; }
+        public bool? filter_hasApartments { get; set; }
+        public string? filter_categoryRids { get; set; }
+        public string? filter_holidayPackageRids { get; set; }
+        public string? filter_addressGroupRids { get; set; }
+        public bool? filter_onlyBookable { get; set; }
+        public bool? filter_onlyActiveGaleries { get; set; }
+        public string? filter_contactType { get; set; }
+        public bool? filter_onlyHgvActive { get; set; }
+        public bool? filter_allowedMarketingGroupRids { get; set; }
+        public string? filter_allowedTourismOrganizationRids { get; set; }
+
+        //poi
+
+        public bool? filter_hasFreeEntry { get; set; }
+        public bool? filter_isOpen { get; set; }
+        public bool? filter_onlyActive { get; set; }
+        public bool? filter_favouriteFor { get; set; }
+        public string? filter_searchTerm { get; set; }
+        public string? filter_tagRids { get; set; }
+        public string? filter_ownerRids { get; set; }
+        public string? filter_areaRids { get; set; }
+        public string? filter_rids { get; set; }
+        public DateTime? filter_lastUpdate { get; set; }
+
+        public string? filter_aroundPosition_ { get; set; }
+        public string? filter_coordinates_example { get; set; }
+        public string? filter_radiusInMeters { get; set; }
+        
     }
     
 }
