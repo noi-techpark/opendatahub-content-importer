@@ -235,11 +235,8 @@ namespace LTSAPI
         public string? fields { get; set; }
         public string? sort { get; set; }
         public string? language { get; set; }
-
         public int? page_number { get; set; }
-
         public int? page_size { get; set; }
-
         public string? filter_language { get; set; }
         public bool? filter_onlyActive { get; set; }
         public string? filter_rids { get; set; }
@@ -283,13 +280,11 @@ namespace LTSAPI
         //poi
 
         public bool? filter_hasFreeEntry { get; set; }
-        public bool? filter_isOpen { get; set; }
-        
+        public bool? filter_isOpen { get; set; }        
         public bool? filter_favouriteFor { get; set; }        
         public string? filter_tagRids { get; set; }
         public string? filter_ownerRids { get; set; }
         public string? filter_areaRids { get; set; }        
-
         public string? filter_aroundPosition_ { get; set; }
         public string? filter_coordinates_example { get; set; }
         public string? filter_radiusInMeters { get; set; }
@@ -313,6 +308,23 @@ namespace LTSAPI
         public int? filter_rating_maxViaFerrataTechnique { get; set; }
         public int? filter_rating_minScaleUIAATechnique { get; set; }
         public int? filter_rating_maxScaleUIAATechnique { get; set; }
+
+        //gastronomy
+        public bool? filter_onlyTourismOrganizationMember { get; set; }
+        public string? filter_facilityRids { get; set; }
+        public DateTime? filter_openOnDate { get; set; }
+        
+        //webcams
+        public bool? filter_excludeOutOfOrder { get; set; }
+
+        //beacons
+        public string? filter_pointOfInterestRids { get; set; }
+
+        //tags
+        public string? filter_codes { get; set; }
+        public string? filter_rootTagRids { get; set; }
+        public int? filter_level { get; set; }
+        public string? filter_entity { get; set; }
     }
     
 }
