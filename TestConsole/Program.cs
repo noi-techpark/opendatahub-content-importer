@@ -21,15 +21,19 @@ LtsApi ltsapi = new LtsApi(new LTSCredentials() {
     password = ltsidm.GetSection("password").Value }
     );
 
+var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
+
+var dict = ltsapi.GetLTSQSDictionary(qs);
+
 //RabbitMQSend rabbitsend = new RabbitMQSend(config.GetConnectionString("RabbitConnection"));
 
-var ltsamenities = await ltsapi.AccommodationAmenitiesRequest(null, true);
+//var ltsamenities = await ltsapi.AccommodationAmenitiesRequest(null, true);
 //rabbitsend.Send("lts/accommodationamenities", ltsamenities);
 
-var ltscategories = await ltsapi.AccommodationCategoriesRequest(null, true);
+//var ltscategories = await ltsapi.AccommodationCategoriesRequest(null, true);
 //rabbitsend.Send("lts/accommodationcategories", ltscategories);
 
-var ltstypes = await ltsapi.AccommodationTypesRequest(null, true);
+//var ltstypes = await ltsapi.AccommodationTypesRequest(null, true);
 //rabbitsend.Send("lts/accommodationtypes", ltstypes);
 
 Console.ReadLine();

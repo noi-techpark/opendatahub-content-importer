@@ -131,7 +131,7 @@ namespace LTSAPI
             return await LTSRequestMethod("accommodations", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> AccommodationSingleRequest(string id, Dictionary<string, string>? _parameters)
+        public async Task<List<JObject>> AccommodationDetailRequest(string id, Dictionary<string, string>? _parameters)
         {
             return await LTSRequestMethod("accommodations/" + id, _parameters, false);            
         }
@@ -148,6 +148,11 @@ namespace LTSAPI
         public async Task<List<JObject>> PoiListRequest(Dictionary<string, string>? _parameters, bool _getallpages)
         {
             return await LTSRequestMethod("pointofinterests", _parameters, _getallpages);
+        }
+
+        public async Task<List<JObject>> PoiDetailRequest(string id, Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("pointofinterests/" + id, _parameters, false);
         }
 
         #endregion
@@ -178,9 +183,41 @@ namespace LTSAPI
 
         #region WeatherSnow
 
-        #endregion        
+        #endregion
 
         #region Tag
+
+        #endregion
+
+        #region QueryString Helper
+
+        public IDictionary<string, string> GetLTSQSDictionary(LTSQueryStrings qs)
+        {
+            IDictionary<string, string> qsdict = new Dictionary<string, string>();
+            
+            foreach (var prop in qs.GetType().GetProperties())
+            {
+                string propkey = "";
+                var propkeysplitted = prop.Name.Split("_");
+                int i = 0;
+                foreach(var pk in propkeysplitted)
+                {
+                    if (i == 0)
+                        propkey = propkey + pk;
+                    else
+                        propkey = propkey + "[" + pk + "]";
+
+                    i++;
+                }
+
+                var propvalue = prop.GetValue(qs, null);
+
+                if (propvalue != null && !String.IsNullOrEmpty(propvalue.ToString()))
+                    qsdict.Add(propkey, propvalue.ToString());
+            }
+
+            return qsdict;
+        }
 
         #endregion
     }
@@ -191,4 +228,16 @@ namespace LTSAPI
         public string username { get; set; }
         public string password { get; set; }
     }
+
+    public class LTSQueryStrings
+    {        
+        public string? language { get; set; }
+
+        public int? page_number { get; set; }
+
+        public int? page_size { get; set; }
+
+        public string? filter_language { get; set; }
+    }
+    
 }
