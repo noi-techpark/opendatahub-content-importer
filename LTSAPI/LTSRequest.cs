@@ -155,37 +155,176 @@ namespace LTSAPI
             return await LTSRequestMethod("pointofinterests/" + id, _parameters, false);
         }
 
+        public async Task<List<JObject>> PoiDeletedRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("pointofinterests/deleted", _parameters, false);
+        }
+
         #endregion
 
         #region Activity
+
+        public async Task<List<JObject>> ActivityListRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("activities", _parameters, _getallpages);
+        }
+
+        public async Task<List<JObject>> ActivityDetailRequest(string id, Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("activities/" + id, _parameters, false);
+        }
+
+        public async Task<List<JObject>> ActivityDeletedRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("activities/deleted", _parameters, false);
+        }
 
         #endregion
 
         #region Gastronomy
 
+        public async Task<List<JObject>> GastronomyListRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("gastronomies", _parameters, _getallpages);
+        }
+
+        public async Task<List<JObject>> GastronomyDetailRequest(string id, Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("gastronomies/" + id, _parameters, false);
+        }
+
+        public async Task<List<JObject>> GastronomyDeletedRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("gastronomies/deleted", _parameters, false);
+        }
+
+        public async Task<List<JObject>> GastronomyCategoriesRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("gastronomies/categories", _parameters, false);
+        }
+
         #endregion
 
         #region Beacon
+
+        public async Task<List<JObject>> BeaconListRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("beacons", _parameters, _getallpages);
+        }
+
+        public async Task<List<JObject>> BeaconDetailRequest(string id, Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("beacons/" + id, _parameters, false);
+        }
+
+        //not listed in lts api
+        public async Task<List<JObject>> BeaconDeletedRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("beacons/deleted", _parameters, false);
+        }
 
         #endregion
 
         #region Event
 
+        public async Task<List<JObject>> EventListRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("events", _parameters, _getallpages);
+        }
+
+        public async Task<List<JObject>> EventDetailRequest(string id, Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("events/" + id, _parameters, false);
+        }
+
+        public async Task<List<JObject>> EventDeletedRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("events/deleted", _parameters, false);
+        }
+
         #endregion
 
         #region Venue
+        public async Task<List<JObject>> VenueListRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("venues", _parameters, _getallpages);
+        }
+
+        public async Task<List<JObject>> VenueDetailRequest(string id, Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("venues/" + id, _parameters, false);
+        }
+
+        //not listed in lts api
+        public async Task<List<JObject>> VenueDeletedRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("venues/deleted", _parameters, false);
+        }
+
+        public async Task<List<JObject>> VenueCategoriesRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("venues/categories", _parameters, false);
+        }
 
         #endregion
 
         #region Webcam
 
+        public async Task<List<JObject>> WebcamListRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("webcams", _parameters, _getallpages);
+        }
+
+        public async Task<List<JObject>> WebcamDetailRequest(string id, Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("webcams/" + id, _parameters, false);
+        }
+
+        //not listed in lts api
+        public async Task<List<JObject>> WebcamDeletedRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("webcams/deleted", _parameters, false);
+        }
+
         #endregion
 
         #region WeatherSnow
 
+        public async Task<List<JObject>> WeatherSnowListRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("weathersnows", _parameters, _getallpages);
+        }
+
+        public async Task<List<JObject>> WeatherSnowDetailRequest(string id, Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("weathersnows/" + id, _parameters, false);
+        }
+
+        //not listed in lts api
+        public async Task<List<JObject>> WeatherSnowDeletedRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("weathersnows/deleted", _parameters, false);
+        }
+
         #endregion
 
         #region Tag
+
+        public async Task<List<JObject>> TagListRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("tags", _parameters, _getallpages);
+        }
+
+        public async Task<List<JObject>> TagDetailRequest(string id, Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("tags/" + id, _parameters, false);
+        }
+
+        //not listed in lts api
+        public async Task<List<JObject>> TagDeletedRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("tags/deleted", _parameters, false);
+        }
 
         #endregion
 
