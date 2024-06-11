@@ -1,6 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-using Amazon.Runtime.Internal.Transform;
-using LTSAPI;
+﻿using LTSAPI;
 using Microsoft.Extensions.Configuration;
 using RabbitPusher;
 
@@ -22,7 +20,6 @@ LtsApi ltsapi = new LtsApi(new LTSCredentials() {
     );
 
 var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
-
 var dict = ltsapi.GetLTSQSDictionary(qs);
 
 //RabbitMQSend rabbitsend = new RabbitMQSend(config.GetConnectionString("RabbitConnection"));

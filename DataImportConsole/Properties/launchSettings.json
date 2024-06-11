@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DataImportConsole": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
