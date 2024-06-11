@@ -54,15 +54,34 @@ namespace DataImportConsole
             // and start it off
             await scheduler.Start();
 
+            await CreateAccoAmenityJob(scheduler, dataimport);
+            await CreateAccoTypeJob(scheduler, dataimport);
+            await CreateAccoCategoryJob(scheduler, dataimport);
+
+
+            //// some sleep to show what's happening
+            //await Task.Delay(TimeSpan.FromSeconds(60));
+
+
+            Console.WriteLine("Press any key to close the application");
+            Console.ReadKey();
+
+            // and last shut down the scheduler when you are ready to close your program
+            await scheduler.Shutdown();
+        }
+     
+        
+        private static async Task CreateAccoAmenityJob(IScheduler scheduler, DataImport dataimport)
+        {
             // define the job and tie it to our HelloJob class
-            IJobDetail job = JobBuilder.Create<ImportAmenitiesJob>()
-                .WithIdentity("job1", "group1")                                
+            IJobDetail job = JobBuilder.Create<ImportAccoAmenitiesJob>()
+                .WithIdentity("job_accoamenities", "accommodation")
                 .SetJobData(new JobDataMap() { { "dataimporter", dataimport } })
-                .Build();                        
+                .Build();
 
             // Trigger the job to run now, and then repeat every 30 seconds
             ITrigger trigger = TriggerBuilder.Create()
-                .WithIdentity("trigger1", "group1")
+                .WithIdentity("trigger_accoamenities", "accommodation")
                 .StartNow()
                 .WithSimpleSchedule(x => x
                     .WithIntervalInSeconds(30)
@@ -71,17 +90,48 @@ namespace DataImportConsole
 
             // Tell Quartz to schedule the job using our trigger
             await scheduler.ScheduleJob(job, trigger);
-
-            //// some sleep to show what's happening
-            //await Task.Delay(TimeSpan.FromSeconds(60));
-
-   
-            Console.WriteLine("Press any key to close the application");
-            Console.ReadKey();
-
-            // and last shut down the scheduler when you are ready to close your program
-            await scheduler.Shutdown();
         }
+
+        private static async Task CreateAccoCategoryJob(IScheduler scheduler, DataImport dataimport)
+        {
+            // define the job and tie it to our HelloJob class
+            IJobDetail job = JobBuilder.Create<ImportAccoCategoriesJob>()
+                .WithIdentity("job_accocategories", "accommodation")
+                .SetJobData(new JobDataMap() { { "dataimporter", dataimport } })
+                .Build();
+
+            // Trigger the job to run now, and then repeat every 45 seconds
+            ITrigger trigger = TriggerBuilder.Create()
+                .WithIdentity("trigger_accocategories", "accommodation")
+                .StartNow()
+                .WithSimpleSchedule(x => x
+                    .WithIntervalInSeconds(45)
+                    .RepeatForever())
+                .Build();
+
+            // Tell Quartz to schedule the job using our trigger
+            await scheduler.ScheduleJob(job, trigger);
+        }
+
+        private static async Task CreateAccoTypeJob(IScheduler scheduler, DataImport dataimport)
+        {
+            // define the job and tie it to our HelloJob class
+            IJobDetail job = JobBuilder.Create<ImportAccoTypesJob>()
+                .WithIdentity("job_accotypes", "accommodation")
+                .SetJobData(new JobDataMap() { { "dataimporter", dataimport } })
+                .Build();
+
+            // Trigger the job to run now, and then repeat every 30 seconds
+            ITrigger trigger = TriggerBuilder.Create()
+                .WithIdentity("trigger_accotypes", "accommodation")
+                .StartNow()
+                .WithCronSchedule("0 0 0/3 1/1 * ? *")          //http://www.cronmaker.com/                       
+                .Build();
+
+            // Tell Quartz to schedule the job using our trigger
+            await scheduler.ScheduleJob(job, trigger);
+        }
+
 
         // simple log provider to get something to the console
         private class ConsoleLogProvider : ILogProvider
@@ -110,16 +160,42 @@ namespace DataImportConsole
         }
     }
 
-    public class ImportAmenitiesJob : IJob
+    public class ImportAccoAmenitiesJob : IJob
     {
         public async Task Execute(IJobExecutionContext context)
         {
             var importer = (DataImport)context.JobDetail.JobDataMap["dataimporter"];
 
             if (importer != null)
-                await importer.ImportLTSAmenities();
+                await importer.ImportLTSAccoAmenities();
 
-            await Console.Out.WriteLineAsync("Amenities Import Job processed");
+            await Console.Out.WriteLineAsync("Accommodation Amenities Import Job processed");
+        }
+    }
+
+    public class ImportAccoCategoriesJob : IJob
+    {
+        public async Task Execute(IJobExecutionContext context)
+        {
+            var importer = (DataImport)context.JobDetail.JobDataMap["dataimporter"];
+
+            if (importer != null)
+                await importer.ImportLTSAccoCategories();
+
+            await Console.Out.WriteLineAsync("Accommodation Categories Import Job processed");
+        }
+    }
+
+    public class ImportAccoTypesJob : IJob
+    {
+        public async Task Execute(IJobExecutionContext context)
+        {
+            var importer = (DataImport)context.JobDetail.JobDataMap["dataimporter"];
+
+            if (importer != null)
+                await importer.ImportLTSAccoTypes();
+
+            await Console.Out.WriteLineAsync("Accommodation Types Import Job processed");
         }
     }
 }

@@ -25,13 +25,31 @@ namespace DataImportHelper
         /// Imports the LTS Amenities and Pushes it to RabbitMQ
         /// </summary>
         /// <returns></returns>
-        public async Task ImportLTSAmenities()
+        public async Task ImportLTSAccoAmenities()
         {
             var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
             var dict = ltsapi.GetLTSQSDictionary(qs);
 
             var ltsamenities = await ltsapi.AccommodationAmenitiesRequest(null, true);
             rabbitsend.Send("lts/accommodationamenities", ltsamenities);                        
+        }
+
+        public async Task ImportLTSAccoCategories()
+        {
+            var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
+            var dict = ltsapi.GetLTSQSDictionary(qs);
+
+            var ltsamenities = await ltsapi.AccommodationCategoriesRequest(null, true);
+            rabbitsend.Send("lts/accommodationcategories", ltsamenities);
+        }
+
+        public async Task ImportLTSAccoTypes()
+        {
+            var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
+            var dict = ltsapi.GetLTSQSDictionary(qs);
+
+            var ltsamenities = await ltsapi.AccommodationTypesRequest(null, true);
+            rabbitsend.Send("lts/accommodationtypes", ltsamenities);
         }
 
         #endregion
