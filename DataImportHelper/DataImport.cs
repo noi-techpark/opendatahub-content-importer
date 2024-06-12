@@ -22,7 +22,7 @@ namespace DataImportHelper
         #region Import Methods
 
         /// <summary>
-        /// Imports the LTS Amenities and Pushes it to RabbitMQ
+        /// Imports the LTS Accommodation Amenities and pushes it to RabbitMQ
         /// </summary>
         /// <returns></returns>
         public async Task ImportLTSAccoAmenities()
@@ -30,26 +30,52 @@ namespace DataImportHelper
             var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
             var dict = ltsapi.GetLTSQSDictionary(qs);
 
-            var ltsamenities = await ltsapi.AccommodationAmenitiesRequest(null, true);
-            rabbitsend.Send("lts/accommodationamenities", ltsamenities);                        
+            var ltsdata = await ltsapi.AccommodationAmenitiesRequest(null, true);
+            rabbitsend.Send("lts/accommodationamenities", ltsdata);                        
         }
 
+        /// <summary>
+        /// Imports the LTS Accommodation Categories and pushes it to RabbitMQ
+        /// </summary>
+        /// <returns></returns>
         public async Task ImportLTSAccoCategories()
         {
             var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
             var dict = ltsapi.GetLTSQSDictionary(qs);
 
-            var ltsamenities = await ltsapi.AccommodationCategoriesRequest(null, true);
-            rabbitsend.Send("lts/accommodationcategories", ltsamenities);
+            var ltsdata = await ltsapi.AccommodationCategoriesRequest(null, true);
+            rabbitsend.Send("lts/accommodationcategories", ltsdata);
         }
 
+        /// <summary>
+        ///  Imports the LTS Accommodation Types and pushes it to RabbitMQ
+        /// </summary>
+        /// <returns></returns>
         public async Task ImportLTSAccoTypes()
         {
             var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
             var dict = ltsapi.GetLTSQSDictionary(qs);
 
-            var ltsamenities = await ltsapi.AccommodationTypesRequest(null, true);
-            rabbitsend.Send("lts/accommodationtypes", ltsamenities);
+            var ltsdata = await ltsapi.AccommodationTypesRequest(null, true);
+            rabbitsend.Send("lts/accommodationtypes", ltsdata);
+        }
+
+        public async Task ImportLTSAccommodationChanged(DateTime datefrom)
+        {
+            var qs = new LTSQueryStrings() { page_size = 1, filter_lastUpdate = datefrom };
+            var dict = ltsapi.GetLTSQSDictionary(qs);
+
+            var ltsdata = await ltsapi.AccommodationDeleteRequest(dict, true);
+            rabbitsend.Send("lts/accommodationchanged", ltsdata);
+        }
+
+        public async Task ImportLTSAccommodationSingle(string rid)
+        {
+            var qs = new LTSQueryStrings() { page_size = 1 };
+            var dict = ltsapi.GetLTSQSDictionary(qs);
+
+            var ltsdata = await ltsapi.AccommodationDetailRequest(rid, null);
+            rabbitsend.Send("lts/accommodationchanged", ltsdata);
         }
 
         #endregion

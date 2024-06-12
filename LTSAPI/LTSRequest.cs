@@ -13,7 +13,7 @@ namespace LTSAPI
     {
         LTSCredentials credentials;
         string baseurl;
-        Dictionary<string,string>? parameters;
+        IDictionary<string,string>? parameters;
         string endpoint;
         bool getallpages = false;
 
@@ -99,7 +99,7 @@ namespace LTSAPI
             }
         }
 
-        private async Task<List<JObject>> LTSRequestMethod(string _endpoint, Dictionary<string, string>? _parameters, bool _getallpages)
+        private async Task<List<JObject>> LTSRequestMethod(string _endpoint, IDictionary<string, string>? _parameters, bool _getallpages)
         {
             endpoint = _endpoint;
             parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
@@ -136,7 +136,7 @@ namespace LTSAPI
             return await LTSRequestMethod("accommodations/" + id, _parameters, false);            
         }
 
-        public async Task<List<JObject>> AccommodationDeleteRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> AccommodationDeleteRequest(IDictionary<string, string>? _parameters, bool _getallpages)
         {            
             return await LTSRequestMethod("accommodations/deleted", _parameters, _getallpages);
         }

@@ -33,4 +33,6 @@ var dict = ltsapi.GetLTSQSDictionary(qs);
 //var ltstypes = await ltsapi.AccommodationTypesRequest(null, true);
 //rabbitsend.Send("lts/accommodationtypes", ltstypes);
 
+
+
 Console.ReadLine();
