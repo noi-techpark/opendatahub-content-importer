@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Helper;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -28,7 +29,7 @@ namespace RabbitListener
             while (!stoppingToken.IsCancellationRequested)
             {
                 // Run the Read method
-                await Task.Run(() => _readMessage.Read(_configuration.RabbitConnectionString, _configuration.ReadQueue, _configuration.MongoDBConnectionString));
+                await Task.Run(() => _readMessage.Read<TestObject>(_configuration.RabbitConnectionString, _configuration.ReadQueue, _configuration.MongoDBConnectionString));
             }
 
             //sync

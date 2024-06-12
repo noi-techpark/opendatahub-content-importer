@@ -25,13 +25,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LTSAPI", "LTSAPI\LTSAPI.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestConsole", "TestConsole\TestConsole.csproj", "{EF528732-53AC-49C8-A0E2-869199786842}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HGVApi", "HGVApi\HGVApi.csproj", "{0DF120F8-B014-4520-8BB2-3EFD0D08F878}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HGVApi", "HGVApi\HGVApi.csproj", "{0DF120F8-B014-4520-8BB2-3EFD0D08F878}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataImportHelper", "DataImportHelper\DataImportHelper.csproj", "{6013ECCF-A7E8-4C6C-B21F-9296C1B66873}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataImportHelper", "DataImportHelper\DataImportHelper.csproj", "{6013ECCF-A7E8-4C6C-B21F-9296C1B66873}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataImportConsole", "DataImportConsole\DataImportConsole.csproj", "{3A11D88A-C37C-446D-AF80-549F2A1357B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataImportConsole", "DataImportConsole\DataImportConsole.csproj", "{3A11D88A-C37C-446D-AF80-549F2A1357B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataImportApi", "DataImportApi\DataImportApi.csproj", "{854AB553-27C4-453F-A510-28B81F275F12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataImportApi", "DataImportApi\DataImportApi.csproj", "{854AB553-27C4-453F-A510-28B81F275F12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccommodationTransformer", "AccommodationTransformer\AccommodationTransformer.csproj", "{4EB9E59B-4EC8-4D93-AE73-A5B756B508E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +85,10 @@ Global
 		{854AB553-27C4-453F-A510-28B81F275F12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{854AB553-27C4-453F-A510-28B81F275F12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{854AB553-27C4-453F-A510-28B81F275F12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EB9E59B-4EC8-4D93-AE73-A5B756B508E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EB9E59B-4EC8-4D93-AE73-A5B756B508E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EB9E59B-4EC8-4D93-AE73-A5B756B508E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EB9E59B-4EC8-4D93-AE73-A5B756B508E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

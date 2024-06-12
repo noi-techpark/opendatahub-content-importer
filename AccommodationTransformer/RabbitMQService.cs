@@ -2,42 +2,45 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using RabbitMQ.Client.Events;
+using Helper;
+using Microsoft.Extensions.Configuration;
+using MongoDBConnector;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using System.Configuration;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.Json.Serialization;
-using Newtonsoft.Json;
-using MongoDBConnector;
-using Helper;
+using System.Threading.Tasks;
 
-namespace RabbitListener
-{    
+namespace AccommodationTransformer
+{
+    #region Generic Code
     public interface IReadMessage
     {
         void Read<T>(string connectionstring, string queue, string mongoconnection);
     }
 
-    public class ReadMessage : IReadMessage
+    public abstract class ReadMessage : IReadMessage
     {
         private string mongodbconnection;
 
         public void Read<T>(string connectionstring, string queue, string mongoconnection)
-        {           
+        {
             var _rabbitMQServer = new ConnectionFactory() { Uri = new Uri(connectionstring) };
-            
+
             using var connection = _rabbitMQServer.CreateConnection();
 
             using var channel = connection.CreateModel();
 
             mongodbconnection = mongoconnection;
 
-            StartReading<T>(channel, queue);            
+            StartReading<T>(channel, queue);
         }
 
         private async void StartReading<T>(IModel channel, string queueName)
@@ -53,14 +56,15 @@ namespace RabbitListener
             var consumer = new EventingBasicConsumer(channel);
 
             // Definition of event when the Consumer gets a message
-            consumer.Received += (sender, e) => {
+            consumer.Received += (sender, e) =>
+            {
                 ManageMessage<T>(e);
             };
 
             // Start pushing messages to our consumer
             channel.BasicConsume(queueName, true, consumer);
 
-            Console.WriteLine("Consumer is running");            
+            Console.WriteLine("Consumer is running");
 
             Console.ReadLine();
         }
@@ -84,15 +88,43 @@ namespace RabbitListener
             MongoDBReader mongoreader = new MongoDBReader(mongodbconnection);
             var result = await mongoreader.GetFromMongoAsObject(message);
 
-            return JsonConvert.DeserializeObject<T>(result.rawdata) ;            
+            return JsonConvert.DeserializeObject<T>(result.rawdata);
         }
 
-        private async Task TransformData<T>(T data)
+        public virtual async Task TransformData<T>(T data)
         {
             //Transformer Logic goes here
             throw new NotImplementedException();
         }
     }
 
+    #endregion
+
+
+    public interface IReadAccommodationChanged : IReadMessage
+    {
+
+    }
+
+    public class ReadAccommodationChanged : ReadMessage, IReadAccommodationChanged
+    {
+        public override async Task TransformData<JObject>(JObject data)
+        {
+            Console.WriteLine("ReadAccommodationChanged called");
+        }
+    }
+
+    public interface IReadAccommodationDetail : IReadMessage
+    {
+
+    }
+
+    public class ReadAccommodationDetail : ReadMessage, IReadAccommodationDetail
+    {
+        public override async Task TransformData<JObject>(JObject data)
+        {
+            Console.WriteLine("ReadAccommodationDetail called");
+        }
+    }
 
 }
