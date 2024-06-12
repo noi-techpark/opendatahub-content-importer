@@ -111,27 +111,27 @@ namespace LTSAPI
 
         #region Accommodation
 
-        public async Task<List<JObject>> AccommodationAmenitiesRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> AccommodationAmenitiesRequest(IDictionary<string, string>? _parameters, bool _getallpages)
         {            
             return await LTSRequestMethod("amenities", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> AccommodationCategoriesRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> AccommodationCategoriesRequest(IDictionary<string, string>? _parameters, bool _getallpages)
         {
             return await LTSRequestMethod("accommodations/categories", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> AccommodationTypesRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> AccommodationTypesRequest(IDictionary<string, string>? _parameters, bool _getallpages)
         {            
             return await LTSRequestMethod("accommodations/types", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> AccommodationListRequest(Dictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> AccommodationListRequest(IDictionary<string, string>? _parameters, bool _getallpages)
         {            
             return await LTSRequestMethod("accommodations", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> AccommodationDetailRequest(string id, Dictionary<string, string>? _parameters)
+        public async Task<List<JObject>> AccommodationDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
             return await LTSRequestMethod("accommodations/" + id, _parameters, false);            
         }

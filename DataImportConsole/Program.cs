@@ -134,7 +134,7 @@ namespace DataImportConsole
         private static async Task CreateAccoChangedJob(IScheduler scheduler, DataImport dataimport)
         {
             // define the job and tie it to our HelloJob class
-            IJobDetail job = JobBuilder.Create<ImportAccoTypesJob>()
+            IJobDetail job = JobBuilder.Create<ImportAccoChangedJob>()
                 .WithIdentity("job_accochanged", "accommodation")
                 .SetJobData(new JobDataMap() { { "dataimporter", dataimport } })
                 .SetJobData(new JobDataMap() { { "datefrom", DateTime.Now.AddDays(-1) } })

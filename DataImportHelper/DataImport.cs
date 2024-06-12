@@ -62,11 +62,25 @@ namespace DataImportHelper
 
         public async Task ImportLTSAccommodationChanged(DateTime datefrom)
         {
+            var qs = new LTSQueryStrings() { 
+                page_size = 1, 
+                filter_lastUpdate = datefrom,
+                filter_marketingGroupRids = "9E72B78AC5B14A9DB6BED6C2592483BF",
+                fields = "rid"
+            };
+            var dict = ltsapi.GetLTSQSDictionary(qs);
+
+            var ltsdata = await ltsapi.AccommodationListRequest(dict, true);
+            rabbitsend.Send("lts/accommodationdeleted", ltsdata);
+        }
+
+        public async Task ImportLTSAccommodationDeleted(DateTime datefrom)
+        {
             var qs = new LTSQueryStrings() { page_size = 1, filter_lastUpdate = datefrom };
             var dict = ltsapi.GetLTSQSDictionary(qs);
 
             var ltsdata = await ltsapi.AccommodationDeleteRequest(dict, true);
-            rabbitsend.Send("lts/accommodationchanged", ltsdata);
+            rabbitsend.Send("lts/accommodationdeleted", ltsdata);
         }
 
         public async Task ImportLTSAccommodationSingle(string rid)
