@@ -136,8 +136,10 @@ namespace DataImportConsole
             // define the job and tie it to our HelloJob class
             IJobDetail job = JobBuilder.Create<ImportAccoChangedJob>()
                 .WithIdentity("job_accochanged", "accommodation")
-                .SetJobData(new JobDataMap() { { "dataimporter", dataimport } })
-                .SetJobData(new JobDataMap() { { "datefrom", DateTime.Now.AddDays(-1) } })
+                .SetJobData(new JobDataMap() { 
+                    { "dataimporter", dataimport }, 
+                    { "datefrom", DateTime.Now.AddDays(-1) } 
+                })
                 .Build();
 
             // Trigger the job to run now, and then repeat every 30 seconds

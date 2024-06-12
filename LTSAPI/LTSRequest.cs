@@ -82,10 +82,16 @@ namespace LTSAPI
                     var currentpage = (string)contentjson["paging"]["pageNumber"];
                     int.TryParse(currentpage, out int currentpageint);
 
-                    if(currentpageint < pagesquantityint)
+                    var resultsetrid = (string)contentjson["resultSet"]["rid"];
+
+
+                    if (currentpageint < pagesquantityint)
                     {
                         //Add page parameter
                         parameters.TryAddOrUpdate("page[number]", (currentpageint + 1).ToString());
+                        //Add filter[resultSet][rid]
+                        if(!String.IsNullOrEmpty(resultsetrid))
+                            parameters.TryAddOrUpdate("filter[resultSet][rid]", resultsetrid);
                         //Request again
                         jobjectlist.AddRange(await RequestAndParseToJObject());
                     }                  
@@ -351,8 +357,24 @@ namespace LTSAPI
 
                 var propvalue = prop.GetValue(qs, null);
 
-                if (propvalue != null && !String.IsNullOrEmpty(propvalue.ToString()))
-                    qsdict.Add(propkey, propvalue.ToString());
+                if (propvalue != null)
+                {
+                    string? valuetoadd = null;
+
+                    if(prop.PropertyType == typeof(DateTime?))
+                    {
+                        valuetoadd = String.Format("{0:yyyy-MM-ddThh:mm:ss.fff}", (DateTime)propvalue);
+                    }
+                    else
+                    {
+                        if (!String.IsNullOrEmpty(propvalue.ToString()))
+                            valuetoadd = propvalue.ToString();
+                    }
+
+                    if (!String.IsNullOrEmpty(valuetoadd))
+                        qsdict.Add(propkey, valuetoadd);
+                }
+                    
             }
 
             return qsdict;
