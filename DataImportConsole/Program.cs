@@ -132,6 +132,25 @@ namespace DataImportConsole
             await scheduler.ScheduleJob(job, trigger);
         }
 
+        private static async Task CreateAccoChangedJob(IScheduler scheduler, DataImport dataimport)
+        {
+            // define the job and tie it to our HelloJob class
+            IJobDetail job = JobBuilder.Create<ImportAccoTypesJob>()
+                .WithIdentity("job_accochanged", "accommodation")
+                .SetJobData(new JobDataMap() { { "dataimporter", dataimport } })
+                .Build();
+
+            // Trigger the job to run now, and then repeat every 30 seconds
+            ITrigger trigger = TriggerBuilder.Create()
+                .WithIdentity("trigger_accochanged", "accommodation")
+                .StartNow()
+                .WithCronSchedule("0 0 23 1/1 * ? *")          //http://www.cronmaker.com/  Daily at 23:00                     
+                .Build();
+
+            // Tell Quartz to schedule the job using our trigger
+            await scheduler.ScheduleJob(job, trigger);
+        }
+
 
         // simple log provider to get something to the console
         private class ConsoleLogProvider : ILogProvider
@@ -196,6 +215,34 @@ namespace DataImportConsole
                 await importer.ImportLTSAccoTypes();
 
             await Console.Out.WriteLineAsync("Accommodation Types Import Job processed");
+        }
+    }
+
+    public class ImportAccoChangedJob : IJob
+    {
+        public async Task Execute(IJobExecutionContext context)
+        {
+            var importer = (DataImport)context.JobDetail.JobDataMap["dataimporter"];
+            var datefrom = (DateTime)context.JobDetail.JobDataMap["datefrom"];
+
+            if (importer != null)
+                await importer.ImportLTSAccommodationChanged(datefrom);
+
+            await Console.Out.WriteLineAsync(String.Format("Accommodation Changed {0} Import Job processed", datefrom.ToShortDateString()));
+        }
+    }
+
+    public class ImportAccoDetailJob : IJob
+    {
+        public async Task Execute(IJobExecutionContext context)
+        {
+            var importer = (DataImport)context.JobDetail.JobDataMap["dataimporter"];
+            var id = (string)context.JobDetail.JobDataMap["id"];
+
+            if (importer != null)
+                await importer.ImportLTSAccommodationSingle(id);
+
+            await Console.Out.WriteLineAsync(String.Format("Accommodation Detail {0} Import Job processed", id));
         }
     }
 }
