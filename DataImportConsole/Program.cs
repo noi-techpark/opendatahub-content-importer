@@ -54,13 +54,12 @@ namespace DataImportConsole
             // and start it off
             await scheduler.Start();
 
-            await CreateAccoAmenityJob(scheduler, dataimport);
-            await CreateAccoTypeJob(scheduler, dataimport);
-            await CreateAccoCategoryJob(scheduler, dataimport);
+            //await CreateAccoAmenityJob(scheduler, dataimport);
+            //await CreateAccoTypeJob(scheduler, dataimport);
+            //await CreateAccoCategoryJob(scheduler, dataimport);
 
+            await CreateAccoChangedJob(scheduler, dataimport);
 
-            //// some sleep to show what's happening
-            //await Task.Delay(TimeSpan.FromSeconds(60));
 
 
             Console.WriteLine("Press any key to close the application");
@@ -138,13 +137,17 @@ namespace DataImportConsole
             IJobDetail job = JobBuilder.Create<ImportAccoTypesJob>()
                 .WithIdentity("job_accochanged", "accommodation")
                 .SetJobData(new JobDataMap() { { "dataimporter", dataimport } })
+                .SetJobData(new JobDataMap() { { "datefrom", DateTime.Now.AddDays(-1) } })
                 .Build();
 
             // Trigger the job to run now, and then repeat every 30 seconds
             ITrigger trigger = TriggerBuilder.Create()
                 .WithIdentity("trigger_accochanged", "accommodation")
                 .StartNow()
-                .WithCronSchedule("0 0 23 1/1 * ? *")          //http://www.cronmaker.com/  Daily at 23:00                     
+                 //.WithCronSchedule("0 0 23 1/1 * ? *")          //http://www.cronmaker.com/  Daily at 23:00                     
+                 .WithSimpleSchedule(x => x
+                    .WithIntervalInSeconds(60)
+                    .RepeatForever())
                 .Build();
 
             // Tell Quartz to schedule the job using our trigger
