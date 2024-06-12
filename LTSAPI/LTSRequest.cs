@@ -82,7 +82,9 @@ namespace LTSAPI
                     var currentpage = (string)contentjson["paging"]["pageNumber"];
                     int.TryParse(currentpage, out int currentpageint);
 
-                    var resultsetrid = (string)contentjson["resultSet"]["rid"];
+                    var resultrid = "";
+                    if(contentjson.ContainsKey("resultSet"))
+                        resultrid = (string)contentjson["resultSet"]["rid"];
 
 
                     if (currentpageint < pagesquantityint)
@@ -90,8 +92,8 @@ namespace LTSAPI
                         //Add page parameter
                         parameters.TryAddOrUpdate("page[number]", (currentpageint + 1).ToString());
                         //Add filter[resultSet][rid]
-                        if(!String.IsNullOrEmpty(resultsetrid))
-                            parameters.TryAddOrUpdate("filter[resultSet][rid]", resultsetrid);
+                        if(!String.IsNullOrEmpty(resultrid))
+                            parameters.TryAddOrUpdate("filter[resultSet][rid]", resultrid);
                         //Request again
                         jobjectlist.AddRange(await RequestAndParseToJObject());
                     }                  

@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using RabbitPusher;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -23,15 +24,17 @@ namespace AccommodationTransformer
     #region Generic Code
     public interface IReadMessage
     {
-        void Read<T>(string connectionstring, string queue, string mongoconnection);
+        void Read(string connectionstring, string queue, string mongoconnection);
     }
 
     public abstract class ReadMessage : IReadMessage
     {
-        private string mongodbconnection;
+        protected string mongodbconnection;
+        protected string rabbitmqconnection;
 
-        public void Read<T>(string connectionstring, string queue, string mongoconnection)
+        public void Read(string connectionstring, string queue, string mongoconnection)
         {
+            rabbitmqconnection = connectionstring;
             var _rabbitMQServer = new ConnectionFactory() { Uri = new Uri(connectionstring) };
 
             using var connection = _rabbitMQServer.CreateConnection();
@@ -40,10 +43,10 @@ namespace AccommodationTransformer
 
             mongodbconnection = mongoconnection;
 
-            StartReading<T>(channel, queue);
+            StartReading(channel, queue);
         }
 
-        private async void StartReading<T>(IModel channel, string queueName)
+        private async void StartReading(IModel channel, string queueName)
         {
             // connect to the queue
             channel.QueueDeclare(queueName,
@@ -58,7 +61,7 @@ namespace AccommodationTransformer
             // Definition of event when the Consumer gets a message
             consumer.Received += (sender, e) =>
             {
-                ManageMessage<T>(e);
+                _ = ManageMessage(e);
             };
 
             // Start pushing messages to our consumer
@@ -69,7 +72,7 @@ namespace AccommodationTransformer
             Console.ReadLine();
         }
 
-        private void ManageMessage<T>(BasicDeliverEventArgs e)
+        private async Task ManageMessage(BasicDeliverEventArgs e)
         {
             var body = e.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
@@ -78,20 +81,18 @@ namespace AccommodationTransformer
             var rabbitmessage = JsonConvert.DeserializeObject<RabbitNotifyMessage>(message);
 
             //Load from MongoDB
-            var data = LoadDataFromMongo<T>(rabbitmessage);
+            var data = await LoadDataFromMongo(rabbitmessage);
 
-            TransformData(data);
+            await TransformData(data);
         }
 
-        private async Task<T> LoadDataFromMongo<T>(RabbitNotifyMessage message)
+        private async Task<MongoDBObject> LoadDataFromMongo(RabbitNotifyMessage message)
         {
             MongoDBReader mongoreader = new MongoDBReader(mongodbconnection);
-            var result = await mongoreader.GetFromMongoAsObject(message);
-
-            return JsonConvert.DeserializeObject<T>(result.rawdata);
+            return await mongoreader.GetFromMongoAsObject(message);
         }
 
-        public virtual async Task TransformData<T>(T data)
+        public virtual async Task TransformData(MongoDBObject data)
         {
             //Transformer Logic goes here
             throw new NotImplementedException();
@@ -108,9 +109,19 @@ namespace AccommodationTransformer
 
     public class ReadAccommodationChanged : ReadMessage, IReadAccommodationChanged
     {
-        public override async Task TransformData<JObject>(JObject data)
+        public override async Task TransformData(MongoDBObject data)
         {
+
+            var json = JToken.Parse(data.rawdata);
+
+            JArray ridlist = json["data"].Value<JArray>();
+
             Console.WriteLine("ReadAccommodationChanged called");
+
+            //Push all Rids to accommodation/detail
+            //RabbitMQSend rabbitsend = new RabbitMQSend(rabbitmqconnection);
+            //var ltsamenities = await ltsapi.AccommodationAmenitiesRequest(null, true);
+            //rabbitsend.Send("lts/accommodationamenities", ltsamenities);
         }
     }
 
@@ -121,7 +132,7 @@ namespace AccommodationTransformer
 
     public class ReadAccommodationDetail : ReadMessage, IReadAccommodationDetail
     {
-        public override async Task TransformData<JObject>(JObject data)
+        public override async Task TransformData(MongoDBObject data)
         {
             Console.WriteLine("ReadAccommodationDetail called");
         }

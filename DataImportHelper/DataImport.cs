@@ -66,7 +66,7 @@ namespace DataImportHelper
                 page_size = 100, 
                 filter_lastUpdate = datefrom,
                 filter_marketingGroupRids = "9E72B78AC5B14A9DB6BED6C2592483BF",
-                fields = "rid"
+                fields = "rid" //when fields rid is set lts api gives all pages without paging
             };
             var dict = ltsapi.GetLTSQSDictionary(qs);
 
