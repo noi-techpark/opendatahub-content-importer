@@ -18,9 +18,9 @@ namespace AccommodationTransformer
         private readonly ILogger<Worker> _logger;        
         private readonly IReadAccommodation _readAccoMessage;
         private readonly WorkerSettings _configuration;
-        private DataImport _dataimport;
+        private IDictionary<string, DataImport> _dataimport;
 
-        public Worker(IReadAccommodation readAccoMessage, ILogger<Worker> logger, WorkerSettings configuration, DataImport dataimport)
+        public Worker(IReadAccommodation readAccoMessage, ILogger<Worker> logger, WorkerSettings configuration, IDictionary<string, DataImport> dataimport)
         {
             _logger = logger;
             _readAccoMessage = readAccoMessage;            
@@ -35,7 +35,7 @@ namespace AccommodationTransformer
             while (!stoppingToken.IsCancellationRequested)
             {
                 // Run the Read method
-                await Task.Run(() => _readAccoMessage.Read(_configuration.RabbitConnectionString, _configuration.MongoDBConnectionString, new List<string>() { "lts.accommodationchanged", "lts.accommodationdetail" }, _dataimport));                //, 
+                await Task.Run(() => _readAccoMessage.Read(_configuration.RabbitConnectionString, _configuration.MongoDBConnectionString, new List<string>() { "lts.accommodationchanged", "lts.accommodationdetail", "lts.accommodationdetail_open" }, _dataimport));                //, 
             }
         }
     }

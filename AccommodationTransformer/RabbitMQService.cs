@@ -25,16 +25,16 @@ namespace AccommodationTransformer
     #region Generic Code
     public interface IReadMessage
     {
-        void Read(string connectionstring, string mongoconnection, List<string> queues, DataImport dataiport);
+        void Read(string connectionstring, string mongoconnection, List<string> queues, IDictionary<string, DataImport> dataiport);
     }
 
     public abstract class ReadMessage : IReadMessage
     {
         protected string mongodbconnection;
         protected string rabbitmqconnection;
-        protected DataImport dataimport;
+        protected IDictionary<string, DataImport> dataimport;
 
-        public void Read(string connectionstring, string mongoconnection, List<string> queues, DataImport _dataimport)
+        public void Read(string connectionstring, string mongoconnection, List<string> queues, IDictionary<string, DataImport> _dataimport)
         {
             rabbitmqconnection = connectionstring;
             var _rabbitMQServer = new ConnectionFactory() { Uri = new Uri(connectionstring) };
@@ -118,40 +118,80 @@ namespace AccommodationTransformer
     {
         public override async Task<bool> TransformData(MongoDBObject data, string routingkey)
         {
-            Console.WriteLine("ReadAccommodationChanged called");
-
+        
             var json = JToken.Parse(data.rawdata);
             var jsonarray = JArray.FromObject(json);
 
             if (routingkey == "lts.accommodationchanged")
             {
+                Console.WriteLine("Read Accommodation CHANGED called");
+
                 var jsonarraydata = jsonarray.FirstOrDefault()["data"].Value<JArray>();
-             
-                foreach(var ridobj in jsonarraydata)
+
+                foreach (var ridobj in jsonarraydata)
                 {
                     var rid = ridobj["rid"].Value<string>();
 
                     Console.WriteLine("rid: " + rid);
 
-                    await dataimport.ImportLTSAccommodationSingle(rid);
+                    await dataimport["idm"].ImportLTSAccommodationSingle(rid);
+
+                    await dataimport["open"].ImportLTSAccommodationSingle(rid);
                 }
 
                 //Request 
 
                 return true;
             }
-            else
+            else if (routingkey == "lts.accommodationdetail")
             {
+                Console.WriteLine("Read Accommodation DETAIL called");
+
                 JObject accomodationdetail = jsonarray.FirstOrDefault()["data"].Value<JObject>();
 
-                //TODO PARSE
-                var name = accomodationdetail["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"]["de"].Value<string>();
+                //TODO PARSE ACCOMMODATION
+                var name = accomodationdetail["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"].Value<JObject>();
+                string namede = "";
 
-                Console.WriteLine("Processing Accommodation " + accomodationdetail["rid"].Value<string>() + " " + name);
+                if (name != null)
+                {
+                    JToken token = name["de"];
+                    if (token != null)
+                    {
+                        namede = token.Value<string>();
+                    }
+                }
+                
+
+                Console.WriteLine("Processing Accommodation " + accomodationdetail["rid"].Value<string>() + " " + namede);
 
                 return true;
             }
+            else if (routingkey == "lts.accommodationdetail_open")
+            {
+                Console.WriteLine("Read Accommodation DETAIL OPEN called");
 
+                JObject accomodationdetail = jsonarray.FirstOrDefault()["data"].Value<JObject>();
+
+                //TODO PARSE ACCOMMODATION
+                var name = accomodationdetail["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"].Value<JObject>();
+                string namede = "";
+
+                if (name != null)
+                {
+                    JToken token = name["de"];
+                    if (token != null)
+                    {
+                        namede = token.Value<string>();
+                    }
+                }
+
+                Console.WriteLine("Processing Accommodation " + accomodationdetail["rid"].Value<string>() + " " + namede);
+
+                return true;
+            }
+            else
+                return false;
 
             //Push all Rids to accommodation/detail
             //RabbitMQSend rabbitsend = new RabbitMQSend(rabbitmqconnection);

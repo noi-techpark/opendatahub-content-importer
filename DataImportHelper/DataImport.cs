@@ -8,12 +8,18 @@ namespace DataImportHelper
         public LTSCredentials ltscredentials { get; set; }
         public LtsApi ltsapi { get; set; }
 
+        public string opendata { get; set; }
+
         RabbitMQSend rabbitsend { get; set; }
 
-        public DataImport(Dictionary<string,Dictionary<string,string>> settings)
+        public DataImport(Dictionary<string,Dictionary<string,string>> settings, bool open = false)
         {
             ltscredentials = new LTSCredentials() { ltsclientid = settings["lts"]["clientid"], username = settings["lts"]["username"], password = settings["lts"]["password"] };
             ltsapi = new LtsApi(ltscredentials);
+            if (open)
+                opendata = "_opendata";
+            else
+                opendata = "";
 
             rabbitsend = new RabbitMQSend(settings["rabbitmq"]["connectionstring"]);
         }
@@ -89,7 +95,7 @@ namespace DataImportHelper
             var dict = ltsapi.GetLTSQSDictionary(qs);
 
             var ltsdata = await ltsapi.AccommodationDetailRequest(rid, null);
-            rabbitsend.Send("lts/accommodationdetail", ltsdata);
+            rabbitsend.Send("lts/accommodationdetail" + opendata, ltsdata);
         }
 
         #endregion

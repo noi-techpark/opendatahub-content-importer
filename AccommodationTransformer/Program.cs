@@ -50,8 +50,33 @@ namespace AccommodationTransformer
 
                     DataImport dataimport = new DataImport(settings);
 
+                    var ltsnoi = hostContext.Configuration.GetSection("LTSApiIDM");
+                    Dictionary<string, Dictionary<string, string>> settingsopen = new Dictionary<string, Dictionary<string, string>>()
+                    {
+                        { "lts" , new Dictionary<string, string>()
+                            {
+                                { "clientid", ltsnoi.GetSection("xltsclientid").Value },
+                                { "username", ltsnoi.GetSection("username").Value },
+                                { "password", ltsnoi.GetSection("password").Value },
+                            }
+                        },
+                        {
+                            "rabbitmq", new Dictionary<string, string>()
+                            {
+                                { "connectionstring", hostContext.Configuration.GetConnectionString("RabbitConnection") }
+                            }
+                        }
+                    };
+                    DataImport dataimportopen = new DataImport(settingsopen, true);
+
+                    IDictionary<string, DataImport> dataimportlist = new Dictionary<string, DataImport>()
+                    {
+                        { "idm", dataimport },
+                        { "open", dataimportopen }
+                    };
+
                     services.AddSingleton(workersettings);
-                    services.AddSingleton(dataimport);
+                    services.AddSingleton(dataimportlist);                    
 
                     services.AddSingleton<IReadAccommodation, ReadAccommodation>();
                     
