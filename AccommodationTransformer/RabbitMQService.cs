@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using DataImportHelper;
 using Helper;
 using Microsoft.Extensions.Configuration;
 using MongoDBConnector;
@@ -24,15 +25,16 @@ namespace AccommodationTransformer
     #region Generic Code
     public interface IReadMessage
     {
-        void Read(string connectionstring, string mongoconnection, List<string> queues);
+        void Read(string connectionstring, string mongoconnection, List<string> queues, DataImport dataiport);
     }
 
     public abstract class ReadMessage : IReadMessage
     {
         protected string mongodbconnection;
         protected string rabbitmqconnection;
+        protected DataImport dataimport;
 
-        public void Read(string connectionstring, string mongoconnection, List<string> queues)
+        public void Read(string connectionstring, string mongoconnection, List<string> queues, DataImport _dataimport)
         {
             rabbitmqconnection = connectionstring;
             var _rabbitMQServer = new ConnectionFactory() { Uri = new Uri(connectionstring) };
@@ -42,6 +44,7 @@ namespace AccommodationTransformer
             using var channel = connection.CreateModel();
 
             mongodbconnection = mongoconnection;
+            dataimport = _dataimport;
 
             StartReading(channel, queues);
         }
@@ -61,20 +64,22 @@ namespace AccommodationTransformer
                 var consumer = new EventingBasicConsumer(channel);
 
                 // Definition of event when the Consumer gets a message
-                consumer.Received += (sender, e) =>
+                consumer.Received += async (sender, e) =>
                 {
-                    _ = ManageMessage(e);
+                    var result = await ManageMessage(e);
+                    if(result)
+                        channel.BasicAck(e.DeliveryTag, false);
                 };
 
                 // Start pushing messages to our consumer
-                channel.BasicConsume(queueName, true, consumer);
+                channel.BasicConsume(queueName, false, consumer);
 
                 Console.WriteLine("Consumer is running");
             }
             Console.ReadLine();
         }
 
-        private async Task ManageMessage(BasicDeliverEventArgs e)
+        private async Task<bool> ManageMessage(BasicDeliverEventArgs e)
         {
             var body = e.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
@@ -85,9 +90,7 @@ namespace AccommodationTransformer
             //Load from MongoDB
             var data = await LoadDataFromMongo(rabbitmessage);
 
-            await TransformData(data);
-
-            
+            return await TransformData(data, e.RoutingKey);            
         }
 
         private async Task<MongoDBObject> LoadDataFromMongo(RabbitNotifyMessage message)
@@ -96,7 +99,7 @@ namespace AccommodationTransformer
             return await mongoreader.GetFromMongoAsObject(message);
         }
 
-        public virtual async Task TransformData(MongoDBObject data)
+        public virtual async Task<bool> TransformData(MongoDBObject data, string routingkey)
         {
             //Transformer Logic goes here
             throw new NotImplementedException();
@@ -106,21 +109,49 @@ namespace AccommodationTransformer
     #endregion
 
 
-    public interface IReadAccommodationChanged : IReadMessage
+    public interface IReadAccommodation : IReadMessage
     {
 
     }
 
-    public class ReadAccommodationChanged : ReadMessage, IReadAccommodationChanged
+    public class ReadAccommodation : ReadMessage, IReadAccommodation
     {
-        public override async Task TransformData(MongoDBObject data)
+        public override async Task<bool> TransformData(MongoDBObject data, string routingkey)
         {
+            Console.WriteLine("ReadAccommodationChanged called");
 
             var json = JToken.Parse(data.rawdata);
+            var jsonarray = JArray.FromObject(json);
 
-            JArray ridlist = json["data"].Value<JArray>();
+            if (routingkey == "lts.accommodationchanged")
+            {
+                var jsonarraydata = jsonarray.FirstOrDefault()["data"].Value<JArray>();
+             
+                foreach(var ridobj in jsonarraydata)
+                {
+                    var rid = ridobj["rid"].Value<string>();
 
-            Console.WriteLine("ReadAccommodationChanged called");
+                    Console.WriteLine("rid: " + rid);
+
+                    await dataimport.ImportLTSAccommodationSingle(rid);
+                }
+
+                //Request 
+
+                return true;
+            }
+            else
+            {
+                JObject accomodationdetail = jsonarray.FirstOrDefault()["data"].Value<JObject>();
+
+                //TODO PARSE
+                var name = accomodationdetail["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"]["de"].Value<string>();
+
+                Console.WriteLine("Processing Accommodation " + accomodationdetail["rid"].Value<string>() + " " + name);
+
+                return true;
+            }
+
 
             //Push all Rids to accommodation/detail
             //RabbitMQSend rabbitsend = new RabbitMQSend(rabbitmqconnection);
@@ -128,18 +159,4 @@ namespace AccommodationTransformer
             //rabbitsend.Send("lts/accommodationamenities", ltsamenities);
         }
     }
-
-    public interface IReadAccommodationDetail : IReadMessage
-    {
-
-    }
-
-    public class ReadAccommodationDetail : ReadMessage, IReadAccommodationDetail
-    {
-        public override async Task TransformData(MongoDBObject data)
-        {
-            Console.WriteLine("ReadAccommodationDetail called");
-        }
-    }
-
 }

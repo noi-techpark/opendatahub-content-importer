@@ -89,7 +89,7 @@ namespace DataImportHelper
             var dict = ltsapi.GetLTSQSDictionary(qs);
 
             var ltsdata = await ltsapi.AccommodationDetailRequest(rid, null);
-            rabbitsend.Send("lts/accommodationchanged", ltsdata);
+            rabbitsend.Send("lts/accommodationdetail", ltsdata);
         }
 
         #endregion

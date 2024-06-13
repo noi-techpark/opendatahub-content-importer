@@ -30,9 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataImportHelper\DataImportHelper.csproj" />
     <ProjectReference Include="..\Helper\Helper.csproj" />
     <ProjectReference Include="..\MongoDBConnector\MongoDBConnector.csproj" />
-    <ProjectReference Include="..\RabbitPusher\RabbitPusher.csproj" />
   </ItemGroup>
 
 </Project>

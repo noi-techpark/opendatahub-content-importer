@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using AccommodationTransformer;
+using DataImportHelper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,11 +30,31 @@ namespace AccommodationTransformer
                         ReadQueue = hostContext.Configuration.GetSection("RabbitMQConfiguration").GetValue<string>("ReadQueue", "")
                     };
 
+                    var ltsidm = hostContext.Configuration.GetSection("LTSApiIDM");
+                    Dictionary<string, Dictionary<string, string>> settings = new Dictionary<string, Dictionary<string, string>>()
+                    {
+                        { "lts" , new Dictionary<string, string>()
+                            {
+                                { "clientid", ltsidm.GetSection("xltsclientid").Value },
+                                { "username", ltsidm.GetSection("username").Value },
+                                { "password", ltsidm.GetSection("password").Value },
+                            }
+                        },
+                        {
+                            "rabbitmq", new Dictionary<string, string>()
+                            {
+                                { "connectionstring", hostContext.Configuration.GetConnectionString("RabbitConnection") }
+                            }
+                        }
+                    };
+
+                    DataImport dataimport = new DataImport(settings);
+
                     services.AddSingleton(workersettings);
+                    services.AddSingleton(dataimport);
 
-                    services.AddSingleton<IReadAccommodationChanged, ReadAccommodationChanged>();
-                    services.AddSingleton<IReadAccommodationDetail, ReadAccommodationDetail>();
-
+                    services.AddSingleton<IReadAccommodation, ReadAccommodation>();
+                    
                     services.AddHostedService<Worker>();
                 });
     }

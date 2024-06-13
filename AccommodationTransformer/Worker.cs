@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using DataImportHelper;
 using Helper;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -14,18 +15,19 @@ namespace AccommodationTransformer
 {
     public class Worker : BackgroundService
     {
-        private readonly ILogger<Worker> _logger;
-        private readonly IReadAccommodationChanged _readAccoChangedMessage;
-        private readonly IReadAccommodationDetail _readAccoDetailMessage;
+        private readonly ILogger<Worker> _logger;        
+        private readonly IReadAccommodation _readAccoMessage;
         private readonly WorkerSettings _configuration;
+        private DataImport _dataimport;
 
-        public Worker(IReadAccommodationChanged readaccoChangedMessage, IReadAccommodationDetail readaccoDetailMessage, ILogger<Worker> logger, WorkerSettings configuration)
+        public Worker(IReadAccommodation readAccoMessage, ILogger<Worker> logger, WorkerSettings configuration, DataImport dataimport)
         {
             _logger = logger;
-            _readAccoChangedMessage = readaccoChangedMessage;
-            _readAccoDetailMessage = readaccoDetailMessage;
+            _readAccoMessage = readAccoMessage;            
 
             _configuration = configuration;
+
+            _dataimport = dataimport;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -33,7 +35,7 @@ namespace AccommodationTransformer
             while (!stoppingToken.IsCancellationRequested)
             {
                 // Run the Read method
-                await Task.Run(() => _readAccoChangedMessage.Read(_configuration.RabbitConnectionString, _configuration.MongoDBConnectionString, new List<string>() { "lts.accommodationchanged", "lts.accommodationdetail" }));                
+                await Task.Run(() => _readAccoMessage.Read(_configuration.RabbitConnectionString, _configuration.MongoDBConnectionString, new List<string>() { "lts.accommodationchanged", "lts.accommodationdetail" }, _dataimport));                //, 
             }
         }
     }
