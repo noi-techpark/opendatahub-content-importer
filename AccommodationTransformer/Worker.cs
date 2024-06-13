@@ -33,9 +33,7 @@ namespace AccommodationTransformer
             while (!stoppingToken.IsCancellationRequested)
             {
                 // Run the Read method
-                await Task.Run(() => _readAccoChangedMessage.Read(_configuration.RabbitConnectionString, "lts.accommodationchanged", _configuration.MongoDBConnectionString));
-
-                await Task.Run(() => _readAccoDetailMessage.Read(_configuration.RabbitConnectionString, "lts.accommodationdetail", _configuration.MongoDBConnectionString));
+                await Task.Run(() => _readAccoChangedMessage.Read(_configuration.RabbitConnectionString, _configuration.MongoDBConnectionString, new List<string>() { "lts.accommodationchanged", "lts.accommodationdetail" }));                
             }
         }
     }
