@@ -30,6 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\odh-api-core\DataModel\DataModel.csproj" />
+    <ProjectReference Include="..\..\TransformerHelper\TransformerHelper\TransformerHelper.csproj" />
     <ProjectReference Include="..\DataImportHelper\DataImportHelper.csproj" />
     <ProjectReference Include="..\Helper\Helper.csproj" />
     <ProjectReference Include="..\MongoDBConnector\MongoDBConnector.csproj" />
