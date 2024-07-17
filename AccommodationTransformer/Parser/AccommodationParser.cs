@@ -54,5 +54,34 @@ namespace AccommodationTransformer.Parser
 
             return accommodationlinked;
         }
+
+        public static AccommodationLinked ParseLTSAccommodation(AccoLTS accomodation, bool reduced)
+        {
+            AccommodationLinked accommodationlinked = new AccommodationLinked();
+
+            accommodationlinked.Id = accomodation.data.rid;
+            accommodationlinked._Meta = new Metadata() { Id = accommodationlinked.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "accommodation", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
+
+            //Accommodation Type
+            accommodationlinked.AccoTypeId = accomodation.data.type.rid;
+
+            //Accommodation Category
+
+            //Accommodation Detail
+
+            //Address Groups
+
+            //Amenities
+
+            //GPS Info
+
+            //Images
+
+            //Galleries
+
+            //District
+
+            return accommodationlinked;
+        }
     }
 }
