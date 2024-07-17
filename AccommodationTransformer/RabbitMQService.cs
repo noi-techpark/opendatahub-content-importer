@@ -69,19 +69,11 @@ namespace AccommodationTransformer
 
                 //TODO PARSE ACCOMMODATION
                 var name = accomodationdetail["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"].Value<JObject>();
-                string namede = "";
+               
+                //Write to the ODH Api and pass referer + use a service account
 
-                if (name != null)
-                {
-                    JToken token = name["de"];
-                    if (token != null)
-                    {
-                        namede = token.Value<string>();
-                    }
-                }
-                
 
-                Console.WriteLine("Processing Accommodation " + accomodationdetail["rid"].Value<string>() + " " + namede);
+                Console.WriteLine("Processing Accommodation " + accomodationdetail["rid"].Value<string>());
 
                 return true;
             }
