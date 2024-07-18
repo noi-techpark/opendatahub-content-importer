@@ -225,7 +225,10 @@ namespace AccommodationTransformer.Parser
                 accommodationlinked.HgvId = accommodation.data.hgvId;
 
                 //Adding POS Info
-
+                accommodationlinked.AccoBookingChannel =
+                [
+                    new AccoBookingChannel() { BookingId = accommodation.data.hgvId, Id = "hgv", Portalname = "HGV Booking", Pos1ID = "2" },
+                ];
             }
             else
             {
@@ -235,6 +238,8 @@ namespace AccommodationTransformer.Parser
                 accommodationlinked.HgvId = null;
 
                 //Remove POS Info
+                if(accommodationlinked.AccoBookingChannel != null)
+                    accommodationlinked.AccoBookingChannel = null;
             }
 
             //List used to add certain ids to the features list
