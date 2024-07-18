@@ -124,6 +124,89 @@ namespace AccommodationTransformer.Parser
             accommodationlinked.HasApartment = accommodation.data.hasApartments;
             accommodationlinked.HasApartment = accommodation.data.hasApartments;
 
+
+            //Overview
+            if (accommodation.data.overview != null)
+            {
+                AccoOverview accooverview = new AccoOverview();
+
+                //int.TryParse(accommodation.data.overview.singl, out int singleroomqty);
+                //accooverview.SingleRooms = singleroomqty;
+
+                //int.TryParse(hoteloverview.Attribute("A4Dbr").Value, out int doubleroomqty);
+                //accooverview.DoubleRooms = doubleroomqty;
+
+                //int.TryParse(hoteloverview.Attribute("A4Tbr").Value, out int tripleroomqty);
+                //accooverview.TripleRooms = tripleroomqty;
+
+                //int.TryParse(hoteloverview.Attribute("A4Qbr").Value, out int quadrupleroomqty);
+                //accooverview.QuadrupleRooms = quadrupleroomqty;
+
+                //accooverview.TotalRooms = singleroomqty + doubleroomqty + tripleroomqty + quadrupleroomqty;
+
+                //int.TryParse(hoteloverview.Attribute("A4App").Value, out int apartmentqty);
+                //accooverview.Apartments = apartmentqty;
+
+                //int.TryParse(hoteloverview.Attribute("A4BAp").Value, out int apartmentbedqty);
+                //accooverview.ApartmentBeds = apartmentbedqty;
+
+                //int.TryParse(hoteloverview.Attribute("A4ToP").Value, out int maxpersonqty);
+                //accooverview.MaxPersons = maxpersonqty;
+
+                //--> REMOVED BY LTS
+               
+                accooverview.OutdoorParkings = accommodation.data.overview.parkingSpaces.outdoor;
+                accooverview.GarageParkings = accommodation.data.overview.parkingSpaces.garage;
+
+                //TO check
+                TimeSpan.TryParse(accommodation.data.overview.checkInStartTime, out TimeSpan checkinfrom);
+                accooverview.CheckInFrom = checkinfrom;
+
+                TimeSpan.TryParse(accommodation.data.overview.checkInEndTime, out TimeSpan checkinto);
+                accooverview.CheckInTo = checkinto;
+
+                //When Checkout Property is ready on LTS Side
+                TimeSpan.TryParse(accommodation.data.overview.checkOutStartTime, out TimeSpan checkoutfrom);
+                accooverview.CheckOutFrom = checkoutfrom;
+
+                //When Checkout Property is ready on LTS Side
+                TimeSpan.TryParse(accommodation.data.overview.checkOutEndTime, out TimeSpan checkoutto);
+                accooverview.CheckOutTo = checkoutto;
+
+                TimeSpan.TryParse(accommodation.data.overview.receptionStartTime, out TimeSpan receptionopenfrom);
+                accooverview.ReceptionOpenFrom = receptionopenfrom;
+
+                TimeSpan.TryParse(accommodation.data.overview.receptionEndTime, out TimeSpan receptionopento);
+                accooverview.ReceptionOpenTo = receptionopento;
+
+                TimeSpan.TryParse(accommodation.data.overview.roomServiceStartTime, out TimeSpan roomservicefrom);
+                accooverview.RoomServiceFrom = roomservicefrom;
+
+                TimeSpan.TryParse(accommodation.data.overview.roomServiceEndTime, out TimeSpan roomserviceto);
+                accooverview.RoomServiceTo = roomserviceto;
+
+                TimeSpan.TryParse(accommodation.data.overview.luggageServiceStartTime, out TimeSpan baggageservicefrom);
+                accooverview.BaggageServiceFrom = baggageservicefrom;
+
+                TimeSpan.TryParse(accommodation.data.overview.luggageServiceEndTime, out TimeSpan baggageserviceto);
+                accooverview.BaggageServiceTo = baggageserviceto;
+
+                
+                accooverview.CampingUnits = accommodation.data.overview.camping.pitches;
+
+                accooverview.CampingWashrooms = accommodation.data.overview.camping.laundrySpaces;
+               
+                accooverview.CampingDouches = accommodation.data.overview.camping.showers;
+
+                accooverview.CampingToilettes = accommodation.data.overview.camping.toilets;
+
+                accooverview.CampingWashingstands = accommodation.data.overview.camping.dishwashingSpaces;
+
+                accooverview.ApartmentRoomSize = accommodation.data.overview.camping.capacityPersons; //? to check
+
+                accommodationlinked.AccoOverview = accooverview;
+            }
+
             //Mapping
 
             //Add LTS Id as Mapping
@@ -301,10 +384,21 @@ namespace AccommodationTransformer.Parser
             }
 
             //Address Groups
-
-            //Amenities
-
+            
             //GPS Info
+            if(accommodation.data.position != null)
+            {
+                accommodationlinked.GpsInfo = new List<GpsInfo>();
+
+                GpsInfo mygps = new GpsInfo();
+                mygps.Longitude = accommodation.data.position.coordinates[0];
+                mygps.Latitude = accommodation.data.position.coordinates[1];
+                mygps.Altitude = accommodation.data.position.altitude;
+                mygps.Gpstype = "position";
+                mygps.AltitudeUnitofMeasure = "m";
+
+                accommodationlinked.GpsInfo.Add(mygps);
+            }
 
             //Images
 
@@ -312,6 +406,36 @@ namespace AccommodationTransformer.Parser
 
             //District
             accommodationlinked.DistrictId = accommodation.data.district.rid;
+
+            //Reviews
+
+            //SuedtirolGuestPass
+
+            //Accessibility Independent Data
+            IndependentData independentdata = new IndependentData();
+
+            var independentrating = accommodation.data.reviews.Where(x => x.type == "independent").FirstOrDefault();
+
+            if(independentrating != null)
+            {
+                independentdata.Enabled = independentrating.isActive;
+                independentdata.IndependentRating = Convert.ToInt32(independentrating.rating);
+                
+                foreach (var lang in haslanguage)
+                {
+                    IndependentDescription independentdetail = new IndependentDescription();
+                    independentdetail.Language = lang;
+                    independentdetail.BacklinkUrl = accommodation.data.accessibility.website[lang];
+                    independentdetail.Description = accommodation.data.accessibility.website[lang];
+
+                    independentdata.IndependentDescription.TryAddOrUpdate(lang, independentdetail);
+                }
+            }
+
+            
+
+
+
 
             return accommodationlinked;
         }

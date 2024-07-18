@@ -83,6 +83,11 @@ namespace AccommodationTransformer.Parser
         public string luggageServiceEndTime { get; set; }
         public string luggageServiceStartTime { get; set; }
         public Parkingspaces parkingSpaces { get; set; }
+
+        public string checkInStartTime { get; set; }
+        public string checkInEndTime { get; set; }
+        public string checkOutStartTime { get; set; }
+        public string checkOutEndTime { get; set; }
         public string receptionEndTime { get; set; }
         public string receptionStartTime { get; set; }
         public string roomServiceEndTime { get; set; }
