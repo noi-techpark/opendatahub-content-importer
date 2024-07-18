@@ -1,9 +1,11 @@
 ﻿using DataModel;
+using Helper;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -79,8 +81,12 @@ namespace AccommodationTransformer.Parser
             accommodationlinked._Meta = new Metadata() { Id = accommodationlinked.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "accommodation", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
             accommodationlinked.Source = "LTS";
 
-            List<string> additionalfeaturestoadd = new List<string>();
+            //Find out all languages the accommodation has, by using contacts.address.name
+            var haslanguage = accommodation.data.contacts.Where(x => x.type == "main").FirstOrDefault().address.name.Where(x => !String.IsNullOrEmpty(x.Value)).Select(x => x.Key).ToList();
 
+            accommodationlinked.HasLanguage = haslanguage;
+
+            List<string> additionalfeaturestoadd = new List<string>();
 
             //Accommodation Type
             var mytype = mytypes.Root.Elements("AccoType").Where(x => x.Attribute("RID").Value == accommodation.data.type.rid).FirstOrDefault().Attribute("SmgType").Value;
@@ -187,6 +193,56 @@ namespace AccommodationTransformer.Parser
             accommodationlinked.Features = featurelist.ToList();
 
             //Accommodation Detail
+
+            List<AccoDetail> myaccodetailslist = new List<AccoDetail>();
+
+            var contactinfo = accommodation.data.contacts.Where(x => x.type == "main").FirstOrDefault();
+            
+            foreach (string lang in haslanguage)
+            {
+                AccoDetail mydetail = new AccoDetail();
+
+                if (contactinfo != null)
+                {
+                    //De Adress
+                    mydetail.Language = lang;
+
+                    mydetail.CountryCode = contactinfo.address.country;
+                    mydetail.City = contactinfo.address.city[lang];
+                    mydetail.Email = contactinfo.email;
+                    mydetail.Name = contactinfo.address.name[lang];
+
+                    mydetail.Firstname = contactinfo.address.name2[lang]; ;
+                    mydetail.Lastname = contactinfo.address.name2[lang]; ;
+
+                    if (lang == "de")
+                        accommodationlinked.Shortname = contactinfo.address.name[lang];
+
+                    mydetail.Street = contactinfo.address.street[lang];
+
+                    mydetail.Fax = contactinfo.fax;
+
+                    //NO MORE PRESENT ON INTERFACE
+                    //mydetail.Firstname = ""
+                    //mydetail.Lastname = "";
+                    //mydetail.Mobile = "";
+                    //mydetail.Vat = "";
+                    //mydetail.NameAddition = "";
+
+
+                    mydetail.Phone = contactinfo.phone;
+                    mydetail.Zip = contactinfo.address.postalCode;
+                    mydetail.Website = contactinfo.website;
+                }
+
+                mydetail.Longdesc = accommodation.data.descriptions.Where(x => x.type == "longDescription").FirstOrDefault()?.description[lang];
+                mydetail.Shortdesc = accommodation.data.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description[lang];
+                
+                accommodationlinked.AccoDetail.TryAddOrUpdate(lang, mydetail);
+            }
+
+
+
 
             //Address Groups
 
