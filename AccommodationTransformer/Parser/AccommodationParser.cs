@@ -86,6 +86,65 @@ namespace AccommodationTransformer.Parser
 
             accommodationlinked.HasLanguage = haslanguage;
 
+            //General Data
+            accommodationlinked.Active = accommodation.data.isActive;
+            accommodationlinked.IsBookable = accommodation.data.isBookable;
+            accommodationlinked.IsAccommodation = accommodation.data.isAccommodation;
+            accommodationlinked.IsCamping = accommodation.data.isCamping;
+            accommodationlinked.TVMember = accommodation.data.isTourismOrganizationMember;
+            accommodationlinked.TourismVereinId = accommodation.data.tourismOrganization.rid;
+
+            //"representationMode": "full",
+            //accommodationlinked.Representation = accommodation.data.representationMode
+
+           
+            if (accommodation.data.isSuedtirolInfoActive)
+            {
+                accommodationlinked.SmgActive = true;
+                if (accommodationlinked.PublishedOn == null)
+                    accommodationlinked.PublishedOn = new List<string>();
+
+                accommodationlinked.PublishedOn.TryAddOrUpdateOnList("idm-marketplace");
+            }                
+            else
+            {
+                accommodationlinked.SmgActive = false;
+
+                if(accommodationlinked.PublishedOn != null)
+                    accommodationlinked.PublishedOn.TryRemoveOnList("idm-marketplace");
+            }
+                
+           
+            //accommodationlinked.IsGastronomy = fehlt
+
+            accommodationlinked.HasApartment = accommodation.data.hasApartments;
+            //accommodationlinked.HasDorm = accommodation.data.hasDorms;  --> to integrate
+            //accommodationlinked.HasPitches = accommodation.data.hasPitches;  --> to integrate
+            accommodationlinked.HasRoom = accommodation.data.hasRooms;
+            accommodationlinked.HasApartment = accommodation.data.hasApartments;
+            accommodationlinked.HasApartment = accommodation.data.hasApartments;
+
+            //Mapping
+
+            //Add LTS Id as Mapping
+            var ltsriddict = new Dictionary<string, string>() { { "rid", accommodation.data.rid } };
+            //Add LTS A0R_ID as Mapping     
+            ltsriddict.TryAddOrUpdate("a0r_id", accommodation.data.id.ToString());
+            accommodationlinked.Mapping.TryAddOrUpdate("lts", ltsriddict);
+
+            //Add HGV Mapping if present and delete it if no more present
+            if (!String.IsNullOrEmpty(accommodation.data.hgvId))
+            {
+                var hgviddict = new Dictionary<string, string>() { { "id", accommodation.data.hgvId } };
+                accommodationlinked.Mapping.TryAddOrUpdate("hgv", hgviddict);
+            }
+            else
+            {
+                if (accommodationlinked.Mapping.ContainsKey("hgv"))
+                    accommodationlinked.Mapping.Remove("hgv");
+            }
+
+            //List used to add certain ids to the features list
             List<string> additionalfeaturestoadd = new List<string>();
 
             //Accommodation Type
@@ -241,9 +300,6 @@ namespace AccommodationTransformer.Parser
                 accommodationlinked.AccoDetail.TryAddOrUpdate(lang, mydetail);
             }
 
-
-
-
             //Address Groups
 
             //Amenities
@@ -255,6 +311,7 @@ namespace AccommodationTransformer.Parser
             //Galleries
 
             //District
+            accommodationlinked.DistrictId = accommodation.data.district.rid;
 
             return accommodationlinked;
         }
