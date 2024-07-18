@@ -221,11 +221,20 @@ namespace AccommodationTransformer.Parser
             {
                 var hgviddict = new Dictionary<string, string>() { { "id", accommodation.data.hgvId } };
                 accommodationlinked.Mapping.TryAddOrUpdate("hgv", hgviddict);
+
+                accommodationlinked.HgvId = accommodation.data.hgvId;
+
+                //Adding POS Info
+
             }
             else
             {
                 if (accommodationlinked.Mapping.ContainsKey("hgv"))
                     accommodationlinked.Mapping.Remove("hgv");
+
+                accommodationlinked.HgvId = null;
+
+                //Remove POS Info
             }
 
             //List used to add certain ids to the features list
