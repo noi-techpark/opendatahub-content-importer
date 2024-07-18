@@ -571,6 +571,27 @@ namespace AccommodationTransformer.Parser
             return accommodationlinked;
         }
 
+        public static IEnumerable<AccommodationRoomLinked> ParseLTSAccommodationRoom(AccoLTS accommodation,
+            bool reduced,
+            XDocument myfeatures, 
+            XDocument roomamenities)
+        {
+            List<AccommodationRoomLinked> roomlist = new List<AccommodationRoomLinked>();
+
+
+            return roomlist;
+        }
+
+        public static AccommodationLinked ParseHGVAccommodation(AccoHGV accommodation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static IEnumerable<AccommodationRoomLinked> ParseHGVAccommodationRoom(AccoRoomHGV accommodation)
+        {
+            throw new NotImplementedException();
+        }
+
         //Special Mapping etc...
         private static void MapFeaturetoMarketingGroup(AccommodationLinked myacco, string featureid)
         {

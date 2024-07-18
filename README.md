@@ -74,4 +74,4 @@ Forward RabbitMQ
 `kubectl port-forward service/rabbitmq 15672:15672 5672:5672 --namespace core`
 
 Forward MongoDB  
-`kubectl port-forward service/mongodb-headless 27018:27017 --namespace core`
+`kubectl port-forward service/mongodb-headless 27017:27017 --namespace core`
