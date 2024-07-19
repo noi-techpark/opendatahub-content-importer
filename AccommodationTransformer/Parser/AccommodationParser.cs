@@ -591,9 +591,9 @@ namespace AccommodationTransformer.Parser
 
                 room.A0RID = accoroom.rid;
                 //room.Id = accoroom.; TO CHECK
-                room.Roomtype = GetRoomType(accoroom.type);
-                
-                if(accoroom.isActive)
+                room.Roomtype = accoroom.type;  //GetRoomType() not needed, type is room/apartment
+
+                if (accoroom.isActive)
                 {
                     //adding room.Active
                     room.PublishedOn.TryAddOrUpdateOnList("idm-marketplace");
