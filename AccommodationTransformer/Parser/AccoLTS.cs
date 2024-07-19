@@ -22,7 +22,7 @@ namespace AccommodationTransformer.Parser
         public Areamap areaMap { get; set; }
         public Category category { get; set; }
         public Contact[] contacts { get; set; }
-        public Description1[] descriptions { get; set; }
+        public Description[] descriptions { get; set; }
         public District district { get; set; }
         public Galery[] galeries { get; set; }
         public bool hasApartments { get; set; }
@@ -179,7 +179,7 @@ namespace AccommodationTransformer.Parser
         public Dictionary<string, string> street { get; set; }
     }
 
-    public class Description1
+    public class Description
     {
         public Dictionary<string, string> description { get; set; }
         public string type { get; set; }
@@ -239,7 +239,7 @@ namespace AccommodationTransformer.Parser
         public int baths { get; set; }
         public string classification { get; set; }
         public string code { get; set; }
-        public object[] descriptions { get; set; }
+        public Description[] descriptions { get; set; }
         public int diningRooms { get; set; }
         public Image2[] images { get; set; }
         public bool isActive { get; set; }

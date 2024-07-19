@@ -583,7 +583,7 @@ namespace AccommodationTransformer.Parser
         {
             List<AccommodationRoomLinked> roomlist = new List<AccommodationRoomLinked>();
 
-            foreach(var accoroom in accommodation.data.roomGroups)
+            foreach (var accoroom in accommodation.data.roomGroups)
             {
                 AccommodationRoomLinked room = new AccommodationRoomLinked();
 
@@ -599,7 +599,7 @@ namespace AccommodationTransformer.Parser
                 room.LTSId = accoroom.rid;
                 room.HGVId = "";
 
-         
+
                 room.RoomCode = accoroom.code;
                 room.PriceFrom = null;  //TO CHECK IF THIS IS AVAILABLE NOW
 
@@ -612,124 +612,103 @@ namespace AccommodationTransformer.Parser
 
                 room.RoomQuantity = accoroom.roomQuantity;
 
+                room.HasLanguage = accoroom.name.Keys.ToList();
 
-              
+                room.Shortname = accoroom.name["de"];
 
-                //room.Shortname = groupname.Elements("Data").Where(x => x.Attribute("LngID").Value.ToUpper() == "DE").Count() > 0 ? groupname.Elements("Data").Where(x => x.Attribute("LngID").Value.ToUpper() == "DE").FirstOrDefault().Attribute("B1Des").Value : "not defined";
+                //TODO
+                //Properties
+                //baths
+                //classification
+                //diningRooms
+                //isActive
+                //lastUpdate
+                //livingRooms
+                //minAmountPerPersonPerDay
+                //minAmountPerUnitPerDay
+                //rooms.availability
+                //sleepingRooms
+                //squareMeters
+                //toilets
+                //type
 
-                //if (grouptin.Elements("Data").Count() > 0)
-                //{
+                //Amenities parsing                
+                List<AccoFeatureLinked> featurelist = new List<AccoFeatureLinked>();
 
-                //    List<AccoFeature> featurelist = new List<AccoFeature>();
+                //Features
+                foreach (var amenity in accoroom.amenities)
+                {
+                    var myfeature = myfeatures.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == amenity.rid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value.ToUpper() == "EN").FirstOrDefault().Attribute("T1Des").Value;
 
-                //    //Features
-                //    foreach (XElement thetin in grouptin.Elements("Data"))
-                //    {
-                //        string tinrid = thetin.Attribute("T0RID").Value;
+                    //HGV ID Feature + OTA Code
+                    string hgvamenityid = "";
+                    string otacodes = "";
 
-                //        var myfeature = myfeatures.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == tinrid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value.ToUpper() == "EN").FirstOrDefault().Attribute("T1Des").Value;
+                    var myamenity = roomamenities.Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == amenity.rid).FirstOrDefault();
 
-                //        //HGV ID Feature + OTA Code
-                //        string hgvamenityid = "";
-                //        string otacodes = "";
+                    if (myamenity != null)
+                    {
+                        hgvamenityid = myamenity.Element("hgvid").Value;
+                        otacodes = myamenity.Element("ota_codes") != null ? myamenity.Element("ota_codes").Value : "";
+                    }
 
-                //        var myamenity = roomamenities.Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == tinrid).FirstOrDefault();
+                    List<int> amenitycodes = null;
 
-                //        if (myamenity != null)
-                //        {
-                //            hgvamenityid = myamenity.Element("hgvid").Value;
-                //            otacodes = myamenity.Element("ota_codes") != null ? myamenity.Element("ota_codes").Value : "";
-                //        }
+                    if (!String.IsNullOrEmpty(otacodes))
+                    {
+                        var otacodessplittet = otacodes.Split(',').ToList();
+                        amenitycodes = new List<int>();
 
-                //        List<int> amenitycodes = null;
+                        foreach (var otacodesplit in otacodessplittet)
+                        {
+                            amenitycodes.Add(Convert.ToInt32(otacodesplit));
+                        }
+                    }
 
-                //        if (!String.IsNullOrEmpty(otacodes))
-                //        {
-                //            var otacodessplittet = otacodes.Split(',').ToList();
-                //            amenitycodes = new List<int>();
-
-                //            foreach (var otacodesplit in otacodessplittet)
-                //            {
-                //                amenitycodes.Add(Convert.ToInt32(otacodesplit));
-                //            }
-                //        }
-
-                //        if (myfeature != null)
-                //            featurelist.Add(new AccoFeature() { Id = tinrid, Name = myfeature, HgvId = hgvamenityid, OtaCodes = otacodes, RoomAmenityCodes = amenitycodes });
-                //    }
-                //    room.Features = featurelist.ToList();
-
-                //    Console.WriteLine("Room Tins imported!");
-                //}
-
-                //List<AccoDetail> myaccodetailslist = new List<AccoDetail>();
-
-                //room.HasLanguage = new List<string>();
-
-                ////Details            
-                //foreach (string mylang in languages)
-                //{
-                //    AccoRoomDetail mydetail = new AccoRoomDetail();
-
-                //    if (groupname.Elements("Data") != null)
-                //    {
-                //        //De Adress
-                //        mydetail.Language = mylang;
-
-                //        if (!room.HasLanguage.Contains(mylang))
-                //            room.HasLanguage.Add(mylang);
-
-                //        //if (groupname.Elements("Data").Where(x => x.Attribute("LngID").Value == mylang.ToUpper()).Count() > 0)
-                //        //    Console.WriteLine("sprochknoten do");
-
-                //        mydetail.Name = groupname.Elements("Data").Where(x => x.Attribute("LngID").Value == mylang.ToUpper()).Count() > 0 ? groupname.Elements("Data").Where(x => x.Attribute("LngID").Value == mylang.ToUpper()).FirstOrDefault().Attribute("B1Des").Value : "";
-
-                //        Console.WriteLine("Name imported!");
-                //    }
-                //    if (grouppublicity.Elements("Data").Count() > 0)
-                //    {
-                //        var mydesc = grouppublicity.Elements("Data").Where(x => x.Attribute("LngID").Value == mylang.ToUpper()).FirstOrDefault();
-
-                //        if (mydesc != null)
-                //        {
-                //            mydetail.Longdesc = mydesc.Attribute("B3ShT").Value;
-                //            mydetail.Shortdesc = mydesc.Attribute("B3LoT").Value;
-                //        }
-                //        Console.WriteLine("Publicity imported!");
-                //    }
-
-                //    room.AccoRoomDetail.TryAddOrUpdate(mylang, mydetail);
-                //}
+                    if (myfeature != null)
+                        featurelist.Add(new AccoFeatureLinked() { Id = amenity.rid, Name = myfeature, HgvId = hgvamenityid, OtaCodes = otacodes, RoomAmenityCodes = amenitycodes });
+                }
+                room.Features = featurelist.ToList();
 
 
-                //List<ImageGallery> imagegallerylist = new List<ImageGallery>();
+                List<AccoDetail> myroomdetailslist = new List<AccoDetail>();
 
-                //if (groupfoto.Elements("Data") != null)
-                //{
-                //    int i = 0;
-                //    ///ACHTUNG SOMMER UND WINTERBILD
-                //    foreach (var theimage in groupfoto.Elements("Data"))
-                //    {
-                //        ImageGallery mainimage = new ImageGallery();
+                //Room Details Parsing            
+                foreach (string lang in room.HasLanguage)
+                {
+                    AccoRoomDetail mydetail = new AccoRoomDetail();
 
-                //        mainimage.ImageUrl = theimage.Attribute("B4Fot").Value;
-                //        mainimage.Height = Convert.ToInt32(theimage.Attribute("B4PxH").Value);
-                //        mainimage.Width = Convert.ToInt32(theimage.Attribute("B4PxW").Value);
-                //        mainimage.ImageSource = "LTS";
-                //        mainimage.ListPosition = i;
+                    mydetail.Language = lang;
+                    mydetail.Name = accoroom.name[lang];
 
-                //        mainimage.CopyRight = theimage.Attribute("B4Cop") != null ? theimage.Attribute("B4Cop").Value : "";
-                //        mainimage.License = theimage.Attribute("S31Cod") != null ? theimage.Attribute("S31Cod").Value : "";
+                    mydetail.Longdesc = accoroom.descriptions.Where(x => x.type == "longDescription").FirstOrDefault()?.description[lang];
+                    mydetail.Shortdesc = accoroom.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description[lang];
 
-                //        imagegallerylist.Add(mainimage);
-                //        i++;
-                //    }
+                    room.AccoRoomDetail.TryAddOrUpdate(lang, mydetail);
+                }
 
-                //}
+                //Image Parsing
+                List<ImageGallery> imagegallerylist = new List<ImageGallery>();
+                foreach (var image in accoroom.images)
+                {
+                    ImageGallery mainimage = new ImageGallery();
 
-                //room.ImageGallery = imagegallerylist.ToList();
+                    mainimage.ImageUrl = image.url;
+                    mainimage.Height = image.heightPixel;
+                    mainimage.Width = image.widthPixel;
+                    mainimage.ImageSource = "lts";
+                    mainimage.ListPosition = image.order;
+
+                    mainimage.CopyRight = image.copyright;
+                    mainimage.License = image.license;
+
+                    mainimage.ImageTitle = image.name;
+
+                    imagegallerylist.Add(mainimage);
+                }
+
+                room.ImageGallery = imagegallerylist.ToList();
                 room.LastChange = DateTime.Now;
-
 
                 roomlist.Add(room);
             }
