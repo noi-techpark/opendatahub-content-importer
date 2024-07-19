@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\odh-importer-v2\DataImportHelper\DataImportHelper.csproj" />
+    <ProjectReference Include="..\..\odh-importer-v2\Helper\Helper.csproj" />
+    <ProjectReference Include="..\..\odh-importer-v2\MongoDBConnector\MongoDBConnector.csproj" />
+  </ItemGroup>
+
+</Project>
