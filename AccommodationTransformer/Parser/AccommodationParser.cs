@@ -80,7 +80,7 @@ namespace AccommodationTransformer.Parser
 
             accommodationlinked.Id = accommodation.data.rid;
             accommodationlinked._Meta = new Metadata() { Id = accommodationlinked.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "accommodation", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
-            accommodationlinked.Source = "LTS";
+            accommodationlinked.Source = "lts";
 
             //Find out all languages the accommodation has, by using contacts.address.name
             var haslanguage = accommodation.data.contacts.Where(x => x.type == "main").FirstOrDefault().address.name.Where(x => !String.IsNullOrEmpty(x.Value)).Select(x => x.Key).ToList();
@@ -520,7 +520,7 @@ namespace AccommodationTransformer.Parser
             if(trustyourating != null)
             {
                 accommodationlinked.TrustYouID = trustyourating.id;
-                accommodationlinked.TrustYouResults = trustyourating.reviewsQuantity != null ? trustyourating.reviewsQuantity.Value : null;
+                accommodationlinked.TrustYouResults = trustyourating.reviewsQuantity != null ? trustyourating.reviewsQuantity.Value : 0; //TODO make TrustYouResults nullable
 
                 accommodationlinked.TrustYouScore = trustyourating.rating;
                 accommodationlinked.TrustYouActive = trustyourating.isActive;
@@ -583,6 +583,192 @@ namespace AccommodationTransformer.Parser
         {
             List<AccommodationRoomLinked> roomlist = new List<AccommodationRoomLinked>();
 
+            foreach(var accoroom in accommodation.data.roomGroups)
+            {
+                AccommodationRoomLinked room = new AccommodationRoomLinked();
+
+                room.A0RID = accoroom.rid;
+                //room.Id = accoroom.; TO CHECK
+                room.Roomtype = GetRoomType(accoroom.type);
+
+                room.RoomtypeInt = Convert.ToInt32(accoroom.type);
+                room.RoomClassificationCodes = AlpineBitsHelper.GetRoomClassificationCode(accoroom.type);
+
+                //NEU
+                room.Source = "lts";
+                room.LTSId = accoroom.rid;
+                room.HGVId = "";
+
+         
+                room.RoomCode = accoroom.code;
+                room.PriceFrom = null;  //TO CHECK IF THIS IS AVAILABLE NOW
+
+                ////Room Numbers
+                //var roomnumbers = new List<string>();
+
+                //if (accoroom.rooms)
+                //{
+                //    //Is the B0RID Attribute Set
+                //    if (grouprdata.Elements("Data").Attributes("B0RID").Count() > 0)
+                //    {
+                //        var roomnumberobject = grouprdata.Elements("Data").Where(x => x.Attribute("B0RID").Value == b0rid).ToList();
+
+                //        if (roomnumberobject != null)
+                //        {
+                //            var roomnumberobjeclist = roomnumberobject.Select(x => x.Attribute("F1Nam").Value).ToList();
+
+                //            if (roomnumberobjeclist != null)
+                //                roomnumbers = roomnumberobjeclist;
+                //        }
+                //    }
+                //}
+
+                //room.RoomNumbers = roomnumbers;
+
+                //string roommax = myroom.Elements("Data").FirstOrDefault().Attribute("B0Max").Value;
+                //string roommin = myroom.Elements("Data").FirstOrDefault().Attribute("B0Min").Value;
+                //string roomstd = myroom.Elements("Data").FirstOrDefault().Attribute("B0Std").Value;
+                //string roomqty = myroom.Elements("Data").FirstOrDefault().Attribute("B0Qty").Value;
+
+                //if (!String.IsNullOrEmpty(roommax))
+                //    room.Roommax = Convert.ToInt32(roommax);
+                //else
+                //    room.Roommax = null;
+
+                //if (!String.IsNullOrEmpty(roommin))
+                //    room.Roommin = Convert.ToInt32(roommin);
+                //else
+                //    room.Roommin = null;
+
+                //if (!String.IsNullOrEmpty(roomstd))
+                //    room.Roomstd = Convert.ToInt32(roomstd);
+                //else
+                //    room.Roomstd = null;
+
+                //if (!String.IsNullOrEmpty(roomqty))
+                //    room.RoomQuantity = Convert.ToInt32(roomqty);
+                //else
+                //    room.RoomQuantity = null;
+
+
+                //room.Shortname = groupname.Elements("Data").Where(x => x.Attribute("LngID").Value.ToUpper() == "DE").Count() > 0 ? groupname.Elements("Data").Where(x => x.Attribute("LngID").Value.ToUpper() == "DE").FirstOrDefault().Attribute("B1Des").Value : "not defined";
+
+                //if (grouptin.Elements("Data").Count() > 0)
+                //{
+
+                //    List<AccoFeature> featurelist = new List<AccoFeature>();
+
+                //    //Features
+                //    foreach (XElement thetin in grouptin.Elements("Data"))
+                //    {
+                //        string tinrid = thetin.Attribute("T0RID").Value;
+
+                //        var myfeature = myfeatures.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == tinrid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value.ToUpper() == "EN").FirstOrDefault().Attribute("T1Des").Value;
+
+                //        //HGV ID Feature + OTA Code
+                //        string hgvamenityid = "";
+                //        string otacodes = "";
+
+                //        var myamenity = roomamenities.Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == tinrid).FirstOrDefault();
+
+                //        if (myamenity != null)
+                //        {
+                //            hgvamenityid = myamenity.Element("hgvid").Value;
+                //            otacodes = myamenity.Element("ota_codes") != null ? myamenity.Element("ota_codes").Value : "";
+                //        }
+
+                //        List<int> amenitycodes = null;
+
+                //        if (!String.IsNullOrEmpty(otacodes))
+                //        {
+                //            var otacodessplittet = otacodes.Split(',').ToList();
+                //            amenitycodes = new List<int>();
+
+                //            foreach (var otacodesplit in otacodessplittet)
+                //            {
+                //                amenitycodes.Add(Convert.ToInt32(otacodesplit));
+                //            }
+                //        }
+
+                //        if (myfeature != null)
+                //            featurelist.Add(new AccoFeature() { Id = tinrid, Name = myfeature, HgvId = hgvamenityid, OtaCodes = otacodes, RoomAmenityCodes = amenitycodes });
+                //    }
+                //    room.Features = featurelist.ToList();
+
+                //    Console.WriteLine("Room Tins imported!");
+                //}
+
+                //List<AccoDetail> myaccodetailslist = new List<AccoDetail>();
+
+                //room.HasLanguage = new List<string>();
+
+                ////Details            
+                //foreach (string mylang in languages)
+                //{
+                //    AccoRoomDetail mydetail = new AccoRoomDetail();
+
+                //    if (groupname.Elements("Data") != null)
+                //    {
+                //        //De Adress
+                //        mydetail.Language = mylang;
+
+                //        if (!room.HasLanguage.Contains(mylang))
+                //            room.HasLanguage.Add(mylang);
+
+                //        //if (groupname.Elements("Data").Where(x => x.Attribute("LngID").Value == mylang.ToUpper()).Count() > 0)
+                //        //    Console.WriteLine("sprochknoten do");
+
+                //        mydetail.Name = groupname.Elements("Data").Where(x => x.Attribute("LngID").Value == mylang.ToUpper()).Count() > 0 ? groupname.Elements("Data").Where(x => x.Attribute("LngID").Value == mylang.ToUpper()).FirstOrDefault().Attribute("B1Des").Value : "";
+
+                //        Console.WriteLine("Name imported!");
+                //    }
+                //    if (grouppublicity.Elements("Data").Count() > 0)
+                //    {
+                //        var mydesc = grouppublicity.Elements("Data").Where(x => x.Attribute("LngID").Value == mylang.ToUpper()).FirstOrDefault();
+
+                //        if (mydesc != null)
+                //        {
+                //            mydetail.Longdesc = mydesc.Attribute("B3ShT").Value;
+                //            mydetail.Shortdesc = mydesc.Attribute("B3LoT").Value;
+                //        }
+                //        Console.WriteLine("Publicity imported!");
+                //    }
+
+                //    room.AccoRoomDetail.TryAddOrUpdate(mylang, mydetail);
+                //}
+
+
+                //List<ImageGallery> imagegallerylist = new List<ImageGallery>();
+
+                //if (groupfoto.Elements("Data") != null)
+                //{
+                //    int i = 0;
+                //    ///ACHTUNG SOMMER UND WINTERBILD
+                //    foreach (var theimage in groupfoto.Elements("Data"))
+                //    {
+                //        ImageGallery mainimage = new ImageGallery();
+
+                //        mainimage.ImageUrl = theimage.Attribute("B4Fot").Value;
+                //        mainimage.Height = Convert.ToInt32(theimage.Attribute("B4PxH").Value);
+                //        mainimage.Width = Convert.ToInt32(theimage.Attribute("B4PxW").Value);
+                //        mainimage.ImageSource = "LTS";
+                //        mainimage.ListPosition = i;
+
+                //        mainimage.CopyRight = theimage.Attribute("B4Cop") != null ? theimage.Attribute("B4Cop").Value : "";
+                //        mainimage.License = theimage.Attribute("S31Cod") != null ? theimage.Attribute("S31Cod").Value : "";
+
+                //        imagegallerylist.Add(mainimage);
+                //        i++;
+                //    }
+
+                //}
+
+                //room.ImageGallery = imagegallerylist.ToList();
+                room.LastChange = DateTime.Now;
+
+
+                roomlist.Add(room);
+            }
 
             return roomlist;
         }
@@ -1408,5 +1594,88 @@ namespace AccommodationTransformer.Parser
                     myacco.SmgTags.Remove(tagname);
             }
         }
+
+        private static string GetRoomType(string roomtype)
+        {
+            string myroomtype = "";
+
+            switch (roomtype)
+            {
+                case "0":
+                    myroomtype = "undefined";
+                    break;
+                case "1":
+                    myroomtype = "room";
+                    break;
+                case "2":
+                    myroomtype = "apartment";
+                    break;
+                case "3":
+                    myroomtype = "pitch";
+                    break;
+                case "4":
+                    myroomtype = "dorm";
+                    break;
+
+                    //case "3":
+                    //    myroomtype = "campsite";
+                    //    break;
+                    //case "4":
+                    //    myroomtype = "caravan";
+                    //    break;
+                    //case "5":
+                    //    myroomtype = "tentarea";
+                    //    break;
+                    //case "6":
+                    //    myroomtype = "bungalow";
+                    //    break;
+                    //case "7":
+                    //    myroomtype = "camp";
+                    //    break;
+            }
+
+            return myroomtype;
+        }
+
+
+
+    }
+
+    public class AlpineBitsHelper
+    {
+        public static int GetRoomClassificationCode(string roomtype)
+        {
+            switch (roomtype)
+            {
+                case "room":
+                    return 42;
+                case "apartment":
+                    return 13;
+                case "pitch":
+                    return 5;
+                case "dorm":
+                    return 42;
+                default:
+                    return 42;
+            }
+        }
+
+        public static List<int> GetRoomTypeAB(string roomtype)
+        {
+            switch (roomtype)
+            {
+                case "room":
+                    return new List<int> { 1 };
+                case "apartment":
+                    return new List<int> { 2, 3, 4, 5 };
+                case "pitch":
+                    return new List<int> { 6, 7, 8 };
+                case "dorm":
+                    return new List<int> { 9 };
+                default:
+                    return new List<int> { 1 };
+            }
+        }
+
     }
 }
