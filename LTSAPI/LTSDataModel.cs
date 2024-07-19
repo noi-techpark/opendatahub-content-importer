@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AccommodationTransformer.Parser
+namespace LTSAPI
 {
     public class AccoLTS
     {
@@ -18,20 +18,20 @@ namespace AccommodationTransformer.Parser
         public Type type { get; set; }
         public string rid { get; set; }
         public Addressgroup[] addressGroups { get; set; }
-        public Amenity[] amenities { get; set; }
+        public LTSAmenity[] amenities { get; set; }
         public Areamap areaMap { get; set; }
         public Category category { get; set; }
-        public Contact[] contacts { get; set; }
-        public Description[] descriptions { get; set; }
+        public LTSContact[] contacts { get; set; }
+        public LTSDescription[] descriptions { get; set; }
         public District district { get; set; }
-        public Galery[] galeries { get; set; }
+        public LTSGallery[] galeries { get; set; }
         public bool hasApartments { get; set; }
         public bool hasDorms { get; set; }
         public bool hasPitches { get; set; }
         public bool hasRooms { get; set; }
         public string hgvId { get; set; }
         public int id { get; set; }
-        public Image1[] images { get; set; }
+        public LTSImage[] images { get; set; }
         public bool isAccommodation { get; set; }
         public bool isActive { get; set; }
         public bool isBookable { get; set; }
@@ -43,11 +43,11 @@ namespace AccommodationTransformer.Parser
         public DateTime lastUpdateAvailability { get; set; }
         public Mealplan[] mealPlans { get; set; }
         public Overview overview { get; set; }
-        public Position position { get; set; }
+        public LTSPosition position { get; set; }
         public string representationMode { get; set; }
         public Review[] reviews { get; set; }
         public Roomgroup[] roomGroups { get; set; }
-        public Season[] seasons { get; set; }
+        public LTSSeason[] seasons { get; set; }
         public Tourismorganization tourismOrganization { get; set; }
         public int trustyouScore { get; set; }
         public Suedtirolguestpass suedtirolGuestPass { get; set; }
@@ -110,7 +110,7 @@ namespace AccommodationTransformer.Parser
         public int outdoor { get; set; }
     }
 
-    public class Position
+    public class LTSPosition
     {
         public int altitude { get; set; }
         public float[] coordinates { get; set; }
@@ -135,9 +135,9 @@ namespace AccommodationTransformer.Parser
 
     public class Accessibility
     {
-        public Dictionary<string,string> website { get; set; }
+        public Dictionary<string, string> website { get; set; }
         public Dictionary<string, string> description { get; set; }
-    }       
+    }
 
     public class Rateplan
     {
@@ -154,14 +154,14 @@ namespace AccommodationTransformer.Parser
         public string rid { get; set; }
     }
 
-    public class Amenity
+    public class LTSAmenity
     {
         public string rid { get; set; }
     }
 
-    public class Contact
+    public class LTSContact
     {
-        public Address address { get; set; }
+        public LTSAddress address { get; set; }
         public string email { get; set; }
         public string fax { get; set; }
         public string phone { get; set; }
@@ -169,7 +169,7 @@ namespace AccommodationTransformer.Parser
         public string website { get; set; }
     }
 
-    public class Address
+    public class LTSAddress
     {
         public Dictionary<string, string> city { get; set; }
         public string country { get; set; }
@@ -179,43 +179,36 @@ namespace AccommodationTransformer.Parser
         public Dictionary<string, string> street { get; set; }
     }
 
-    public class Description
+    public class LTSDescription
     {
         public Dictionary<string, string> description { get; set; }
         public string type { get; set; }
     }
-   
 
-    public class Galery
+
+    public class LTSGallery
     {
-        public Image[] images { get; set; }
+        public LTSImage[] images { get; set; }
         public bool isActive { get; set; }
         public int order { get; set; }
         public string rid { get; set; }
     }
 
-    public class Image
+    public class LTSImage
     {
+        public DateTime? applicableEndDate { get; set; }
+        public DateTime? applicableStartDate { get; set; }
+
         public string copyright { get; set; }
         public int heightPixel { get; set; }
         public bool isActive { get; set; }
         public string license { get; set; }
-        public int order { get; set; }
+        public int? order { get; set; }
         public string rid { get; set; }
         public string url { get; set; }
         public int widthPixel { get; set; }
-    }
 
-    public class Image1
-    {
-        public DateTime applicableEndDate { get; set; }
-        public DateTime applicableStartDate { get; set; }
-        public string copyright { get; set; }
-        public int heightPixel { get; set; }
-        public string license { get; set; }
-        public string rid { get; set; }
-        public string url { get; set; }
-        public int widthPixel { get; set; }
+        public Dictionary<string, string>? name { get; set; }
     }
 
     public class Mealplan
@@ -235,13 +228,13 @@ namespace AccommodationTransformer.Parser
 
     public class Roomgroup
     {
-        public Amenity1[] amenities { get; set; }
+        public LTSAmenity[] amenities { get; set; }
         public int baths { get; set; }
         public string classification { get; set; }
         public string code { get; set; }
-        public Description[] descriptions { get; set; }
+        public LTSDescription[] descriptions { get; set; }
         public int diningRooms { get; set; }
-        public Image2[] images { get; set; }
+        public LTSImage[] images { get; set; }
         public bool isActive { get; set; }
         public DateTime lastUpdate { get; set; }
         public int livingRooms { get; set; }
@@ -257,7 +250,7 @@ namespace AccommodationTransformer.Parser
         public int toilets { get; set; }
         public string type { get; set; }
     }
-    
+
     public class Occupancy
     {
         public int max { get; set; }
@@ -265,23 +258,6 @@ namespace AccommodationTransformer.Parser
         public int minAdults { get; set; }
         public int standard { get; set; }
     }
-
-    public class Amenity1
-    {
-        public string rid { get; set; }
-    }
-
-    public class Image2
-    {
-        public string copyright { get; set; }
-        public int heightPixel { get; set; }
-        public string license { get; set; }
-        public Dictionary<string,string> name { get; set; }
-        public int order { get; set; }
-        public string rid { get; set; }
-        public string url { get; set; }
-        public int widthPixel { get; set; }
-    }    
 
     public class Room
     {
@@ -299,7 +275,7 @@ namespace AccommodationTransformer.Parser
         public string statusStartDate { get; set; }
     }
 
-    public class Season
+    public class LTSSeason
     {
         public string endDate { get; set; }
         public string startDate { get; set; }
