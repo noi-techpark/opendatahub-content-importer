@@ -592,6 +592,16 @@ namespace AccommodationTransformer.Parser
                 room.A0RID = accoroom.rid;
                 //room.Id = accoroom.; TO CHECK
                 room.Roomtype = GetRoomType(accoroom.type);
+                
+                if(accoroom.isActive)
+                {
+                    //adding room.Active
+                    room.PublishedOn.TryAddOrUpdateOnList("idm-marketplace");
+                }
+                else
+                {
+                    room.PublishedOn.TryRemoveOnList("idm-marketplace");
+                }
 
                 room.RoomtypeInt = Convert.ToInt32(accoroom.type);
                 room.RoomClassificationCodes = AlpineBitsHelper.GetRoomClassificationCode(accoroom.type);
@@ -603,7 +613,7 @@ namespace AccommodationTransformer.Parser
 
 
                 room.RoomCode = accoroom.code;
-                room.PriceFrom = null;  //TO CHECK IF THIS IS AVAILABLE NOW
+                room.PriceFrom = accoroom.minAmountPerPersonPerDay;  //TO CHECK IF THIS IS THE RIGHT field
 
                 ////Room Numbers
                 room.RoomNumbers = accoroom.rooms.Select(x => x.code).ToList();
@@ -619,19 +629,23 @@ namespace AccommodationTransformer.Parser
                 room.Shortname = accoroom.name["de"];
 
                 //TODO
-                //Properties
+
                 //baths
-                //classification
                 //diningRooms
+                //livingRooms
+                //sleepingRooms
+                //toilets
+
+
+                //classification (room, apartment?)
+
                 //isActive
                 //lastUpdate
-                //livingRooms
+
                 //minAmountPerPersonPerDay
                 //minAmountPerUnitPerDay
                 //rooms.availability
-                //sleepingRooms
                 //squareMeters
-                //toilets
                 //type
 
                 //Amenities parsing                
