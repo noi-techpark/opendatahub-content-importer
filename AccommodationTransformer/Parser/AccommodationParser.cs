@@ -604,52 +604,16 @@ namespace AccommodationTransformer.Parser
                 room.PriceFrom = null;  //TO CHECK IF THIS IS AVAILABLE NOW
 
                 ////Room Numbers
-                //var roomnumbers = new List<string>();
+                room.RoomNumbers = accoroom.rooms.Select(x => x.code).ToList();
+                room.Roommax = accoroom.occupancy.max;
+                room.Roommin = accoroom.occupancy.min;
+                room.Roomstd = accoroom.occupancy.standard;
+                //room.Roomminadults = accoroom.occupancy.minAdults; new field
 
-                //if (accoroom.rooms)
-                //{
-                //    //Is the B0RID Attribute Set
-                //    if (grouprdata.Elements("Data").Attributes("B0RID").Count() > 0)
-                //    {
-                //        var roomnumberobject = grouprdata.Elements("Data").Where(x => x.Attribute("B0RID").Value == b0rid).ToList();
+                room.RoomQuantity = accoroom.roomQuantity;
 
-                //        if (roomnumberobject != null)
-                //        {
-                //            var roomnumberobjeclist = roomnumberobject.Select(x => x.Attribute("F1Nam").Value).ToList();
 
-                //            if (roomnumberobjeclist != null)
-                //                roomnumbers = roomnumberobjeclist;
-                //        }
-                //    }
-                //}
-
-                //room.RoomNumbers = roomnumbers;
-
-                //string roommax = myroom.Elements("Data").FirstOrDefault().Attribute("B0Max").Value;
-                //string roommin = myroom.Elements("Data").FirstOrDefault().Attribute("B0Min").Value;
-                //string roomstd = myroom.Elements("Data").FirstOrDefault().Attribute("B0Std").Value;
-                //string roomqty = myroom.Elements("Data").FirstOrDefault().Attribute("B0Qty").Value;
-
-                //if (!String.IsNullOrEmpty(roommax))
-                //    room.Roommax = Convert.ToInt32(roommax);
-                //else
-                //    room.Roommax = null;
-
-                //if (!String.IsNullOrEmpty(roommin))
-                //    room.Roommin = Convert.ToInt32(roommin);
-                //else
-                //    room.Roommin = null;
-
-                //if (!String.IsNullOrEmpty(roomstd))
-                //    room.Roomstd = Convert.ToInt32(roomstd);
-                //else
-                //    room.Roomstd = null;
-
-                //if (!String.IsNullOrEmpty(roomqty))
-                //    room.RoomQuantity = Convert.ToInt32(roomqty);
-                //else
-                //    room.RoomQuantity = null;
-
+              
 
                 //room.Shortname = groupname.Elements("Data").Where(x => x.Attribute("LngID").Value.ToUpper() == "DE").Count() > 0 ? groupname.Elements("Data").Where(x => x.Attribute("LngID").Value.ToUpper() == "DE").FirstOrDefault().Attribute("B1Des").Value : "not defined";
 
