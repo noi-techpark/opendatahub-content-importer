@@ -1596,7 +1596,64 @@ namespace AccommodationTransformer.Parser
             return myroomtype;
         }
 
+        private static string GetRoomTypeFromClassification(string classification)
+        {            
+            switch (classification)
+            {
+                case "room": return "room";
+                case "apartment": return "apartment";
+                case "holidayHome": return "apartment";
+                case "tent": return "pitch";
+                case "pitch": return "pitch";
+                case "dorm": return "dorm";
+                default: return "undefined";
+            }
+        }
 
+        private static string GetRoomTypeFromType(string roomtype)
+        {
+            //roomtypes used before
+            //room
+            //apartment
+            //pitch
+            //dorm
+            //caravan
+            //campsite
+            //undefined
+           
+            switch (roomtype)
+            {
+                case "room": return "room";
+                case "apartment": return "apartment";
+                case "pitches": return "pitch";
+                case "restingPlaces": return "dorm";
+                default: return "undefined";
+            }
+        }
+
+        private static int GetRepresentationmode(string representationmode)
+        {
+            //According to old LTS Documentation Representation Mode (0 = don’t show; 1 = minimal displaying; 2 = complete displaying)
+            switch (representationmode)
+            {
+                case "full": return 2;
+                case "minimal": return 1;
+                case "none": return 0;
+                default: return 0;
+            }
+        }
+
+        private static int GetTrustYouState(string trustyoustate)
+        {
+            //According to old LTS Documentation State (0=not rated, 1=do not display, 2=display)
+            switch (trustyoustate)
+            {
+                case "rated": return 2;
+                case "underValued": return 1;
+                case "notRated": return 0;
+                default: return 0;
+            }            
+        }
 
     }
 
