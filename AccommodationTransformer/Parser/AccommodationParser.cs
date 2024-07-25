@@ -97,8 +97,7 @@ namespace AccommodationTransformer.Parser
             accommodationlinked.TVMember = accommodation.data.isTourismOrganizationMember;
             accommodationlinked.TourismVereinId = accommodation.data.tourismOrganization.rid;
 
-            //"representationMode": "full",
-            //accommodationlinked.Representation = accommodation.data.representationMode  //TODO Convert in INT Value
+            accommodationlinked.Representation = GetRepresentationmode(accommodation.data.representationMode);
 
 
             if (accommodation.data.isSuedtirolInfoActive)
@@ -428,8 +427,7 @@ namespace AccommodationTransformer.Parser
                 accommodationlinked.GpsInfo.Add(mygps);
             }
 
-            //Images (Validfrom etc)
-
+            //Images (Main Images with ValidFrom)
             List<ImageGallery> imagegallerylist = new List<ImageGallery>();
 
             foreach (var image in accommodation.data.images)
@@ -479,7 +477,6 @@ namespace AccommodationTransformer.Parser
                 imagegallerylist.Add(mainimage);
             }
 
-
             //Galleries
 
             foreach (var gallery in accommodation.data.galeries.Where(x => x.isActive))
@@ -505,7 +502,6 @@ namespace AccommodationTransformer.Parser
                 }
             }
 
-
             accommodationlinked.ImageGallery = imagegallerylist.ToList();
 
             //Reorder Image Gallery
@@ -521,13 +517,23 @@ namespace AccommodationTransformer.Parser
             var trustyourating = accommodation.data.reviews.Where(x => x.type == "trustyou").FirstOrDefault();
             if(trustyourating != null)
             {
-                accommodationlinked.TrustYouID = trustyourating.id;
-                accommodationlinked.TrustYouResults = trustyourating.reviewsQuantity != null ? trustyourating.reviewsQuantity.Value : 0; //TODO make TrustYouResults nullable
+                var review = new DataModel.Review();
 
-                accommodationlinked.TrustYouScore = trustyourating.rating;
-                accommodationlinked.TrustYouActive = trustyourating.isActive;
+                review.ReviewId = trustyourating.id;
+                review.Results = trustyourating.reviewsQuantity != null ? trustyourating.reviewsQuantity.Value : 0;
 
-                //accommodationlinked.TrustYouState = trustyourating.status TODO Converto To Intvalue
+                review.Score = trustyourating.rating;
+                review.Active = trustyourating.isActive;
+
+                review.State = trustyourating.status;
+                review.StateInteger = GetTrustYouState(trustyourating.status);
+
+                review.Provider = "trustyou";
+
+                if(accommodationlinked.Review == null)
+                    accommodationlinked.Review = new Dictionary<string, DataModel.Review>();
+
+                accommodationlinked.Review.TryAddOrUpdate("trustyou", review);
             }
             
             //Accessibility Independent Data
@@ -551,16 +557,11 @@ namespace AccommodationTransformer.Parser
                 }
             }
 
-            //TODO ADD POS Info based on HGV Id
-
-
-
             //Special Operations for IDM
             //Special (Mapping Features to Marketinggroup) (B79228E62B5A4D14B2BF35E7B79B8580 ) + 2 (B5757D0688674594955606382A5E126C)  + 3 (31F741E8D6D8444A9BB571A2DF193F69
             MapFeaturetoMarketingGroup(accommodationlinked, "B79228E62B5A4D14B2BF35E7B79B8580");
             MapFeaturetoMarketingGroup(accommodationlinked, "B5757D0688674594955606382A5E126C");
             MapFeaturetoMarketingGroup(accommodationlinked, "31F741E8D6D8444A9BB571A2DF193F69");
-
 
             UpdateSpecialFeatures(accommodationlinked);
             //tracesource.TraceEvent(TraceEventType.Information, 0, A0RID + " Ausstattunginformation created");
@@ -573,7 +574,6 @@ namespace AccommodationTransformer.Parser
 
             //IF Badge Behindertengerecht is present add it as Tag NEW: Additional Check is done 
             UpdateBadgesToSmgTags(accommodationlinked, "Behindertengerecht", "barrier-free");
-
 
             return accommodationlinked;
         }
@@ -591,26 +591,27 @@ namespace AccommodationTransformer.Parser
 
                 room.A0RID = accoroom.rid;
                 //room.Id = accoroom.; TO CHECK
-                room.Roomtype = accoroom.type;  //GetRoomType() not needed, type is room/apartment
+                room.Roomtype = GetRoomTypeFromType(accoroom.type);  //GetRoomType() not needed, type is room/apartment
 
                 if (accoroom.isActive)
                 {
+                    room.Active = true;
                     //adding room.Active
                     room.PublishedOn.TryAddOrUpdateOnList("idm-marketplace");
                 }
                 else
                 {
+                    room.Active = false;
                     room.PublishedOn.TryRemoveOnList("idm-marketplace");
                 }
 
-                room.RoomtypeInt = Convert.ToInt32(accoroom.type);
-                room.RoomClassificationCodes = AlpineBitsHelper.GetRoomClassificationCode(accoroom.type);
+                room.RoomtypeInt = GetRoomType(room.Roomtype);
+                room.RoomClassificationCodes = AlpineBitsHelper.GetRoomClassificationCode(room.Roomtype);
 
                 //NEU
                 room.Source = "lts";
                 room.LTSId = accoroom.rid;
                 room.HGVId = "";
-
 
                 room.RoomCode = accoroom.code;
                 room.PriceFrom = accoroom.minAmountPerPersonPerDay;  //TO CHECK IF THIS IS THE RIGHT field
@@ -638,8 +639,7 @@ namespace AccommodationTransformer.Parser
 
 
                 //classification (room, apartment?)
-
-                //isActive
+                
                 //lastUpdate
 
                 //minAmountPerPersonPerDay
@@ -685,7 +685,6 @@ namespace AccommodationTransformer.Parser
                         featurelist.Add(new AccoFeatureLinked() { Id = amenity.rid, Name = myfeature, HgvId = hgvamenityid, OtaCodes = otacodes, RoomAmenityCodes = amenitycodes });
                 }
                 room.Features = featurelist.ToList();
-
 
                 List<AccoDetail> myroomdetailslist = new List<AccoDetail>();
 
@@ -1554,25 +1553,25 @@ namespace AccommodationTransformer.Parser
             }
         }
 
-        private static string GetRoomType(string roomtype)
+        private static string GetRoomType(int roomtype)
         {
             string myroomtype = "";
 
             switch (roomtype)
             {
-                case "0":
+                case 0:
                     myroomtype = "undefined";
                     break;
-                case "1":
+                case 1:
                     myroomtype = "room";
                     break;
-                case "2":
+                case 2:
                     myroomtype = "apartment";
                     break;
-                case "3":
+                case 3:
                     myroomtype = "pitch";
                     break;
-                case "4":
+                case 4:
                     myroomtype = "dorm";
                     break;
 
@@ -1594,6 +1593,18 @@ namespace AccommodationTransformer.Parser
             }
 
             return myroomtype;
+        }
+
+        private static int GetRoomType(string roomtype)
+        {
+            switch (roomtype)
+            {
+                case "undefined": return 0;                    
+                case "room": return 1;                    
+                case "apartment": return 2;
+                case "pitch": return 4;
+                default: return 0;
+            }
         }
 
         private static string GetRoomTypeFromClassification(string classification)
