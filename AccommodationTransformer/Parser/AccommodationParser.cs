@@ -91,10 +91,6 @@ namespace AccommodationTransformer.Parser
 
             //General Data
             accommodationlinked.Active = accommodation.data.isActive;
-            accommodationlinked.IsBookable = accommodation.data.isBookable;
-            accommodationlinked.IsAccommodation = accommodation.data.isAccommodation;
-            accommodationlinked.IsCamping = accommodation.data.isCamping;
-            accommodationlinked.TVMember = accommodation.data.isTourismOrganizationMember;
             accommodationlinked.TourismVereinId = accommodation.data.tourismOrganization.rid;
 
             accommodationlinked.Representation = GetRepresentationmode(accommodation.data.representationMode);
@@ -115,16 +111,20 @@ namespace AccommodationTransformer.Parser
                 if(accommodationlinked.PublishedOn != null)
                     accommodationlinked.PublishedOn.TryRemoveOnList("idm-marketplace");
             }
-                
-           
-            //accommodationlinked.IsGastronomy = fehlt
 
-            accommodationlinked.HasApartment = accommodation.data.hasApartments;
-            //accommodationlinked.HasDorm = accommodation.data.hasDorms;  --> to integrate
-            //accommodationlinked.HasPitches = accommodation.data.hasPitches;  --> to integrate
-            accommodationlinked.HasRoom = accommodation.data.hasRooms;
-            accommodationlinked.HasApartment = accommodation.data.hasApartments;
-            accommodationlinked.HasApartment = accommodation.data.hasApartments;
+
+            AccoProperties accoproperties = new AccoProperties();
+            accoproperties.HasApartment = accommodation.data.hasApartments;
+            accoproperties.HasDorm = accommodation.data.hasDorms;
+            accoproperties.HasPitches = accommodation.data.hasPitches;
+            accoproperties.HasRoom = accommodation.data.hasRooms;
+            accoproperties.HasApartment = accommodation.data.hasApartments;
+            accoproperties.IsBookable = accommodation.data.isBookable;
+            accoproperties.IsAccommodation = accommodation.data.isAccommodation;
+            accoproperties.IsCamping = accommodation.data.isCamping;
+            accoproperties.TVMember = accommodation.data.isTourismOrganizationMember;
+
+            accommodationlinked.AccoProperties = accoproperties;
 
 
             //Overview
