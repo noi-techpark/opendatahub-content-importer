@@ -26,7 +26,7 @@ namespace AccommodationTransformer
                     WorkerSettings workersettings = new WorkerSettings()
                     {
                         RabbitConnectionString = hostContext.Configuration.GetConnectionString("RabbitConnection"),
-                        MongoDBConnectionString = hostContext.Configuration.GetConnectionString("MongoDBConnection"),
+                        MongoDBConnectionString = hostContext.Configuration.GetConnectionString("MongoDBConnection"),                        
                         ReadQueue = hostContext.Configuration.GetSection("RabbitMQConfiguration").GetValue<string>("ReadQueue", "")
                     };
 
@@ -47,6 +47,14 @@ namespace AccommodationTransformer
                             }
                         }
                     };
+
+                    var writetoapisettings = hostContext.Configuration.GetSection("ODHApiCore");
+                    var apiwriter = new DataWriteToODHApi(
+                        writetoapisettings.GetSection("authserver").Value,
+                        writetoapisettings.GetSection("client_id").Value,
+                        writetoapisettings.GetSection("client_secret").Value,
+                        writetoapisettings.GetSection("apiurl").Value);
+
 
                     DataImport dataimport = new DataImport(settings);
 
@@ -76,7 +84,8 @@ namespace AccommodationTransformer
                     };
 
                     services.AddSingleton(workersettings);
-                    services.AddSingleton(dataimportlist);                    
+                    services.AddSingleton(dataimportlist);
+                    services.AddSingleton(writetoapisettings);
 
                     services.AddSingleton<IReadAccommodation, ReadAccommodation>();
                     

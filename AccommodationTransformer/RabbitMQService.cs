@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using AccommodationTransformer.Parser;
 using DataImportHelper;
 using Helper;
 using Microsoft.Extensions.Configuration;
@@ -22,10 +23,7 @@ using System.Threading.Tasks;
 using TransformerHelper;
 
 namespace AccommodationTransformer
-{
-    
-
-
+{   
     public interface IReadAccommodation : IReadMessage
     {
 
@@ -69,11 +67,13 @@ namespace AccommodationTransformer
 
                 //TODO PARSE ACCOMMODATION
                 var name = accomodationdetail["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"].Value<JObject>();
-               
-                //Write to the ODH Api and pass referer + use a service account
-
-
+                              
                 Console.WriteLine("Processing Accommodation " + accomodationdetail["rid"].Value<string>());
+
+                var result = AccommodationParser.ParseLTSAccommodation(accomodationdetail, false, null, null, null, null, null, null, null, null, null, null, null, null);
+
+                //Write to the ODH Api and pass referer + use a service account
+                var apiresponse = await writetoodhapi.PushToODHApiCore(result, result.Id, "Accommodation");
 
                 return true;
             }

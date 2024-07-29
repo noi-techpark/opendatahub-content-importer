@@ -1,5 +1,9 @@
 ﻿using LTSAPI;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using RabbitPusher;
+using System.Net;
+using System.Security.Principal;
 
 namespace DataImportHelper
 {
@@ -100,5 +104,127 @@ namespace DataImportHelper
 
         #endregion
 
+    }
+
+    public class DataWriteToODHApi
+    {
+        protected string odhapicoreendpoint = "";
+        protected string endpoint = "";
+        protected string clientid = "";
+        protected string clientsecret = "";
+
+        public DataWriteToODHApi(string _endpoint, string _clientid, string _clientsecret, string _odhapicoreendpoint)
+        {
+            endpoint = _endpoint;
+            clientid = _clientid;
+            clientsecret = _clientsecret;
+            odhapicoreendpoint = _odhapicoreendpoint;
+        }
+
+        public async Task<HttpResponseMessage> PushToODHApiCore<T>(T data, string id, string postendpoint)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Referrer = new Uri("https://service.suedtirol.info");
+                //Get Token from Singleton
+                ODHTokenStore tokenstore = await ODHTokenStore.GetInstance(endpoint, clientid, clientsecret);
+                var token = tokenstore.GetBearerHeader();
+                //Add the Bearer Token to the Request Header
+                client.DefaultRequestHeaders.Add("Authorization", token);
+
+                var requesturl = odhapicoreendpoint + postendpoint + "/" + id;
+
+                return await client.PostAsync(requesturl, new StringContent(JsonConvert.SerializeObject(data)));
+            }
+        }
+    }
+
+    public class ODHTokenStore
+    {
+        private static ODHTokenStore _instance;
+        private static Token odhtoken;
+        private DateTime expirationdate;
+
+        static string serviceaccount_clientid = "";
+        static string serviceaccount_clientsecret = "";
+        static string serviceaccount_url = "";
+
+        private ODHTokenStore(string endpoint, string clientid, string clientsecret)
+        {
+            serviceaccount_clientid = clientid;
+            serviceaccount_clientsecret = clientsecret;
+            serviceaccount_url = endpoint;
+        }
+
+        public static async Task<ODHTokenStore> GetInstance(string endpoint, string clientid, string clientsecret)
+        {
+            if (_instance == null || _instance.isTokenExpired())
+            {
+                _instance = new ODHTokenStore(endpoint, clientid, clientsecret);
+                await _instance.GetToken();
+            }
+
+            return _instance;
+        }
+
+        private async Task GetToken()
+        {
+            HttpClient client = new HttpClient();
+
+            string baseAddress = serviceaccount_url;
+
+            string grant_type = "client_credentials";
+            string client_id = serviceaccount_clientid;
+            string client_secret = serviceaccount_clientsecret;
+
+            var form = new Dictionary<string, string>
+                {
+                    {"grant_type", grant_type},
+                    {"client_id", client_id},
+                    {"client_secret", client_secret},
+                };
+
+            var now = DateTime.Now;
+
+            HttpResponseMessage tokenResponse = await client.PostAsync(baseAddress, new FormUrlEncodedContent(form));
+            var jsonContent = await tokenResponse.Content.ReadAsStringAsync();
+            odhtoken = JsonConvert.DeserializeObject<Token>(jsonContent);
+
+            expirationdate = now.AddSeconds(odhtoken.ExpiresIn);
+        }
+
+        private bool isTokenExpired()
+        {
+            if (odhtoken == null)
+                return true;
+            else
+            {
+                if (expirationdate > DateTime.Now)
+                    return false;
+                else
+                    return true;
+
+            }
+        }
+
+        public string GetBearerHeader()
+        {
+            return "Bearer " + odhtoken.AccessToken;
+        }
+    }
+
+    internal class Token
+    {
+        [JsonProperty("access_token")]
+        public string AccessToken { get; set; }
+
+        [JsonProperty("token_type")]
+        public string TokenType { get; set; }
+
+        [JsonProperty("expires_in")]
+        public int ExpiresIn { get; set; }
+
+        [JsonProperty("refresh_token")]
+        public string RefreshToken { get; set; }
     }
 }

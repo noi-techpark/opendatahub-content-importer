@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -18,48 +19,64 @@ namespace AccommodationTransformer.Parser
 {
     public class AccommodationParser
     {
-        public static AccommodationLinked ParseLTSAccommodation(JObject accomodationdetail, bool reduced)
+        public static AccommodationLinked ParseLTSAccommodation(JObject accomodationdetail, bool reduced,
+            XDocument mytypes,
+            XDocument mycategories,
+            XDocument myboards,
+            XDocument myfeatures,            
+            XDocument myvinumlist,
+            XDocument mywinelist,
+            XDocument mycitylist,
+            XDocument myskiarealist,
+            XDocument mymediterranenlist,
+            XDocument dolomiteslist,
+            XDocument alpinelist,
+            XDocument roomamenitylist)
         {
-            AccommodationLinked accommodationlinked = new AccommodationLinked();
-            
-            accommodationlinked.Id = accomodationdetail["rid"].Value<string>();
-            accommodationlinked._Meta = new Metadata() { Id = accommodationlinked.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "accommodation", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };           
-
-            //Accommodation Type
-
-            //Accommodation Category
-
-            //Accommodation Detail
-
-            //Address Groups
-
-            //Amenities
-
-            //GPS Info
-
-            //Images
-
-            //Galleries
-
-            //District
-
-
-
-            //TODO PARSE ACCOMMODATION
-            var name = accomodationdetail["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"].Value<JObject>();
-            string namede = "";
-
-            if (name != null)
+            try
             {
-                JToken token = name["de"];
-                if (token != null)
-                {
-                    namede = token.Value<string>();
-                }
+                AccoLTS accoltsdetail = accomodationdetail.ToObject<AccoLTS>();
+
+                return ParseLTSAccommodation(accoltsdetail, reduced, mytypes, mycategories, myboards, myfeatures, 
+                    myvinumlist, mywinelist, mycitylist, myskiarealist, mymediterranenlist, dolomiteslist, alpinelist, roomamenitylist);
             }
+            catch(Exception ex)
+            {
+                AccommodationLinked accommodationlinked = new AccommodationLinked();
 
+                //Accommodation Type
 
-            return accommodationlinked;
+                //Accommodation Category
+
+                //Accommodation Detail
+
+                //Address Groups
+
+                //Amenities
+
+                //GPS Info
+
+                //Images
+
+                //Galleries
+
+                //District
+
+                //TODO PARSE ACCOMMODATION
+                var name = accomodationdetail["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"].Value<JObject>();
+                string namede = "";
+
+                if (name != null)
+                {
+                    JToken token = name["de"];
+                    if (token != null)
+                    {
+                        namede = token.Value<string>();
+                    }
+                }
+
+                return accommodationlinked;
+            }          
         }
 
         public static AccommodationLinked ParseLTSAccommodation(AccoLTS accommodation, 
@@ -67,8 +84,7 @@ namespace AccommodationTransformer.Parser
             XDocument mytypes,
             XDocument mycategories,
             XDocument myboards,
-            XDocument myfeatures,
-            XDocument mybookingchannels,
+            XDocument myfeatures,            
             XDocument myvinumlist,
             XDocument mywinelist,
             XDocument mycitylist,

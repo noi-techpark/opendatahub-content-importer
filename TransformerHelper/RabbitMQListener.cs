@@ -11,19 +11,19 @@ namespace TransformerHelper
     #region Generic Code
     public interface IReadMessage
     {
-        void Read(string connectionstring, string mongoconnection, List<string> queues, IDictionary<string, DataImport> dataimport);
+        void Read(string rabbitconnectionstring, string mongoconnection, List<string> queues, IDictionary<string, DataImport> dataimport, DataWriteToODHApi writetoodhapi);
     }
 
     public abstract class ReadMessage : IReadMessage
     {
         protected string mongodbconnection;
-        protected string rabbitmqconnection;
+        //protected string rabbitmqconnection;
         protected IDictionary<string, DataImport> dataimport;
+        protected DataWriteToODHApi writetoodhapi;
 
-        public void Read(string connectionstring, string mongoconnection, List<string> queues, IDictionary<string, DataImport> _dataimport)
-        {
-            rabbitmqconnection = connectionstring;
-            var _rabbitMQServer = new ConnectionFactory() { Uri = new Uri(connectionstring) };
+        public void Read(string rabbitconnectionstring, string mongoconnection, List<string> queues, IDictionary<string, DataImport> _dataimport, DataWriteToODHApi _writetoodhapi)
+        {            
+            var _rabbitMQServer = new ConnectionFactory() { Uri = new Uri(rabbitconnectionstring) };
 
             using var connection = _rabbitMQServer.CreateConnection();
 
@@ -31,6 +31,8 @@ namespace TransformerHelper
 
             mongodbconnection = mongoconnection;
             dataimport = _dataimport;
+
+            writetoodhapi = _writetoodhapi;
 
             StartReading(channel, queues);
         }
@@ -89,6 +91,11 @@ namespace TransformerHelper
         {
             //Transformer Logic goes here
             throw new NotImplementedException();
+        }
+
+        public async Task<HttpResponseMessage> PushToODHApiCore<T>(T data, string id, string endpoint)
+        {
+            return await writetoodhapi.PushToODHApiCore(data, id, endpoint);
         }
     }
 
