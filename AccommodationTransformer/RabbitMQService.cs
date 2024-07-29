@@ -20,6 +20,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using TransformerHelper;
 
 namespace AccommodationTransformer
@@ -69,7 +70,10 @@ namespace AccommodationTransformer
                               
                 Console.WriteLine("Processing Accommodation " + accomodationdetail["data"]["rid"].Value<string>());
 
-                var result = AccommodationParser.ParseLTSAccommodation(accomodationdetail, false, null, null, null, null, null, null, null, null, null, null, null, null);
+                //Load all XDocuments
+                var xmlfiles = LoadXmlFiles("../xml/");
+
+                var result = AccommodationParser.ParseLTSAccommodation(accomodationdetail, false, xmlfiles);
 
                 //Write to the ODH Api and pass referer + use a service account
                 var apiresponse = await writetoodhapi.PushToODHApiCore(result, result.Id, "Accommodation");
@@ -107,5 +111,27 @@ namespace AccommodationTransformer
             //var ltsamenities = await ltsapi.AccommodationAmenitiesRequest(null, true);
             //rabbitsend.Send("lts/accommodationamenities", ltsamenities);
         }
-    }
+
+        public IDictionary<string, XDocument> LoadXmlFiles(string directory)
+        {
+            //TODO move this files to Database
+
+            IDictionary<string, XDocument> myxmlfiles = new Dictionary<string, XDocument>();
+            myxmlfiles.Add("AccoCategories", XDocument.Load(directory + "AccoCategories.xml"));
+            myxmlfiles.Add("AccoTypes", XDocument.Load(directory + "AccoTypes.xml"));
+            myxmlfiles.Add("Alpine", XDocument.Load(directory + "Alpine.xml"));
+            myxmlfiles.Add("Boards", XDocument.Load(directory + "Boards.xml"));
+            myxmlfiles.Add("City", XDocument.Load(directory + "City.xml"));
+            myxmlfiles.Add("Dolomites", XDocument.Load(directory + "Dolomites.xml"));
+            myxmlfiles.Add("Features", XDocument.Load(directory + "Features.xml"));
+            myxmlfiles.Add("Mediterranean", XDocument.Load(directory + "Mediterranean.xml"));
+            myxmlfiles.Add("NearSkiArea", XDocument.Load(directory + "NearSkiArea.xml"));
+            myxmlfiles.Add("RoomAmenities", XDocument.Load(directory + "RoomAmenities.xml"));
+            myxmlfiles.Add("Vinum", XDocument.Load(directory + "Vinum.xml"));
+            myxmlfiles.Add("Wine", XDocument.Load(directory + "Wine.xml"));
+
+            return myxmlfiles;
+        }
+    }    
+
 }

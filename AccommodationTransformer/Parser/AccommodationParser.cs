@@ -19,26 +19,13 @@ namespace AccommodationTransformer.Parser
 {
     public class AccommodationParser
     {
-        public static AccommodationLinked ParseLTSAccommodation(JObject accomodationdetail, bool reduced,
-            XDocument mytypes,
-            XDocument mycategories,
-            XDocument myboards,
-            XDocument myfeatures,            
-            XDocument myvinumlist,
-            XDocument mywinelist,
-            XDocument mycitylist,
-            XDocument myskiarealist,
-            XDocument mymediterranenlist,
-            XDocument dolomiteslist,
-            XDocument alpinelist,
-            XDocument roomamenitylist)
+        public static AccommodationLinked ParseLTSAccommodation(JObject accomodationdetail, bool reduced, IDictionary<string, XDocument> xmlfiles)
         {
             try
             {
                 AccoLTS accoltsdetail = accomodationdetail.ToObject<AccoLTS>();
 
-                return ParseLTSAccommodation(accoltsdetail, reduced, mytypes, mycategories, myboards, myfeatures, 
-                    myvinumlist, mywinelist, mycitylist, myskiarealist, mymediterranenlist, dolomiteslist, alpinelist, roomamenitylist);
+                return ParseLTSAccommodation(accoltsdetail, reduced, xmlfiles);
             }
             catch(Exception ex)
             {
@@ -81,18 +68,7 @@ namespace AccommodationTransformer.Parser
 
         public static AccommodationLinked ParseLTSAccommodation(AccoLTS accommodation, 
             bool reduced,
-            XDocument mytypes,
-            XDocument mycategories,
-            XDocument myboards,
-            XDocument myfeatures,            
-            XDocument myvinumlist,
-            XDocument mywinelist,
-            XDocument mycitylist,
-            XDocument myskiarealist,
-            XDocument mymediterranenlist,
-            XDocument dolomiteslist,
-            XDocument alpinelist,
-            XDocument roomamenitylist)
+            IDictionary<string, XDocument> xmlfiles)
         {
             AccommodationLinked accommodationlinked = new AccommodationLinked();
 
@@ -263,12 +239,12 @@ namespace AccommodationTransformer.Parser
             List<string> additionalfeaturestoadd = new List<string>();
 
             //Accommodation Type
-            var mytype = mytypes.Root.Elements("AccoType").Where(x => x.Attribute("RID").Value == accommodation.data.type.rid).FirstOrDefault().Attribute("SmgType").Value;
+            var mytype = xmlfiles["AccoTypes"].Root.Elements("AccoType").Where(x => x.Attribute("RID").Value == accommodation.data.type.rid).FirstOrDefault().Attribute("SmgType").Value;
             accommodationlinked.AccoTypeId = mytype;
             additionalfeaturestoadd.Add(accommodation.data.type.rid);
 
             //Accommodation Category
-            var mycategory = mycategories.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == accommodation.data.category.rid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault().Attribute("T1Des").Value;
+            var mycategory = xmlfiles["AccoCategories"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == accommodation.data.category.rid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault().Attribute("T1Des").Value;
             accommodationlinked.AccoCategoryId = accommodation.data.category.rid;
 
             //Board Infos
@@ -278,7 +254,7 @@ namespace AccommodationTransformer.Parser
             {
                 additionalfeaturestoadd.Add(myboardelement.rid);
 
-                var myboard = myboards.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == myboardelement.rid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault().Attribute("T1Des").Value;
+                var myboard = xmlfiles["Boards"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == myboardelement.rid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault().Attribute("T1Des").Value;
 
                 if (myboard != null)
                     accoboardings.Add(myboard);
@@ -290,7 +266,7 @@ namespace AccommodationTransformer.Parser
 
             foreach (var tin in accommodation.data.amenities)
             {
-                var myfeature = myfeatures.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == tin.rid).FirstOrDefault();
+                var myfeature = xmlfiles["Features"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == tin.rid).FirstOrDefault();
 
                 if (myfeature != null)
                 {
@@ -306,7 +282,7 @@ namespace AccommodationTransformer.Parser
 
                         //var myamenity = roomamenitylist.Root.Elements("amenity").Elements("ltsrid").Where(x => x.Value == tinrid).FirstOrDefault();
 
-                        var myamenity = roomamenitylist.Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == tin.rid).FirstOrDefault();
+                        var myamenity = xmlfiles["RoomAmenities"].Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == tin.rid).FirstOrDefault();
 
                         if (myamenity != null)
                             hgvamenityid = myamenity.Element("hgvid").Value;
@@ -342,7 +318,7 @@ namespace AccommodationTransformer.Parser
 
             foreach (var featuretoadd in additionalfeaturestoadd)
             {
-                var myfeature = myfeatures.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == featuretoadd).FirstOrDefault();
+                var myfeature = xmlfiles["Features"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == featuretoadd).FirstOrDefault();
 
                 if (myfeature != null)
                 {
@@ -358,7 +334,7 @@ namespace AccommodationTransformer.Parser
 
                         //var myamenity = roomamenitylist.Root.Elements("amenity").Elements("ltsrid").Where(x => x.Value == tinrid).FirstOrDefault();
 
-                        var myamenity = roomamenitylist.Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == featuretoadd).FirstOrDefault();
+                        var myamenity = xmlfiles["RoomAmenities"].Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == featuretoadd).FirstOrDefault();
 
                         if (myamenity != null)
                             hgvamenityid = myamenity.Element("hgvid").Value;
@@ -581,9 +557,9 @@ namespace AccommodationTransformer.Parser
 
             UpdateSpecialFeatures(accommodationlinked);
             //tracesource.TraceEvent(TraceEventType.Information, 0, A0RID + " Ausstattunginformation created");
-            UpdateThemes(accommodationlinked, mywinelist, mycitylist, myskiarealist, mymediterranenlist, dolomiteslist, alpinelist);
+            UpdateThemes(accommodationlinked, xmlfiles["Wine"], xmlfiles["City"], xmlfiles["NearSkiArea"], xmlfiles["Mediterranean"], xmlfiles["Dolomites"], xmlfiles["Alpine"]);
             //tracesource.TraceEvent(TraceEventType.Information, 0, A0RID + " Themeinformation created");
-            UpdateBadges(accommodationlinked, myvinumlist);
+            UpdateBadges(accommodationlinked, xmlfiles["Vinum"]);
             //tracesource.TraceEvent(TraceEventType.Information, 0, A0RID + " Badgeinformation created");
             UpdateAusstattungToSmgTags(accommodationlinked);
             //tracesource.TraceEvent(TraceEventType.Information, 0, A0RID + " Ausstattunginformation created");

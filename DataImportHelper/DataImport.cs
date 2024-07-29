@@ -125,7 +125,7 @@ namespace DataImportHelper
         {
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.Referrer = new Uri("https://service.suedtirol.info");
+                client.DefaultRequestHeaders.Referrer = new Uri("https://tourism.importer.v2");
                 //Get Token from Singleton
                 ODHTokenStore tokenstore = await ODHTokenStore.GetInstance(endpoint, clientid, clientsecret);
                 var token = tokenstore.GetBearerHeader();
