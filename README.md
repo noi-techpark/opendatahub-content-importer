@@ -50,10 +50,11 @@ Pushes the data to RabbitMQ queue ingress-q. A route key and a data object has t
 
 DataImportHelper offers the various DataImport Interfaces like LTS Api &HGV Api and pushes the received data to RabbitMQ. Uses RabbitPusher, LTS Api, HGV Api.
 Used in DataImport Api, DataImport Console and also in the Transformer because it could be that a raw data Import triggers another data Import.
+Contains also 
 
 ### RabbitListener
 
-Test Project obsolete
+Test Project obsolete to remove logic shifted to transformer
 
 ### MongoDBConnector
 

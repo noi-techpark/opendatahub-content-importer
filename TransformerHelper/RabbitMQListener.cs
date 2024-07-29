@@ -11,7 +11,7 @@ namespace TransformerHelper
     #region Generic Code
     public interface IReadMessage
     {
-        void Read(string rabbitconnectionstring, string mongoconnection, List<string> queues, IDictionary<string, DataImport> dataimport, DataWriteToODHApi writetoodhapi);
+        void Read(string rabbitconnectionstring, string mongoconnection, List<string> queues, IDictionary<string, DataImport> dataimport, ODHApiWriter writetoodhapi);
     }
 
     public abstract class ReadMessage : IReadMessage
@@ -19,9 +19,9 @@ namespace TransformerHelper
         protected string mongodbconnection;
         //protected string rabbitmqconnection;
         protected IDictionary<string, DataImport> dataimport;
-        protected DataWriteToODHApi writetoodhapi;
+        protected ODHApiWriter writetoodhapi;
 
-        public void Read(string rabbitconnectionstring, string mongoconnection, List<string> queues, IDictionary<string, DataImport> _dataimport, DataWriteToODHApi _writetoodhapi)
+        public void Read(string rabbitconnectionstring, string mongoconnection, List<string> queues, IDictionary<string, DataImport> _dataimport, ODHApiWriter _writetoodhapi)
         {            
             var _rabbitMQServer = new ConnectionFactory() { Uri = new Uri(rabbitconnectionstring) };
 

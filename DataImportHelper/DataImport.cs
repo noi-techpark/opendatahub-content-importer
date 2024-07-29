@@ -106,14 +106,14 @@ namespace DataImportHelper
 
     }
 
-    public class DataWriteToODHApi
+    public class ODHApiWriter
     {
         protected string odhapicoreendpoint = "";
         protected string endpoint = "";
         protected string clientid = "";
         protected string clientsecret = "";
 
-        public DataWriteToODHApi(string _endpoint, string _clientid, string _clientsecret, string _odhapicoreendpoint)
+        public ODHApiWriter(string _endpoint, string _clientid, string _clientsecret, string _odhapicoreendpoint)
         {
             endpoint = _endpoint;
             clientid = _clientid;

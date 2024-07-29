@@ -61,14 +61,13 @@ namespace AccommodationTransformer
             else if (routingkey == "lts.accommodationdetail")
             {
                 Console.WriteLine("Read Accommodation DETAIL called");
-
                
-                JObject accomodationdetail = jsonarray.FirstOrDefault()["data"].Value<JObject>();
+                JObject accomodationdetail = jsonarray.FirstOrDefault().Value<JObject>();
 
                 //TODO PARSE ACCOMMODATION
-                var name = accomodationdetail["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"].Value<JObject>();
+                var name = accomodationdetail["data"]["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"].Value<JObject>();
                               
-                Console.WriteLine("Processing Accommodation " + accomodationdetail["rid"].Value<string>());
+                Console.WriteLine("Processing Accommodation " + accomodationdetail["data"]["rid"].Value<string>());
 
                 var result = AccommodationParser.ParseLTSAccommodation(accomodationdetail, false, null, null, null, null, null, null, null, null, null, null, null, null);
 

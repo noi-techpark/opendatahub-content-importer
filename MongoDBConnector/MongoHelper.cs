@@ -43,20 +43,25 @@ namespace MongoDBConnector
 
         private async Task<BsonDocument> GetFromMongo(string id, string db, string collection)
         {
-            var mclient = new MongoClient(mongodbconnection);
-            var mdatabase = mclient.GetDatabase(db);
+            try
+            {
+                var mclient = new MongoClient(mongodbconnection);
+                var mdatabase = mclient.GetDatabase(db);
 
-            var mongocollection = mdatabase.GetCollection<BsonDocument>(collection);
+                var mongocollection = mdatabase.GetCollection<BsonDocument>(collection);
 
-            var mongoid = new ObjectId(id);
+                var mongoid = new ObjectId(id);
 
-            var obj = await mongocollection.Find($"{{ _id: ObjectId('{mongoid}') }}").SingleAsync();
+                var obj = await mongocollection.Find($"{{ _id: ObjectId('{mongoid}') }}").SingleAsync();
 
-            return obj;
+                return obj;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
     }
-
-
 
     public class MongoDBObject
     {

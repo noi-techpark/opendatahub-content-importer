@@ -19,9 +19,9 @@ namespace AccommodationTransformer
         private readonly IReadAccommodation _readAccoMessage;
         private readonly WorkerSettings _configuration;
         private IDictionary<string, DataImport> _dataimport;
-        private DataWriteToODHApi _dataWriteToODHApi;
+        private ODHApiWriter _dataWriteToODHApi;
 
-        public Worker(IReadAccommodation readAccoMessage, ILogger<Worker> logger, WorkerSettings configuration, IDictionary<string, DataImport> dataimport, DataWriteToODHApi datawritetoapi)
+        public Worker(IReadAccommodation readAccoMessage, ILogger<Worker> logger, WorkerSettings configuration, IDictionary<string, DataImport> dataimport, ODHApiWriter datawritetoapi)
         {
             _logger = logger;
 

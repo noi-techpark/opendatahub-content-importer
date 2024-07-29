@@ -49,7 +49,7 @@ namespace AccommodationTransformer
                     };
 
                     var writetoapisettings = hostContext.Configuration.GetSection("ODHApiCore");
-                    var apiwriter = new DataWriteToODHApi(
+                    var apiwriter = new ODHApiWriter(
                         writetoapisettings.GetSection("authserver").Value,
                         writetoapisettings.GetSection("client_id").Value,
                         writetoapisettings.GetSection("client_secret").Value,
@@ -85,7 +85,7 @@ namespace AccommodationTransformer
 
                     services.AddSingleton(workersettings);
                     services.AddSingleton(dataimportlist);
-                    services.AddSingleton(writetoapisettings);
+                    services.AddSingleton(apiwriter);
 
                     services.AddSingleton<IReadAccommodation, ReadAccommodation>();
                     
