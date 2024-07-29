@@ -71,7 +71,7 @@ namespace AccommodationTransformer
                 Console.WriteLine("Processing Accommodation " + accomodationdetail["data"]["rid"].Value<string>());
 
                 //Load all XDocuments
-                var xmlfiles = LoadXmlFiles("../xml/");
+                var xmlfiles = LoadXmlFiles("..\\..\\..\\xml\\");
 
                 var result = AccommodationParser.ParseLTSAccommodation(accomodationdetail, false, xmlfiles);
 
