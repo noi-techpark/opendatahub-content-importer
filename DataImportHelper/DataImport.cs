@@ -3,7 +3,9 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RabbitPusher;
 using System.Net;
+using System.Net.Http.Json;
 using System.Security.Principal;
+using System.Text;
 
 namespace DataImportHelper
 {
@@ -134,9 +136,7 @@ namespace DataImportHelper
 
                 var requesturl = odhapicoreendpoint + postendpoint + "/" + id;
 
-                var result = await client.PutAsync(requesturl, new StringContent(JsonConvert.SerializeObject(data)));
-
-                return result;
+                return await client.PutAsync(requesturl, new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json"));
             }
         }
     }
