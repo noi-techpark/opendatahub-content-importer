@@ -64,9 +64,6 @@ namespace AccommodationTransformer
                 Console.WriteLine("Read Accommodation DETAIL called");
                
                 JObject accomodationdetail = jsonarray.FirstOrDefault().Value<JObject>();
-
-                //TODO PARSE ACCOMMODATION
-                var name = accomodationdetail["data"]["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"].Value<JObject>();
                               
                 Console.WriteLine("Processing Accommodation " + accomodationdetail["data"]["rid"].Value<string>());
 

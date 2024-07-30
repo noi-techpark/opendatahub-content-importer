@@ -39,14 +39,20 @@ RabbitMQSend rabbitsend = new RabbitMQSend(config.GetConnectionString("RabbitCon
 //var ltsacco2 = await ltsapi.AccommodationDetailRequest("2657B7CBCb85380B253D2fBE28AF100E", null);
 //rabbitsend.Send("lts/accommodationdetail", ltsacco2);
 
-var qs1 = new LTSQueryStrings()
-{
-    page_size = 100,
-    filter_lastUpdate = DateTime.Now.AddHours(-1),
-    filter_marketingGroupRids = "9E72B78AC5B14A9DB6BED6C2592483BF",
-    fields = "rid"
-};
-var dict1 = ltsapi.GetLTSQSDictionary(qs1);
-var ltsaccochanged = await ltsapi.AccommodationListRequest(dict1, true);
-rabbitsend.Send("lts/accommodationchanged", ltsaccochanged);
+//var qs1 = new LTSQueryStrings()
+//{
+//    page_size = 100,
+//    filter_lastUpdate = DateTime.Now.AddHours(-1),
+//    filter_marketingGroupRids = "9E72B78AC5B14A9DB6BED6C2592483BF",
+//    fields = "rid"
+//};
+//var dict1 = ltsapi.GetLTSQSDictionary(qs1);
+//var ltsaccochanged = await ltsapi.AccommodationListRequest(dict1, true);
+//rabbitsend.Send("lts/accommodationchanged", ltsaccochanged);
+
+
+//TEST accommodation Parsing
+
+var ltsacco2 = await ltsapi.AccommodationDetailRequest("2657B7CBCb85380B253D2fBE28AF100E", null);
+rabbitsend.Send("lts/accommodationdetail", ltsacco2);
 

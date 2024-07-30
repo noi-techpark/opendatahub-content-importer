@@ -246,6 +246,8 @@ namespace AccommodationTransformer.Parser
             //Accommodation Category
             var mycategory = xmlfiles["AccoCategories"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == accommodation.data.category.rid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault().Attribute("T1Des").Value;
             accommodationlinked.AccoCategoryId = accommodation.data.category.rid;
+            additionalfeaturestoadd.Add(accommodation.data.category.rid);  //to check
+
 
             //Board Infos
             List<string> accoboardings = new List<string>();
@@ -359,51 +361,53 @@ namespace AccommodationTransformer.Parser
 
             List<AccoDetail> myaccodetailslist = new List<AccoDetail>();
 
-            var contactinfo = accommodation.data.contacts.Where(x => x.type == "main").FirstOrDefault();
-            
-            foreach (string lang in haslanguage)
+            if (accommodation.data.contacts != null)
             {
-                AccoDetail mydetail = new AccoDetail();
+                var contactinfo = accommodation.data.contacts.Where(x => x.type == "main").FirstOrDefault();
 
-                if (contactinfo != null)
+                foreach (string lang in haslanguage)
                 {
-                    //De Adress
-                    mydetail.Language = lang;
+                    AccoDetail mydetail = new AccoDetail();
 
-                    mydetail.CountryCode = contactinfo.address.country;
-                    mydetail.City = contactinfo.address.city[lang];
-                    mydetail.Email = contactinfo.email;
-                    mydetail.Name = contactinfo.address.name[lang];
+                    if (contactinfo != null)
+                    {
+                        //De Adress
+                        mydetail.Language = lang;
 
-                    mydetail.Firstname = contactinfo.address.name2[lang]; ;
-                    mydetail.Lastname = contactinfo.address.name2[lang]; ;
+                        mydetail.CountryCode = contactinfo.address.country;
+                        mydetail.City = contactinfo.address.city[lang];
+                        mydetail.Email = contactinfo.email;
+                        mydetail.Name = contactinfo.address.name[lang];
 
-                    if (lang == "de")
-                        accommodationlinked.Shortname = contactinfo.address.name[lang];
+                        mydetail.Firstname = contactinfo.address.name2[lang];
+                        mydetail.Lastname = contactinfo.address.name2[lang];
 
-                    mydetail.Street = contactinfo.address.street[lang];
+                        if (lang == "de")
+                            accommodationlinked.Shortname = contactinfo.address.name[lang];
 
-                    mydetail.Fax = contactinfo.fax;
+                        mydetail.Street = contactinfo.address.street[lang];
 
-                    //NO MORE PRESENT ON INTERFACE
-                    //mydetail.Firstname = ""
-                    //mydetail.Lastname = "";
-                    //mydetail.Mobile = "";
-                    //mydetail.Vat = "";
-                    //mydetail.NameAddition = "";
+                        mydetail.Fax = contactinfo.fax;
+
+                        //NO MORE PRESENT ON INTERFACE
+                        //mydetail.Firstname = ""
+                        //mydetail.Lastname = "";
+                        //mydetail.Mobile = "";
+                        //mydetail.Vat = "";
+                        //mydetail.NameAddition = "";
 
 
-                    mydetail.Phone = contactinfo.phone;
-                    mydetail.Zip = contactinfo.address.postalCode;
-                    mydetail.Website = contactinfo.website;
+                        mydetail.Phone = contactinfo.phone;
+                        mydetail.Zip = contactinfo.address.postalCode;
+                        mydetail.Website = contactinfo.website;
+                    }
+
+                    mydetail.Longdesc = accommodation.data.descriptions.Where(x => x.type == "longDescription").FirstOrDefault()?.description[lang];
+                    mydetail.Shortdesc = accommodation.data.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description[lang];
+
+                    accommodationlinked.AccoDetail.TryAddOrUpdate(lang, mydetail);
                 }
-
-                mydetail.Longdesc = accommodation.data.descriptions.Where(x => x.type == "longDescription").FirstOrDefault()?.description[lang];
-                mydetail.Shortdesc = accommodation.data.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description[lang];
-                
-                accommodationlinked.AccoDetail.TryAddOrUpdate(lang, mydetail);
             }
-            
             //GPS Info
             if(accommodation.data.position != null)
             {
@@ -422,78 +426,82 @@ namespace AccommodationTransformer.Parser
             //Images (Main Images with ValidFrom)
             List<ImageGallery> imagegallerylist = new List<ImageGallery>();
 
-            foreach (var image in accommodation.data.images)
+            if (accommodation.data.images != null)
             {
-                ImageGallery mainimage = new ImageGallery();
-
-                //DE
-                mainimage.ImageUrl = image.url;
-                mainimage.IsInGallery = true;
-
-                mainimage.Height = image.heightPixel;
-                mainimage.Width = image.widthPixel;
-                mainimage.ValidFrom = image.applicableStartDate;
-                mainimage.ValidTo = image.applicableEndDate;
-                mainimage.ListPosition = 0;
-                //Not offered
-                //mainimagede.ImageDesc.TryAddOrUpdate("de", theimage.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "DE").Count() > 0 ? theimage.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "DE").FirstOrDefault().Attribute("A9Nam").Value : "");
-                //mainimagede.ImageDesc.TryAddOrUpdate("it", theimage.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "IT").Count() > 0 ? theimage.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "IT").FirstOrDefault().Attribute("A9Nam").Value : "");
-                //mainimagede.ImageDesc.TryAddOrUpdate("en", theimage.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").Count() > 0 ? theimage.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault().Attribute("A9Nam").Value : "");
-
-                mainimage.CopyRight = image.copyright;
-                mainimage.License = image.license;
-
-                //New Check date and give Image Tag
-                if (mainimage.ValidFrom != null && mainimage.ValidTo != null)
+                foreach (var image in accommodation.data.images)
                 {
-                    List<string> imagetaglist = new List<string>();
+                    ImageGallery mainimage = new ImageGallery();
 
-                    //Date is set 
-                    var checkbegindate = ((DateTime)mainimage.ValidFrom).Date;
-                    var checkenddate = ((DateTime)mainimage.ValidTo).Date;
+                    //DE
+                    mainimage.ImageUrl = image.url;
+                    mainimage.IsInGallery = true;
 
-                    var summer = new DateTime(mainimage.ValidFrom.Value.Year, 7, 15).Date;
-                    var winter = new DateTime(mainimage.ValidTo.Value.Year, 1, 15).Date;
+                    mainimage.Height = image.heightPixel;
+                    mainimage.Width = image.widthPixel;
+                    mainimage.ValidFrom = image.applicableStartDate;
+                    mainimage.ValidTo = image.applicableEndDate;
+                    mainimage.ListPosition = 0;
+                    //Not offered
+                    //mainimagede.ImageDesc.TryAddOrUpdate("de", theimage.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "DE").Count() > 0 ? theimage.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "DE").FirstOrDefault().Attribute("A9Nam").Value : "");
+                    //mainimagede.ImageDesc.TryAddOrUpdate("it", theimage.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "IT").Count() > 0 ? theimage.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "IT").FirstOrDefault().Attribute("A9Nam").Value : "");
+                    //mainimagede.ImageDesc.TryAddOrUpdate("en", theimage.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").Count() > 0 ? theimage.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault().Attribute("A9Nam").Value : "");
 
-                    //check if date is into 15.07
-                    if (summer >= checkbegindate && summer <= checkenddate)
-                        imagetaglist.Add("Summer");
+                    mainimage.CopyRight = image.copyright;
+                    mainimage.License = image.license;
 
-                    //check if date is into 15.01
-                    if (winter >= checkbegindate && winter <= checkenddate)
-                        imagetaglist.Add("Winter");
+                    //New Check date and give Image Tag
+                    if (mainimage.ValidFrom != null && mainimage.ValidTo != null)
+                    {
+                        List<string> imagetaglist = new List<string>();
 
-                    mainimage.ImageTags = imagetaglist;
+                        //Date is set 
+                        var checkbegindate = ((DateTime)mainimage.ValidFrom).Date;
+                        var checkenddate = ((DateTime)mainimage.ValidTo).Date;
+
+                        var summer = new DateTime(mainimage.ValidFrom.Value.Year, 7, 15).Date;
+                        var winter = new DateTime(mainimage.ValidTo.Value.Year, 1, 15).Date;
+
+                        //check if date is into 15.07
+                        if (summer >= checkbegindate && summer <= checkenddate)
+                            imagetaglist.Add("Summer");
+
+                        //check if date is into 15.01
+                        if (winter >= checkbegindate && winter <= checkenddate)
+                            imagetaglist.Add("Winter");
+
+                        mainimage.ImageTags = imagetaglist;
+                    }
+
+                    imagegallerylist.Add(mainimage);
                 }
-
-                imagegallerylist.Add(mainimage);
             }
-
             //Galleries
 
-            foreach (var gallery in accommodation.data.galeries.Where(x => x.isActive))
+            if (accommodation.data.galeries != null)
             {
-                foreach(var image in gallery.images)
+                foreach (var gallery in accommodation.data.galeries.Where(x => x.isActive))
                 {
-                    ImageGallery mygallery = new ImageGallery();
+                    foreach (var image in gallery.images)
+                    {
+                        ImageGallery mygallery = new ImageGallery();
 
-                    mygallery.ImageUrl = image.url;
-                    mygallery.ListPosition = image.order;
-                    mygallery.IsInGallery = image.isActive;
+                        mygallery.ImageUrl = image.url;
+                        mygallery.ListPosition = image.order;
+                        mygallery.IsInGallery = image.isActive;
 
-                    mygallery.Height = image.heightPixel;
-                    mygallery.Width = image.widthPixel;
+                        mygallery.Height = image.heightPixel;
+                        mygallery.Width = image.widthPixel;
 
-                    mygallery.CopyRight = image.copyright;
-                    mygallery.License = image.license;
+                        mygallery.CopyRight = image.copyright;
+                        mygallery.License = image.license;
 
-                    //TODO Image Descriptions not in Interface?
+                        //TODO Image Descriptions not in Interface?
 
-                    imagegallerylist.Add(mygallery);
+                        imagegallerylist.Add(mygallery);
 
+                    }
                 }
             }
-
             accommodationlinked.ImageGallery = imagegallerylist.ToList();
 
             //Reorder Image Gallery
@@ -506,7 +514,7 @@ namespace AccommodationTransformer.Parser
             accommodationlinked.DistrictId = accommodation.data.district.rid;
 
             //Reviews
-            var trustyourating = accommodation.data.reviews.Where(x => x.type == "trustyou").FirstOrDefault();
+            var trustyourating = accommodation.data.reviews != null ? accommodation.data.reviews.Where(x => x.type == "trustyou").FirstOrDefault() : null;
             if(trustyourating != null)
             {
                 var review = new DataModel.Review();
@@ -531,7 +539,7 @@ namespace AccommodationTransformer.Parser
             //Accessibility Independent Data
             IndependentData independentdata = new IndependentData();
 
-            var independentrating = accommodation.data.reviews.Where(x => x.type == "independent").FirstOrDefault();
+            var independentrating = accommodation.data.reviews != null ? accommodation.data.reviews.Where(x => x.type == "independent").FirstOrDefault() : null;
 
             if(independentrating != null)
             {
