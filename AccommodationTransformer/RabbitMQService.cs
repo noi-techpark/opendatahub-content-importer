@@ -70,10 +70,17 @@ namespace AccommodationTransformer
                 //Load all XDocuments
                 var xmlfiles = LoadXmlFiles("..\\..\\..\\xml\\");
 
+                //Parse the Accommodation
                 var result = AccommodationParser.ParseLTSAccommodation(accomodationdetail, false, xmlfiles);
+
+                //Parse Rooms
+
+                //Add Parsed Rooms to Accommodation Object
 
                 //Write to the ODH Api and pass referer + use a service account
                 var apiresponse = await writetoodhapi.PushToODHApiCore(result, result.Id, "Accommodation");
+
+                //Write all rooms to thee ODH Api and pass referer + use a service account
 
                 return true;
             }

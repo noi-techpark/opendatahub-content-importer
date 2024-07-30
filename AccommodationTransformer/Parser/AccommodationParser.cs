@@ -29,40 +29,42 @@ namespace AccommodationTransformer.Parser
             }
             catch(Exception ex)
             {
-                AccommodationLinked accommodationlinked = new AccommodationLinked();
+                //AccommodationLinked accommodationlinked = new AccommodationLinked();
 
-                //Accommodation Type
+                ////Accommodation Type
 
-                //Accommodation Category
+                ////Accommodation Category
 
-                //Accommodation Detail
+                ////Accommodation Detail
 
-                //Address Groups
+                ////Address Groups
 
-                //Amenities
+                ////Amenities
 
-                //GPS Info
+                ////GPS Info
 
-                //Images
+                ////Images
 
-                //Galleries
+                ////Galleries
 
-                //District
+                ////District
 
-                //TODO PARSE ACCOMMODATION
-                var name = accomodationdetail["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"].Value<JObject>();
-                string namede = "";
+                ////TODO PARSE ACCOMMODATION
+                //var name = accomodationdetail["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"].Value<JObject>();
+                //string namede = "";
 
-                if (name != null)
-                {
-                    JToken token = name["de"];
-                    if (token != null)
-                    {
-                        namede = token.Value<string>();
-                    }
-                }
+                //if (name != null)
+                //{
+                //    JToken token = name["de"];
+                //    if (token != null)
+                //    {
+                //        namede = token.Value<string>();
+                //    }
+                //}
 
-                return accommodationlinked;
+                //return accommodationlinked;
+
+                return null;
             }          
         }
 
@@ -574,6 +576,9 @@ namespace AccommodationTransformer.Parser
 
             //IF Badge Behindertengerecht is present add it as Tag NEW: Additional Check is done 
             UpdateBadgesToSmgTags(accommodationlinked, "Behindertengerecht", "barrier-free");
+
+            //TODO Create AccoRoomInfo
+            //TODO OwnerRID
 
             return accommodationlinked;
         }
