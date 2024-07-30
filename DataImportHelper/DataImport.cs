@@ -134,7 +134,9 @@ namespace DataImportHelper
 
                 var requesturl = odhapicoreendpoint + postendpoint + "/" + id;
 
-                return await client.PostAsync(requesturl, new StringContent(JsonConvert.SerializeObject(data)));
+                var result = await client.PutAsync(requesturl, new StringContent(JsonConvert.SerializeObject(data)));
+
+                return result;
             }
         }
     }

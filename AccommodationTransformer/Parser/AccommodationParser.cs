@@ -319,6 +319,12 @@ namespace AccommodationTransformer.Parser
             foreach (var addressgroup in accommodation.data.addressGroups)
                 additionalfeaturestoadd.Add(addressgroup.rid);
 
+            //TO Check adding Address Groups as Marketinggroups
+            accommodationlinked.MarketingGroupIds = new List<string>();
+            foreach (var addressgroup in accommodation.data.addressGroups)
+            {
+                accommodationlinked.MarketingGroupIds.Add(addressgroup.rid);
+            }
 
             foreach (var featuretoadd in additionalfeaturestoadd)
             {
