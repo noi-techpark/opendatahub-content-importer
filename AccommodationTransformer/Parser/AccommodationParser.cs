@@ -565,6 +565,49 @@ namespace AccommodationTransformer.Parser
                 }
             }
 
+            //Seasons
+            List<OperationSchedule> operationschedules = new List<OperationSchedule>();
+            if (accommodation.data.seasons != null)
+            {
+                foreach (var season in accommodation.data.seasons)
+                {                   
+                    OperationSchedule schedule = new OperationSchedule();
+                    schedule.Start = Convert.ToDateTime(season.startDate);
+                    schedule.Stop = Convert.ToDateTime(season.endDate);
+                    schedule.Type = "1";
+                    schedule.OperationscheduleName = new Dictionary<string, string>() {
+                        { "de","" },
+                        { "it","" },
+                        { "en","" }
+                    };
+
+                    operationschedules.Add(schedule);
+                }
+            }
+            accommodationlinked.OperationSchedule = operationschedules;
+
+            //Rate Plans
+            List<RatePlan> rateplans = new List<RatePlan>();
+
+            if (accommodation.data.ratePlans != null)
+            {
+                foreach(var rateplanlts in accommodation.data.ratePlans)
+                {
+                    RatePlan rateplan = new RatePlan();
+                    rateplan.RatePlanId = rateplanlts.rid;
+                    rateplan.Name = rateplanlts.name;
+                    rateplan.Description = rateplanlts.descriptions;
+                    rateplan.Visibility = rateplanlts.visibility;
+                    rateplan.Code = rateplanlts.code;
+                    rateplan.ChargeType = rateplanlts.chargeType;
+                    rateplan.LastUpdate = rateplanlts.lastUpdate;
+
+                    rateplans.Add(rateplan);
+                }
+            }
+            accommodationlinked.RatePlan = rateplans;
+
+
             //Special Operations for IDM
             //Special (Mapping Features to Marketinggroup) (B79228E62B5A4D14B2BF35E7B79B8580 ) + 2 (B5757D0688674594955606382A5E126C)  + 3 (31F741E8D6D8444A9BB571A2DF193F69
             MapFeaturetoMarketingGroup(accommodationlinked, "B79228E62B5A4D14B2BF35E7B79B8580");

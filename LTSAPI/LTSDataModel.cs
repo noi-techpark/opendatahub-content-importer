@@ -143,10 +143,11 @@ namespace LTSAPI
     {
         public string chargeType { get; set; }
         public string code { get; set; }
-        public object[] descriptions { get; set; }
+        public Dictionary<string, string>? descriptions { get; set; }
         public DateTime lastUpdate { get; set; }
         public Dictionary<string, string> name { get; set; }
         public string rid { get; set; }
+        public string? visibility { get; set; }
     }
 
     public class Addressgroup
