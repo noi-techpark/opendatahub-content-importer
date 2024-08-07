@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using RabbitPusher;
 using DataImportHelper;
 using Helper;
-using DataImportApi;
 
 Console.WriteLine("Test!");
 var builder = new ConfigurationBuilder()

@@ -592,8 +592,7 @@ namespace AccommodationTransformer.Parser
 
         public static IEnumerable<AccommodationRoomLinked> ParseLTSAccommodationRoom(AccoLTS accommodation,
             bool reduced,
-            XDocument myfeatures, 
-            XDocument roomamenities)
+            IDictionary<string, XDocument> xmlfiles)
         {
             List<AccommodationRoomLinked> roomlist = new List<AccommodationRoomLinked>();
 
@@ -666,13 +665,13 @@ namespace AccommodationTransformer.Parser
                 //Features
                 foreach (var amenity in accoroom.amenities)
                 {
-                    var myfeature = myfeatures.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == amenity.rid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value.ToUpper() == "EN").FirstOrDefault().Attribute("T1Des").Value;
+                    var myfeature = xmlfiles["Features"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == amenity.rid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value.ToUpper() == "EN").FirstOrDefault().Attribute("T1Des").Value;
 
                     //HGV ID Feature + OTA Code
                     string hgvamenityid = "";
                     string otacodes = "";
 
-                    var myamenity = roomamenities.Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == amenity.rid).FirstOrDefault();
+                    var myamenity = xmlfiles["RoomAmenities"].Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == amenity.rid).FirstOrDefault();
 
                     if (myamenity != null)
                     {
