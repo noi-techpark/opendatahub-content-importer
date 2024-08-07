@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Threading.Tasks;
+using DataImportApi;
 using DataImportHelper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
@@ -21,29 +22,9 @@ namespace DataImportConsole
             .AddUserSecrets<Program>();
             //.AddEnvironmentVariables();
             IConfiguration config = builder.Build();
-
-            var ltsidm = config.GetSection("LTSApiIDM");
-            var rabbitconn = config.GetConnectionString("RabbitConnection");
-
-            Dictionary<string, Dictionary<string, string>> settings = new Dictionary<string, Dictionary<string, string>>()
-            {
-                { "lts" , new Dictionary<string, string>()
-                    {
-                        { "clientid", ltsidm.GetSection("xltsclientid").Value },
-                        { "username", ltsidm.GetSection("username").Value },
-                        { "password", ltsidm.GetSection("password").Value },
-                    }
-                },
-                {
-                    "rabbitmq", new Dictionary<string, string>()
-                    {
-                        { "connectionstring", rabbitconn }
-                    }
-                }
-            };
-
+            
+            Settings settings = new Settings(config);
             DataImport dataimport = new DataImport(settings);
-
 
             LogProvider.SetCurrentLogProvider(new ConsoleLogProvider());
 
@@ -59,8 +40,6 @@ namespace DataImportConsole
             //await CreateAccoCategoryJob(scheduler, dataimport);
 
             await CreateAccoChangedJob(scheduler, dataimport);
-
-
 
             Console.WriteLine("Press any key to close the application");
             Console.ReadKey();

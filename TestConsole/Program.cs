@@ -1,6 +1,9 @@
 ﻿using LTSAPI;
 using Microsoft.Extensions.Configuration;
 using RabbitPusher;
+using DataImportHelper;
+using Helper;
+using DataImportApi;
 
 Console.WriteLine("Test!");
 var builder = new ConfigurationBuilder()
@@ -10,19 +13,16 @@ var builder = new ConfigurationBuilder()
 //.AddEnvironmentVariables();
 IConfiguration config = builder.Build();
 
-var ltsidm = config.GetSection("LTSApiIDM");
+Settings settings = new Settings(config);
 
-//LtsApi ltsapi = new LtsApi(new LTSCredentials() { ltsclientid = "", username = "", password = "" }, new Dictionary<string, string>() { "", "" });
-LtsApi ltsapi = new LtsApi(new LTSCredentials() { 
-    ltsclientid = ltsidm.GetSection("xltsclientid").Value, 
-    username = ltsidm.GetSection("username").Value, 
-    password = ltsidm.GetSection("password").Value }
-    );
+DataImport dataimport = new DataImport(settings);
 
-var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
-var dict = ltsapi.GetLTSQSDictionary(qs);
 
-RabbitMQSend rabbitsend = new RabbitMQSend(config.GetConnectionString("RabbitConnection"));
+//var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
+
+await dataimport.ImportLTSAccommodationSingle("2657B7CBCb85380B253D2fBE28AF100E");
+
+//RabbitMQSend rabbitsend = new RabbitMQSend(config.GetConnectionString("RabbitConnection"));
 
 //var ltsamenities = await ltsapi.AccommodationAmenitiesRequest(null, true);
 //rabbitsend.Send("lts/accommodationamenities", ltsamenities);
@@ -53,6 +53,6 @@ RabbitMQSend rabbitsend = new RabbitMQSend(config.GetConnectionString("RabbitCon
 
 //TEST accommodation Parsing
 
-var ltsacco2 = await ltsapi.AccommodationDetailRequest("2657B7CBCb85380B253D2fBE28AF100E", null);
-rabbitsend.Send("lts/accommodationdetail", ltsacco2);
+//var ltsacco2 = await ltsapi.AccommodationDetailRequest("2657B7CBCb85380B253D2fBE28AF100E", null);
+//rabbitsend.Send("lts/accommodationdetail", ltsacco2);
 

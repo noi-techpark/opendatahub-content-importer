@@ -385,12 +385,7 @@ namespace LTSAPI
         #endregion
     }
 
-    public class LTSCredentials
-    {
-        public string ltsclientid { get; set; }
-        public string username { get; set; }
-        public string password { get; set; }
-    }
+    
 
     public class LTSQueryStrings
     {

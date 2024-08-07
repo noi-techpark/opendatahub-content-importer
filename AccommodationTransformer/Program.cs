@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Helper;
 
 namespace AccommodationTransformer
 {
@@ -23,59 +24,25 @@ namespace AccommodationTransformer
             Host.CreateDefaultBuilder(args)            
             .ConfigureServices((hostContext, services) =>
                 {
+                    Settings settings = new Settings(hostContext.Configuration);
+
                     WorkerSettings workersettings = new WorkerSettings()
                     {
-                        RabbitConnectionString = hostContext.Configuration.GetConnectionString("RabbitConnection"),
-                        MongoDBConnectionString = hostContext.Configuration.GetConnectionString("MongoDBConnection"),                        
-                        ReadQueue = hostContext.Configuration.GetSection("RabbitMQConfiguration").GetValue<string>("ReadQueue", "")
-                    };
-
-                    var ltsidm = hostContext.Configuration.GetSection("LTSApiIDM");
-                    Dictionary<string, Dictionary<string, string>> settings = new Dictionary<string, Dictionary<string, string>>()
-                    {
-                        { "lts" , new Dictionary<string, string>()
-                            {
-                                { "clientid", ltsidm.GetSection("xltsclientid").Value },
-                                { "username", ltsidm.GetSection("username").Value },
-                                { "password", ltsidm.GetSection("password").Value },
-                            }
-                        },
-                        {
-                            "rabbitmq", new Dictionary<string, string>()
-                            {
-                                { "connectionstring", hostContext.Configuration.GetConnectionString("RabbitConnection") }
-                            }
-                        }
-                    };
+                        RabbitConnectionString = settings.RabbitConnection,
+                        MongoDBConnectionString = settings.MongoDBConnection,
+                        ReadQueue = settings.RabbitMQConfiguration.ReadQueue
+                    };                    
 
                     var writetoapisettings = hostContext.Configuration.GetSection("ODHApiCore");
                     var apiwriter = new ODHApiWriter(
-                        writetoapisettings.GetSection("authserver").Value,
-                        writetoapisettings.GetSection("client_id").Value,
-                        writetoapisettings.GetSection("client_secret").Value,
-                        writetoapisettings.GetSection("apiurl").Value);
+                        settings.ODHApiCoreConfiguration.AuthServer,
+                        settings.ODHApiCoreConfiguration.ClientId,
+                        settings.ODHApiCoreConfiguration.ClientSecret,
+                        settings.ODHApiCoreConfiguration.ApiEndpoint);
 
 
-                    DataImport dataimport = new DataImport(settings);
-
-                    var ltsnoi = hostContext.Configuration.GetSection("LTSApiIDM");
-                    Dictionary<string, Dictionary<string, string>> settingsopen = new Dictionary<string, Dictionary<string, string>>()
-                    {
-                        { "lts" , new Dictionary<string, string>()
-                            {
-                                { "clientid", ltsnoi.GetSection("xltsclientid").Value },
-                                { "username", ltsnoi.GetSection("username").Value },
-                                { "password", ltsnoi.GetSection("password").Value },
-                            }
-                        },
-                        {
-                            "rabbitmq", new Dictionary<string, string>()
-                            {
-                                { "connectionstring", hostContext.Configuration.GetConnectionString("RabbitConnection") }
-                            }
-                        }
-                    };
-                    DataImport dataimportopen = new DataImport(settingsopen, true);
+                    DataImport dataimport = new DataImport(settings.LtsCredentials, settings.RabbitConnection);                    
+                    DataImport dataimportopen = new DataImport(settings.LtsCredentialsOpen, settings.RabbitConnection);
 
                     IDictionary<string, DataImport> dataimportlist = new Dictionary<string, DataImport>()
                     {

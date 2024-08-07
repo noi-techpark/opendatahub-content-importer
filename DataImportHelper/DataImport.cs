@@ -1,4 +1,5 @@
 ﻿using LTSAPI;
+using Helper;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RabbitPusher;
@@ -9,25 +10,44 @@ using System.Text;
 
 namespace DataImportHelper
 {
-    public class DataImport
+    public interface IDataImport
     {
-        public LTSCredentials ltscredentials { get; set; }
+        Task ImportLTSAccoAmenities();
+        Task ImportLTSAccoCategories();
+        Task ImportLTSAccoTypes();
+        Task ImportLTSAccommodationChanged(DateTime datefrom);
+        Task ImportLTSAccommodationDeleted(DateTime datefrom);
+        Task ImportLTSAccommodationSingle(string rid);
+    }
+
+    public class DataImport : IDataImport
+    {
         public LtsApi ltsapi { get; set; }
 
         public string opendata { get; set; }
 
         RabbitMQSend rabbitsend { get; set; }
 
-        public DataImport(Dictionary<string,Dictionary<string,string>> settings, bool open = false)
+        public DataImport(ISettings settings)
         {
-            ltscredentials = new LTSCredentials() { ltsclientid = settings["lts"]["clientid"], username = settings["lts"]["username"], password = settings["lts"]["password"] };
-            ltsapi = new LtsApi(ltscredentials);
-            if (open)
+            ltsapi = new LtsApi(settings.LtsCredentials);
+            if (settings.LtsCredentials.opendata)
                 opendata = "_opendata";
             else
                 opendata = "";
 
-            rabbitsend = new RabbitMQSend(settings["rabbitmq"]["connectionstring"]);
+            rabbitsend = new RabbitMQSend(settings.RabbitConnection);
+        }
+
+        public DataImport(LTSCredentials ltscredentials, string rabbitconnection)
+        {
+            ltsapi = new LtsApi(ltscredentials);
+            if (ltscredentials.opendata)
+                opendata = "_opendata";
+            else
+                opendata = "";
+
+            rabbitsend = new RabbitMQSend(rabbitconnection);
         }
 
         //This import methods are used by the Api and Console Application

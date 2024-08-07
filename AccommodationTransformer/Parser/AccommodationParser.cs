@@ -14,6 +14,7 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AccommodationTransformer.Parser
 {
@@ -307,7 +308,7 @@ namespace AccommodationTransformer.Parser
                 }
             }
 
-            //GuestPass
+            //GuestPass (Adding to features, to check if we should add it to Tags)
             var guestpass = accommodation.data.suedtirolGuestPass;
             if(guestpass != null && guestpass.isActive)
             {
@@ -1564,6 +1565,8 @@ namespace AccommodationTransformer.Parser
             }
         }
 
+        //Refers to LTS SendData B0Typ Type of room: 0=undefined; 1=room; 2=apartment; 3=camp site (Stellplatz); 4=caravan for rent; 5=tent area(Zeltplatz); 6=Bungalow; 7=camp(Schlaflager)
+
         private static string GetRoomType(int roomtype)
         {
             string myroomtype = "";
@@ -1606,6 +1609,7 @@ namespace AccommodationTransformer.Parser
             return myroomtype;
         }
 
+        //Converts Room Type of the new Interface to B0Typ
         private static int GetRoomType(string roomtype)
         {
             switch (roomtype)
@@ -1613,7 +1617,8 @@ namespace AccommodationTransformer.Parser
                 case "undefined": return 0;                    
                 case "room": return 1;                    
                 case "apartment": return 2;
-                case "pitch": return 4;
+                case "pitch": return 3;
+                case "dorm": return 4;
                 default: return 0;
             }
         }
