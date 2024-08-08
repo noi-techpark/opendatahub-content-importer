@@ -11,25 +11,82 @@ namespace DataImportApi.Controllers
     {
         private IDataImport dataimport;
 
-        public UpdateController(IDataImport dataimport) 
+        public UpdateController(IDataImport dataimport)
         {
             this.dataimport = dataimport;
         }
 
         [HttpGet, Route("LTS/{datatype}/{operation}")]
-        public ContentResult Update(
-            string datatype, 
-            string operation,
+        public async Task<IActionResult> Update(
+            LTSDatatype datatype,
+            Operation operation,
             string? id,
             string? lastchange)
-        {            
-            return new ContentResult
+        {
+            var response = new UpdateResponse() { success = null, message = null, operation = String.Join(".", "lts", datatype, operation) };
+
+            if (datatype == LTSDatatype.accommodations)
             {
-                Content = datatype,
-                ContentType = "text/html"
-            };
+                if (operation == Operation.list)
+                {
+                    DateTime updatefrom = DateTime.Now.AddDays(-1);
+
+                    if (!String.IsNullOrEmpty(lastchange))
+                        DateTime.TryParse(lastchange, out updatefrom);
+
+                    await dataimport.ImportLTSAccommodationChanged(updatefrom);
+
+                    response.success = true;
+                    response.message = String.Format("Import Accommodation List succeeded {0}", updatefrom.ToShortDateString());
+                }
+                if (operation == Operation.single)
+                {                    
+                    await dataimport.ImportLTSAccommodationSingle(id);
+
+                    response.success = true;
+                    response.message = String.Format("Import Accommodation Single {0} succeeded", id);
+                }
+            }
+
+
+            return new JsonResult(response);
         }
     }
+    
 
 
+    public enum LTSDatatype
+    {
+        accommodations,
+        gastronomies,
+        events,
+        activities,
+        pointofinterests,
+        venues,
+        webcams,
+        weathersnows,
+        beacons,
+        tags
+    }
+
+    public enum Operation
+    {
+        list,
+        single,
+        changed,
+        deleted,
+        search,
+        categories,
+        types,
+        roomgroups,
+        mealplans
+    }
+
+    public class UpdateResponse
+    {
+        public bool? success { get; set; }
+        public string? message { get; set; }
+        public string? error { get; set; }
+        public string? operation { get; set; }
+    }
 }
