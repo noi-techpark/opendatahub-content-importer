@@ -34,7 +34,7 @@ namespace AccommodationTransformer
                     };                    
 
                     var writetoapisettings = hostContext.Configuration.GetSection("ODHApiCore");
-                    var apiwriter = new ODHApiWriter(
+                    var apiwriter = new ODHApiConnector(
                         settings.ODHApiCoreConfiguration.AuthServer,
                         settings.ODHApiCoreConfiguration.ClientId,
                         settings.ODHApiCoreConfiguration.ClientSecret,

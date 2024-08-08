@@ -128,19 +128,46 @@ namespace DataImportHelper
 
     }
 
-    public class ODHApiWriter
+    public interface IODHApiConnector
+    {
+        Task<T> GetFromODHApiCore<T>(T data, string id, string getendpoint);
+        Task<HttpResponseMessage> PostToODHApiCore<T>(T data, string id, string putendpoint);
+        Task<HttpResponseMessage> PutToODHApiCore<T>(T data, string id, string putendpoint);
+        Task<HttpResponseMessage> DeleteFromODHApiCore(string id, string deleteendpoint);
+    }
+
+    public class ODHApiConnector : IODHApiConnector
     {
         protected string odhapicoreendpoint = "";
         protected string endpoint = "";
         protected string clientid = "";
         protected string clientsecret = "";
 
-        public ODHApiWriter(string _endpoint, string _clientid, string _clientsecret, string _odhapicoreendpoint)
+        public ODHApiConnector(string _endpoint, string _clientid, string _clientsecret, string _odhapicoreendpoint)
         {
             endpoint = _endpoint;
             clientid = _clientid;
             clientsecret = _clientsecret;
             odhapicoreendpoint = _odhapicoreendpoint;
+        }
+
+        public async Task<T> GetFromODHApiCore<T>(T data, string id, string getendpoint)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Referrer = new Uri("https://tourism.importer.v2");
+                //Get Token from Singleton
+                ODHTokenStore tokenstore = await ODHTokenStore.GetInstance(endpoint, clientid, clientsecret);
+                var token = tokenstore.GetBearerHeader();
+                //Add the Bearer Token to the Request Header
+                client.DefaultRequestHeaders.Add("Authorization", token);
+
+                var requesturl = odhapicoreendpoint + getendpoint + "/" + id;
+
+                var result = await client.GetAsync(requesturl);
+
+                return JsonConvert.DeserializeObject<T>(await result.Content.ReadAsStringAsync());
+            }
         }
 
         public async Task<HttpResponseMessage> PushToODHApiCore<T>(T data, string id, string postendpoint)
@@ -177,7 +204,6 @@ namespace DataImportHelper
             }
         }
 
-
         public async Task<HttpResponseMessage> PutToODHApiCore<T>(T data, string id, string putendpoint)
         {
             using (var client = new HttpClient())
@@ -194,27 +220,7 @@ namespace DataImportHelper
                 return await client.PutAsync(requesturl, new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json"));
             }
         }
-
-
-        public async Task<T> LoadFromODHApiCore<T>(T data, string id, string getendpoint)
-        {
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Referrer = new Uri("https://tourism.importer.v2");
-                //Get Token from Singleton
-                ODHTokenStore tokenstore = await ODHTokenStore.GetInstance(endpoint, clientid, clientsecret);
-                var token = tokenstore.GetBearerHeader();
-                //Add the Bearer Token to the Request Header
-                client.DefaultRequestHeaders.Add("Authorization", token);
-
-                var requesturl = odhapicoreendpoint + getendpoint + "/" + id;
-
-                var result = await client.GetAsync(requesturl);
-
-                return JsonConvert.DeserializeObject<T>(await result.Content.ReadAsStringAsync());
-            }
-        }
-
+        
         public async Task<HttpResponseMessage> DeleteFromODHApiCore(string id, string deleteendpoint)
         {
             using (var client = new HttpClient())
@@ -320,5 +326,10 @@ namespace DataImportHelper
 
         [JsonProperty("refresh_token")]
         public string RefreshToken { get; set; }
+    }
+
+    public class DataImportLog
+    {
+        //TODO Add Log classes
     }
 }

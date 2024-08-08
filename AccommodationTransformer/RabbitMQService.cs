@@ -87,7 +87,7 @@ namespace AccommodationTransformer
 
 
                 //Write to the ODH Api and pass referer + use a service account
-                var apiresponse = await writetoodhapi.PushToODHApiCore(result, result.Id, "Accommodation");
+                var apiresponse = await odhapiconnector.PushToODHApiCore(accommodation, accommodation.Id, "Accommodation");
 
                 //Write all rooms to thee ODH Api and pass referer + use a service account
 
