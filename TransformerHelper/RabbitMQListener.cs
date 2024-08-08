@@ -22,19 +22,26 @@ namespace TransformerHelper
         protected ODHApiConnector odhapiconnector;
 
         public void Read(string rabbitconnectionstring, string mongoconnection, List<string> queues, IDictionary<string, DataImport> _dataimport, ODHApiConnector _odhapiconnector)
-        {            
-            var _rabbitMQServer = new ConnectionFactory() { Uri = new Uri(rabbitconnectionstring) };
+        {
+            try
+            {
+                var _rabbitMQServer = new ConnectionFactory() { Uri = new Uri(rabbitconnectionstring) };
 
-            using var connection = _rabbitMQServer.CreateConnection();
+                using var connection = _rabbitMQServer.CreateConnection();
 
-            using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();
 
-            mongodbconnection = mongoconnection;
-            dataimport = _dataimport;
+                mongodbconnection = mongoconnection;
+                dataimport = _dataimport;
 
-            odhapiconnector = _odhapiconnector;
+                odhapiconnector = _odhapiconnector;
 
-            StartReading(channel, queues);
+                StartReading(channel, queues);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private async void StartReading(IModel channel, List<string> queues)
