@@ -19,6 +19,7 @@ namespace LTSAPI
 
         public LtsApi(LTSCredentials _credentials) 
         {
+            //TODO SET THIS URL IN CONFIG
             this.baseurl = "https://go.lts.it/api/v1";
             this.credentials = _credentials;                        
         }
