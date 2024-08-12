@@ -64,7 +64,7 @@ namespace RabbitPusher
                                  body: messagebody);
 
 
-            Console.WriteLine($"Sent message to { provider }" );
+            Console.WriteLine(JsonConvert.SerializeObject(new RabbitLog() { id = message.id, routingkey = message.provider }));
         }
     }
 
@@ -84,5 +84,9 @@ namespace RabbitPusher
         }
     }
 
-    
+    public class RabbitLog
+    {
+        public string id { get; set; }
+        public string routingkey { get; set; }        
+    }
 }

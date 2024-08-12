@@ -1,13 +1,19 @@
 services:
-  rabbitpusher:
-    image: ${DOCKER_REGISTRY-}rabbitpusher
+  dataimportapi:
+    image: ${DOCKER_REGISTRY-}dataimportapi
     build:
       context: .
-      dockerfile: RabbitPusher/Dockerfile
+      dockerfile: DataImportApi/Dockerfile
+      
+  dataimportconsole:
+    image: ${DOCKER_REGISTRY-}dataimportconsole
+    build:
+      context: .
+      dockerfile: DataImportConsole/Dockerfile
 
-  rabbitlistener:
-    image: ${DOCKER_REGISTRY-}rabbitlistener
+  accommodationtransformer:
+    image: ${DOCKER_REGISTRY-}accommodationtransformer
     build:
       context: .
-      dockerfile: RabbitListener/Dockerfile
+      dockerfile: AccommodationTransformer/Dockerfile
 

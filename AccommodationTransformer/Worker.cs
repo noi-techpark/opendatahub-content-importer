@@ -19,9 +19,9 @@ namespace AccommodationTransformer
         private readonly IReadAccommodation _readAccoMessage;
         private readonly WorkerSettings _configuration;
         private IDictionary<string, DataImport> _dataimport;
-        private ODHApiWriter _dataWriteToODHApi;
+        private ODHApiConnector _odhConnector;
 
-        public Worker(IReadAccommodation readAccoMessage, ILogger<Worker> logger, WorkerSettings configuration, IDictionary<string, DataImport> dataimport, ODHApiWriter datawritetoapi)
+        public Worker(IReadAccommodation readAccoMessage, ILogger<Worker> logger, WorkerSettings configuration, IDictionary<string, DataImport> dataimport, ODHApiConnector odhConnector)
         {
             _logger = logger;
 
@@ -31,7 +31,7 @@ namespace AccommodationTransformer
 
             _dataimport = dataimport;
 
-            _dataWriteToODHApi = datawritetoapi;
+            _odhConnector = odhConnector;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -39,7 +39,7 @@ namespace AccommodationTransformer
             while (!stoppingToken.IsCancellationRequested)
             {
                 // Run the Read method
-                await Task.Run(() => _readAccoMessage.Read(_configuration.RabbitConnectionString, _configuration.MongoDBConnectionString, new List<string>() { "lts.accommodationchanged", "lts.accommodationdetail", "lts.accommodationdetail_open" }, _dataimport, _dataWriteToODHApi));                //, 
+                await Task.Run(() => _readAccoMessage.Read(_configuration.RabbitConnectionString, _configuration.MongoDBConnectionString, new List<string>() { "lts.accommodationchanged", "lts.accommodationdetail", "lts.accommodationdetail_open" }, _dataimport, _odhConnector));                //, 
             }
         }
     }

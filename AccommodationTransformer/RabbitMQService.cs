@@ -5,6 +5,7 @@
 using AccommodationTransformer.Parser;
 using DataImportHelper;
 using Helper;
+using LTSAPI;
 using Microsoft.Extensions.Configuration;
 using MongoDBConnector;
 using Newtonsoft.Json;
@@ -68,17 +69,25 @@ namespace AccommodationTransformer
                 Console.WriteLine("Processing Accommodation " + accomodationdetail["data"]["rid"].Value<string>());
 
                 //Load all XDocuments
-                var xmlfiles = LoadXmlFiles("..\\..\\..\\xml\\");
+                var xmlfiles = LoadXmlFiles(Path.Combine(".\\xml\\"));
 
                 //Parse the Accommodation
-                var result = AccommodationParser.ParseLTSAccommodation(accomodationdetail, false, xmlfiles);
+                var accommodation = AccommodationParser.ParseLTSAccommodation(accomodationdetail.ToObject<AccoLTS>(), false, xmlfiles);
 
                 //Parse Rooms
+                var accommodationrooms = AccommodationParser.ParseLTSAccommodationRoom(accomodationdetail.ToObject<AccoLTS>(), false, xmlfiles);
 
-                //Add Parsed Rooms to Accommodation Object
+                //Add Parsed Rooms to Accommodation Object QUESTION IF THIS SHOULD BE DONE ON ODH API CORE SIDE?
+
+                //GET HGV Room Data
+
+                //How to write down the AccommodationRooms? delete all rooms that aren't present anymore etc...
+
+                //GET HGV Accommodation Overview  SHOULD A PATCH METHOD IMPLEMENTED? Or should 
+
 
                 //Write to the ODH Api and pass referer + use a service account
-                var apiresponse = await writetoodhapi.PushToODHApiCore(result, result.Id, "Accommodation");
+                var apiresponse = await odhapiconnector.PushToODHApiCore(accommodation, accommodation.Id, "Accommodation");
 
                 //Write all rooms to thee ODH Api and pass referer + use a service account
 

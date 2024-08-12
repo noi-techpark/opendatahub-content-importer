@@ -14,6 +14,7 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AccommodationTransformer.Parser
 {
@@ -307,7 +308,7 @@ namespace AccommodationTransformer.Parser
                 }
             }
 
-            //GuestPass
+            //GuestPass (Adding to features, to check if we should add it to Tags)
             var guestpass = accommodation.data.suedtirolGuestPass;
             if(guestpass != null && guestpass.isActive)
             {
@@ -634,8 +635,7 @@ namespace AccommodationTransformer.Parser
 
         public static IEnumerable<AccommodationRoomLinked> ParseLTSAccommodationRoom(AccoLTS accommodation,
             bool reduced,
-            XDocument myfeatures, 
-            XDocument roomamenities)
+            IDictionary<string, XDocument> xmlfiles)
         {
             List<AccommodationRoomLinked> roomlist = new List<AccommodationRoomLinked>();
 
@@ -708,13 +708,13 @@ namespace AccommodationTransformer.Parser
                 //Features
                 foreach (var amenity in accoroom.amenities)
                 {
-                    var myfeature = myfeatures.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == amenity.rid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value.ToUpper() == "EN").FirstOrDefault().Attribute("T1Des").Value;
+                    var myfeature = xmlfiles["Features"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == amenity.rid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value.ToUpper() == "EN").FirstOrDefault().Attribute("T1Des").Value;
 
                     //HGV ID Feature + OTA Code
                     string hgvamenityid = "";
                     string otacodes = "";
 
-                    var myamenity = roomamenities.Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == amenity.rid).FirstOrDefault();
+                    var myamenity = xmlfiles["RoomAmenities"].Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == amenity.rid).FirstOrDefault();
 
                     if (myamenity != null)
                     {
@@ -1607,6 +1607,8 @@ namespace AccommodationTransformer.Parser
             }
         }
 
+        //Refers to LTS SendData B0Typ Type of room: 0=undefined; 1=room; 2=apartment; 3=camp site (Stellplatz); 4=caravan for rent; 5=tent area(Zeltplatz); 6=Bungalow; 7=camp(Schlaflager)
+
         private static string GetRoomType(int roomtype)
         {
             string myroomtype = "";
@@ -1649,6 +1651,7 @@ namespace AccommodationTransformer.Parser
             return myroomtype;
         }
 
+        //Converts Room Type of the new Interface to B0Typ
         private static int GetRoomType(string roomtype)
         {
             switch (roomtype)
@@ -1656,7 +1659,8 @@ namespace AccommodationTransformer.Parser
                 case "undefined": return 0;                    
                 case "room": return 1;                    
                 case "apartment": return 2;
-                case "pitch": return 4;
+                case "pitch": return 3;
+                case "dorm": return 4;
                 default: return 0;
             }
         }

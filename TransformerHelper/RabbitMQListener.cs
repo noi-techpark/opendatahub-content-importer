@@ -11,7 +11,7 @@ namespace TransformerHelper
     #region Generic Code
     public interface IReadMessage
     {
-        void Read(string rabbitconnectionstring, string mongoconnection, List<string> queues, IDictionary<string, DataImport> dataimport, ODHApiWriter writetoodhapi);
+        void Read(string rabbitconnectionstring, string mongoconnection, List<string> queues, IDictionary<string, DataImport> dataimport, ODHApiConnector odhapiconnector);
     }
 
     public abstract class ReadMessage : IReadMessage
@@ -19,22 +19,29 @@ namespace TransformerHelper
         protected string mongodbconnection;
         //protected string rabbitmqconnection;
         protected IDictionary<string, DataImport> dataimport;
-        protected ODHApiWriter writetoodhapi;
+        protected ODHApiConnector odhapiconnector;
 
-        public void Read(string rabbitconnectionstring, string mongoconnection, List<string> queues, IDictionary<string, DataImport> _dataimport, ODHApiWriter _writetoodhapi)
-        {            
-            var _rabbitMQServer = new ConnectionFactory() { Uri = new Uri(rabbitconnectionstring) };
+        public void Read(string rabbitconnectionstring, string mongoconnection, List<string> queues, IDictionary<string, DataImport> _dataimport, ODHApiConnector _odhapiconnector)
+        {
+            try
+            {
+                var _rabbitMQServer = new ConnectionFactory() { Uri = new Uri(rabbitconnectionstring) };
 
-            using var connection = _rabbitMQServer.CreateConnection();
+                using var connection = _rabbitMQServer.CreateConnection();
 
-            using var channel = connection.CreateModel();
+                using var channel = connection.CreateModel();
 
-            mongodbconnection = mongoconnection;
-            dataimport = _dataimport;
+                mongodbconnection = mongoconnection;
+                dataimport = _dataimport;
 
-            writetoodhapi = _writetoodhapi;
+                odhapiconnector = _odhapiconnector;
 
-            StartReading(channel, queues);
+                StartReading(channel, queues);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private async void StartReading(IModel channel, List<string> queues)
@@ -91,11 +98,6 @@ namespace TransformerHelper
         {
             //Transformer Logic goes here
             throw new NotImplementedException();
-        }
-
-        public async Task<HttpResponseMessage> PushToODHApiCore<T>(T data, string id, string endpoint)
-        {
-            return await writetoodhapi.PushToODHApiCore(data, id, endpoint);
         }
     }
 

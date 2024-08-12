@@ -33,7 +33,7 @@ namespace LTSAPI
              
                 using (var client = new HttpClient())
                 {
-                    client.Timeout = TimeSpan.FromSeconds(10);
+                    client.Timeout = TimeSpan.FromSeconds(30);
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(credentials.username + ":" + credentials.password)));
                     client.DefaultRequestHeaders.Add("X-LTS-ClientID", credentials.ltsclientid);
 
@@ -104,7 +104,8 @@ namespace LTSAPI
             }
             else
             {
-                return new List<JObject>() { new JObject(new { error = true, message = "LTS Api error ", exception = await response.Content.ReadAsStringAsync() }) };
+                var error = await response.Content.ReadAsStringAsync();
+                return new List<JObject>() { new JObject(new { error = true, message = "LTS Api error ", exception = error  }) };
             }
         }
 
@@ -386,12 +387,7 @@ namespace LTSAPI
         #endregion
     }
 
-    public class LTSCredentials
-    {
-        public string ltsclientid { get; set; }
-        public string username { get; set; }
-        public string password { get; set; }
-    }
+    
 
     public class LTSQueryStrings
     {
