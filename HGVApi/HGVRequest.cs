@@ -6,12 +6,15 @@ namespace HGVApi
 {
     public class HGVRequest
     {
-        public static async Task<XElement> GetMssRoomlistAsync(string lang, string hotelid, string hotelidofchannel, XElement roomdetails, XDocument roomamenities, string source, string version, string mssuser, string msspswd)
+        public static async Task<XElement> GetMssRoomlistAsync(string lang, string hotelid, string hotelidofchannel, XElement roomdetails, XDocument roomamenities, string source, string version)
         {
             try
             {
-                XDocument myrequest = MssRequest.BuildRoomlistPostData(roomdetails, hotelid, hotelidofchannel, lang, source, version, mssuser, msspswd);
-                var myresponses = MssRequest.RequestRoomAsync(myrequest);
+                //TODO add this from config
+                MssRequest mssRequest = new MssRequest(null);
+
+                XDocument myrequest = mssRequest.BuildRoomlistPostData(roomdetails, hotelid, hotelidofchannel, lang, source, version);
+                var myresponses = mssRequest.RequestRoomListAsync(myrequest);
 
                 await Task.WhenAll(myresponses);
 
@@ -32,23 +35,40 @@ namespace HGVApi
 
     }
 
+    public enum MSSFunction
+    {
+        getHotelList,
+        getSpecialList,
+        getRoomList,
+        getLocationList
+    }
+
+    public class HGVCredentials
+    {
+        public string serviceurl { get; set; }
+        public string username { get; set; }
+        public string password { get; set; }
+    }
+
     public class MssRequest
     {
-        //TODO FILL THIS URLS by config
-        public const string serviceurl = "";
-        public const string serviceurlspecial = "";
-        //neu getroomlist
-        public const string serviceurlroomlist = "";
-        public const string serviceurllocationlist = "";
+        string baseurl;
+        HGVCredentials credentials;
+        public MssRequest(HGVCredentials _credentials)
+        {
+            this.baseurl = _credentials.serviceurl; // @"http://www.easymailing.eu/mss/mss_service.php";
+            this.credentials = _credentials;
+        }
 
 
 
-        public static async Task<HttpResponseMessage> RequestAsync(XDocument request)
+        public async Task<HttpResponseMessage> RequestHotelListAsync(XDocument request)
         {
             try
             {
                 HttpClient myclient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
                 myclient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
+                string serviceurl = baseurl + "?function=" + MSSFunction.getHotelList + "&mode=1";
                 var myresponse = await myclient.PostAsync(serviceurl, new StringContent(request.ToString(), Encoding.UTF8, "text/xml"));
 
                 return myresponse;
@@ -59,13 +79,14 @@ namespace HGVApi
             }
         }
 
-        public static async Task<HttpResponseMessage> RequestSpecialAsync(XDocument request)
+        public async Task<HttpResponseMessage> RequestSpecialListAsync(XDocument request)
         {
             try
             {
                 HttpClient myclient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
                 myclient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
-                var myresponse = await myclient.PostAsync(serviceurlspecial, new StringContent(request.ToString(), Encoding.UTF8, "text/xml"));
+                string serviceurl = baseurl + "?function=" + MSSFunction.getSpecialList + "&mode=1";
+                var myresponse = await myclient.PostAsync(serviceurl, new StringContent(request.ToString(), Encoding.UTF8, "text/xml"));
 
                 return myresponse;
             }
@@ -75,13 +96,15 @@ namespace HGVApi
             }
         }
 
-        public static async Task<HttpResponseMessage> RequestRoomAsync(XDocument request)
+        public async Task<HttpResponseMessage> RequestRoomListAsync(XDocument request)
         {
             try
             {
                 HttpClient myclient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
                 myclient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
-                var myresponse = await myclient.PostAsync(serviceurlroomlist, new StringContent(request.ToString(), Encoding.UTF8, "text/xml"));
+                string serviceurl = baseurl + "?function=" + MSSFunction.getRoomList + "&mode=1";
+
+                var myresponse = await myclient.PostAsync(serviceurl, new StringContent(request.ToString(), Encoding.UTF8, "text/xml"));
 
                 return myresponse;
             }
@@ -89,31 +112,17 @@ namespace HGVApi
             {
                 return new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest, Content = new StringContent(ex.Message) };
             }
-        }
+        }        
 
-        public static HttpResponseMessage RequestRoom(XDocument request)
+        public async Task<HttpResponseMessage> RequestLocationListAsync(XDocument request)
         {
             try
             {
                 HttpClient myclient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
                 myclient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
-                var myresponse = myclient.PostAsync(serviceurlroomlist, new StringContent(request.ToString(), Encoding.UTF8, "text/xml")).Result;
+                string serviceurl = baseurl + "?function=" + MSSFunction.getLocationList + "&mode=1";
 
-                return myresponse;
-            }
-            catch (Exception ex)
-            {
-                return new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest, Content = new StringContent(ex.Message) };
-            }
-        }
-
-        public static async Task<HttpResponseMessage> RequestLocationAsync(XDocument request)
-        {
-            try
-            {
-                HttpClient myclient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
-                myclient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
-                var myresponse = await myclient.PostAsync(serviceurllocationlist, new StringContent(request.ToString(), Encoding.UTF8, "text/xml"));
+                var myresponse = await myclient.PostAsync(serviceurl, new StringContent(request.ToString(), Encoding.UTF8, "text/xml"));
 
                 return myresponse;
             }
@@ -124,15 +133,17 @@ namespace HGVApi
         }
 
 
-        public static XDocument BuildPostData(XElement idlist, XElement channel, XElement roomlist, DateTime arrival, DateTime departure, XElement offerdetails, XElement hoteldetails, XElement type, int service, string lang, string source, string version, string mssuser, string msspswd)
+        //Build the Post Data
+
+        public XDocument BuildPostData(XElement idlist, XElement channel, XElement roomlist, DateTime arrival, DateTime departure, XElement offerdetails, XElement hoteldetails, XElement type, int service, string lang, string source, string version)
         {
             XElement myroot =
                 new XElement("root",
                 new XElement("version", version + ".0"),
                 new XElement("header",
                     new XElement("credentials",
-                        new XElement("user", mssuser),
-                        new XElement("password", msspswd),
+                        new XElement("user", credentials.username),
+                        new XElement("password", credentials.password),
                         new XElement("source", source)
                         ),
                     new XElement("method", "getHotelList"),
@@ -173,15 +184,15 @@ namespace HGVApi
             return encodedDoc8;
         }
 
-        public static XDocument BuildPostData(XElement channel, XElement roomlist, DateTime arrival, DateTime departure, XElement offerdetails, XElement hoteldetails, XElement type, int service, string lang, string source, string version, string mssuser, string msspswd)
+        public XDocument BuildPostData(XElement channel, XElement roomlist, DateTime arrival, DateTime departure, XElement offerdetails, XElement hoteldetails, XElement type, int service, string lang, string source, string version)
         {
             XElement myroot =
                 new XElement("root",
                 new XElement("version", version + ".0"),
                 new XElement("header",
                     new XElement("credentials",
-                        new XElement("user", mssuser),
-                        new XElement("password", msspswd),
+                        new XElement("user", credentials.username),
+                        new XElement("password", credentials.password),
                         new XElement("source", source)
                         ),
                     new XElement("method", "getHotelList"),
@@ -220,15 +231,15 @@ namespace HGVApi
             return encodedDoc8;
         }
 
-        public static XDocument BuildPostData2(XElement channels, XElement roomlist, DateTime arrival, DateTime departure, XElement offerdetails, XElement hoteldetails, XElement type, int service, string lang, string source, string version, string mssuser, string msspswd)
+        public XDocument BuildPostData2(XElement channels, XElement roomlist, DateTime arrival, DateTime departure, XElement offerdetails, XElement hoteldetails, XElement type, int service, string lang, string source, string version)
         {
             XElement myroot =
                 new XElement("root",
                 new XElement("version", version + ".0"),
                 new XElement("header",
                     new XElement("credentials",
-                        new XElement("user", mssuser),
-                        new XElement("password", msspswd),
+                        new XElement("user", credentials.username),
+                        new XElement("password", credentials.password),
                         new XElement("source", source)
                         ),
                     new XElement("method", "getHotelList"),
@@ -267,15 +278,15 @@ namespace HGVApi
             return encodedDoc8;
         }
 
-        public static XDocument BuildBaseSearchPostData(XElement offerdetails, XElement hoteldetails, string lang, string idofchannel, string version, string source, string mssuser, string msspswd)
+        public XDocument BuildBaseSearchPostData(XElement offerdetails, XElement hoteldetails, string lang, string idofchannel, string version, string source)
         {
             XElement myroot =
                 new XElement("root",
                 new XElement("version", version + ".0"),
                 new XElement("header",
                     new XElement("credentials",
-                        new XElement("user", mssuser),
-                        new XElement("password", msspswd),
+                        new XElement("user", credentials.username),
+                        new XElement("password", credentials.password),
                         new XElement("source", source)
                         ),
                     new XElement("method", "getHotelList"),
@@ -306,16 +317,15 @@ namespace HGVApi
             return encodedDoc8;
         }
 
-
-        public static XDocument BuildSpecialPostData(XElement offerid, XElement roomlist, DateTime arrival, DateTime departure, XElement specialdetails, int typ, int service, string lang, string source, string version, string mssuser, string msspswd)
+        public XDocument BuildSpecialPostData(XElement offerid, XElement roomlist, DateTime arrival, DateTime departure, XElement specialdetails, int typ, int service, string lang, string source, string version)
         {
             XElement myroot =
                 new XElement("root",
                 new XElement("version", version + ".0"),
                 new XElement("header",
                     new XElement("credentials",
-                        new XElement("user", mssuser),
-                        new XElement("password", msspswd),
+                        new XElement("user", credentials.username),
+                        new XElement("password", credentials.password),
                         new XElement("source", source)
                         ),
                     new XElement("method", "getSpecialList"),
@@ -357,15 +367,15 @@ namespace HGVApi
             return encodedDoc8;
         }
 
-        public static XDocument BuildRoomlistPostData(XElement roomdetails, string hotelid, string idofchannel, string lang, string source, string version, string mssuser, string msspswd)
+        public XDocument BuildRoomlistPostData(XElement roomdetails, string hotelid, string idofchannel, string lang, string source, string version)
         {
             XElement myroot =
                 new XElement("root",
                 new XElement("version", version + ".0"),
                 new XElement("header",
                     new XElement("credentials",
-                        new XElement("user", mssuser),
-                        new XElement("password", msspswd),
+                        new XElement("user", credentials.username),
+                        new XElement("password", credentials.password),
                         new XElement("source", source)
                         ),
                     new XElement("method", "getRoomList"),
@@ -393,16 +403,15 @@ namespace HGVApi
             return encodedDoc8;
         }
 
-        //Premium includiert
-        public static XDocument BuildSpecialPostDatawithPremium(XElement offerid, XElement roomlist, DateTime arrival, DateTime departure, XElement specialdetails, int typ, int premium, int service, string lang, string source, string version, string mssuser, string msspswd)
+        public XDocument BuildSpecialPostDatawithPremium(XElement offerid, XElement roomlist, DateTime arrival, DateTime departure, XElement specialdetails, int typ, int premium, int service, string lang, string source, string version)
         {
             XElement myroot =
                 new XElement("root",
                 new XElement("version", version + ".0"),
                 new XElement("header",
                     new XElement("credentials",
-                        new XElement("user", mssuser),
-                        new XElement("password", msspswd),
+                        new XElement("user", credentials.username),
+                        new XElement("password", credentials.password),
                         new XElement("source", source)
                         ),
                     new XElement("method", "getSpecialList"),
@@ -445,15 +454,15 @@ namespace HGVApi
             return encodedDoc8;
         }
 
-        public static XDocument BuildSpecialPostDataCheckAvailability(XElement idlist, XElement offerid, XElement roomlist, DateTime arrival, DateTime departure, XElement specialdetails, XElement hoteldetails, int typ, int service, string lang, string source, string version, string mssuser, string msspswd)
+        public XDocument BuildSpecialPostDataCheckAvailability(XElement idlist, XElement offerid, XElement roomlist, DateTime arrival, DateTime departure, XElement specialdetails, XElement hoteldetails, int typ, int service, string lang, string source, string version)
         {
             XElement myroot =
                 new XElement("root",
                 new XElement("version", version + ".0"),
                 new XElement("header",
                     new XElement("credentials",
-                        new XElement("user", mssuser),
-                        new XElement("password", msspswd),
+                        new XElement("user", credentials.username),
+                        new XElement("password", credentials.password),
                         new XElement("source", source)
                         ),
                     new XElement("method", "getSpecialList"),
@@ -499,17 +508,16 @@ namespace HGVApi
 
             return encodedDoc8;
         }
-
-        //Premium includiert
-        public static XDocument BuildSpecialPostDataCheckAvailabilitywithPremium(XElement idlist, XElement offerid, XElement roomlist, DateTime arrival, DateTime departure, XElement specialdetails, XElement hoteldetails, int typ, int premium, int service, string lang, string source, string version, string mssuser, string msspswd)
+        
+        public XDocument BuildSpecialPostDataCheckAvailabilitywithPremium(XElement idlist, XElement offerid, XElement roomlist, DateTime arrival, DateTime departure, XElement specialdetails, XElement hoteldetails, int typ, int premium, int service, string lang, string source, string version)
         {
             XElement myroot =
                 new XElement("root",
                 new XElement("version", version + ".0"),
                 new XElement("header",
                     new XElement("credentials",
-                        new XElement("user", mssuser),
-                        new XElement("password", msspswd),
+                        new XElement("user", credentials.username),
+                        new XElement("password", credentials.password),
                         new XElement("source", source)
                         ),
                     new XElement("method", "getSpecialList"),
@@ -557,8 +565,7 @@ namespace HGVApi
             return encodedDoc8;
         }
 
-
-        public static XDocument BuildLocationListPostData(string rootid, string typ, string source, string version, string mssuser, string msspswd)
+        public XDocument BuildLocationListPostData(string rootid, string typ, string source, string version)
         {
             //<request>
             //  <!-- Search Parameter: -->
@@ -579,8 +586,8 @@ namespace HGVApi
                new XElement("version", version + ".0"),
                new XElement("header",
                    new XElement("credentials",
-                       new XElement("user", mssuser),
-                       new XElement("password", msspswd),
+                       new XElement("user", credentials.username),
+                       new XElement("password", credentials.password),
                        new XElement("source", source)
                        ),
                    new XElement("method", "getLocationList"),
