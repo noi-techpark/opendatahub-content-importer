@@ -15,6 +15,8 @@ namespace Helper
 
         LTSCredentials LtsCredentialsOpen { get; }
 
+        HGVCredentials HgvCredentials{ get; }
+
         RabbitMQConfiguration RabbitMQConfiguration { get; }
 
         ODHApiCoreConfig ODHApiCoreConfiguration { get; }
@@ -22,18 +24,34 @@ namespace Helper
 
     public class LTSCredentials
     {
-        public LTSCredentials(string username, string password, string ltsclientid, bool opendata)
+        public LTSCredentials(string serviceurl, string username, string password, string ltsclientid, bool opendata)
         {
+            this.serviceurl = serviceurl;
             this.ltsclientid = ltsclientid;
             this.username = username;
             this.password = password;
             this.opendata = opendata;
         }
 
+        public string serviceurl { get; set; }
         public string ltsclientid { get; set; }
         public string username { get; set; }
         public string password { get; set; }
         public bool opendata { get; set; }
+    }
+
+    public class HGVCredentials
+    {
+        public HGVCredentials(string serviceurl, string username, string password)
+        {
+            this.serviceurl = serviceurl;
+            this.username = username;
+            this.password = password;            
+        }
+
+        public string serviceurl { get; set; }
+        public string username { get; set; }
+        public string password { get; set; }        
     }
 
     public class RabbitMQConfiguration

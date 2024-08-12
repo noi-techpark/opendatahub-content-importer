@@ -1,40 +1,10 @@
 ﻿using System.Net;
 using System.Text;
 using System.Xml.Linq;
+using Helper;
 
 namespace HGVApi
-{
-    public class HGVRequest
-    {
-        public static async Task<XElement> GetMssRoomlistAsync(string lang, string hotelid, string hotelidofchannel, XElement roomdetails, XDocument roomamenities, string source, string version)
-        {
-            try
-            {
-                //TODO add this from config
-                MssRequest mssRequest = new MssRequest(null);
-
-                XDocument myrequest = mssRequest.BuildRoomlistPostData(roomdetails, hotelid, hotelidofchannel, lang, source, version);
-                var myresponses = mssRequest.RequestRoomListAsync(myrequest);
-
-                await Task.WhenAll(myresponses);
-
-                Task<string> roomresponsecontent = myresponses.Result.Content.ReadAsStringAsync();
-
-                await Task.WhenAll(roomresponsecontent);
-
-                XElement fullresponse = XElement.Parse(roomresponsecontent.Result);
-                
-                return fullresponse;
-
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
-    }
-
+{    
     public enum MSSFunction
     {
         getHotelList,
@@ -43,18 +13,12 @@ namespace HGVApi
         getLocationList
     }
 
-    public class HGVCredentials
-    {
-        public string serviceurl { get; set; }
-        public string username { get; set; }
-        public string password { get; set; }
-    }
-
-    public class MssRequest
+    
+    public class HgvApi
     {
         string baseurl;
         HGVCredentials credentials;
-        public MssRequest(HGVCredentials _credentials)
+        public HgvApi(HGVCredentials _credentials)
         {
             this.baseurl = _credentials.serviceurl; // @"http://www.easymailing.eu/mss/mss_service.php";
             this.credentials = _credentials;

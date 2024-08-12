@@ -15,6 +15,7 @@ namespace Helper
         private readonly Lazy<string> mongoDBConnection;
         private readonly LTSCredentials ltsCredentials;
         private readonly LTSCredentials ltsCredentialsOpen;
+        private readonly HGVCredentials hgvCredentials;
         private readonly RabbitMQConfiguration rabbitMQConfiguration;
         private readonly ODHApiCoreConfig odhApiCoreConfiguration;
 
@@ -28,10 +29,13 @@ namespace Helper
 
         
             var ltsapi = this.configuration.GetSection("LTSApiIDM");
-            this.ltsCredentials = new LTSCredentials(ltsapi.GetValue<string>("username", ""), ltsapi.GetValue<string>("password", ""), ltsapi.GetValue<string>("xltsclientid", ""), ltsapi.GetValue<bool>("opendata", false));
+            this.ltsCredentials = new LTSCredentials(ltsapi.GetValue<string>("serviceurl", ""), ltsapi.GetValue<string>("username", ""), ltsapi.GetValue<string>("password", ""), ltsapi.GetValue<string>("xltsclientid", ""), ltsapi.GetValue<bool>("opendata", false));
 
             var ltsapiopen = this.configuration.GetSection("LTSApiNOI");
-            this.ltsCredentialsOpen = new LTSCredentials(ltsapiopen.GetValue<string>("username", ""), ltsapiopen.GetValue<string>("password", ""), ltsapiopen.GetValue<string>("xltsclientid", ""), ltsapiopen.GetValue<bool>("opendata", false));
+            this.ltsCredentialsOpen = new LTSCredentials(ltsapiopen.GetValue<string>("serviceurl", ""), ltsapiopen.GetValue<string>("username", ""), ltsapiopen.GetValue<string>("password", ""), ltsapiopen.GetValue<string>("xltsclientid", ""), ltsapiopen.GetValue<bool>("opendata", false));
+
+            var hgvapi = this.configuration.GetSection("HGVApi");
+            this.hgvCredentials = new HGVCredentials(hgvapi.GetValue<string>("serviceurl", ""), hgvapi.GetValue<string>("username", ""), hgvapi.GetValue<string>("password", ""));
 
 
             var rabbitMQconfigsection = this.configuration.GetSection("RabbitMQConfiguration");
@@ -53,6 +57,8 @@ namespace Helper
         public LTSCredentials LtsCredentials => this.ltsCredentials;
 
         public LTSCredentials LtsCredentialsOpen => this.ltsCredentialsOpen;
+
+        public HGVCredentials HgvCredentials => this.hgvCredentials;
 
         public RabbitMQConfiguration RabbitMQConfiguration => this.rabbitMQConfiguration;
 

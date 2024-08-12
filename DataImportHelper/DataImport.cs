@@ -1,4 +1,5 @@
 ﻿using LTSAPI;
+using HGVApi;
 using Helper;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -7,6 +8,8 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Security.Principal;
 using System.Text;
+using System.Xml.Linq;
+using System;
 
 namespace DataImportHelper
 {
@@ -23,6 +26,7 @@ namespace DataImportHelper
     public class DataImport : IDataImport
     {
         public LtsApi ltsapi { get; set; }
+        public HgvApi hgvapi { get; set; }
 
         public string opendata { get; set; }
 
@@ -31,6 +35,7 @@ namespace DataImportHelper
         public DataImport(ISettings settings)
         {
             ltsapi = new LtsApi(settings.LtsCredentials);
+            hgvapi = new HgvApi(settings.HgvCredentials);
             if (settings.LtsCredentials.opendata)
                 opendata = "_opendata";
             else
@@ -122,6 +127,30 @@ namespace DataImportHelper
 
             var ltsdata = await ltsapi.AccommodationDetailRequest(rid, null);
             rabbitsend.Send("lts/accommodationdetail" + opendata, ltsdata);
+        }
+
+        public async Task ImportHGVAccommodationSingle(string rid)
+        {
+            var qs = new LTSQueryStrings() { page_size = 1 };
+            var dict = ltsapi.GetLTSQSDictionary(qs);
+
+            var ltsdata = await ltsapi.AccommodationDetailRequest(rid, null);
+            rabbitsend.Send("lts/accommodationdetail" + opendata, ltsdata);
+        }
+
+        public async Task ImportHGVAccommodationRoomList(string rid)
+        {
+            XElement roomdetail = new XElement("room_details", 69932);
+
+            //To check, if room data has to be requested in each language?
+            XDocument myrequest = hgvapi.BuildRoomlistPostData(roomdetail, rid, "lts", "", "sinfo", "2");
+            var myresponses = await hgvapi.RequestRoomListAsync(myrequest);
+
+            string roomresponsecontent = await myresponses.Content.ReadAsStringAsync();
+            
+            XElement fullresponse = XElement.Parse(roomresponsecontent);
+
+            rabbitsend.Send("hgv/accoommodationroom" + opendata, fullresponse);
         }
 
         #endregion

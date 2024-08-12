@@ -18,9 +18,8 @@ namespace LTSAPI
         bool getallpages = false;
 
         public LtsApi(LTSCredentials _credentials) 
-        {
-            //TODO SET THIS URL IN CONFIG
-            this.baseurl = "https://go.lts.it/api/v1";
+        {            
+            this.baseurl = _credentials.serviceurl;
             this.credentials = _credentials;                        
         }
 
