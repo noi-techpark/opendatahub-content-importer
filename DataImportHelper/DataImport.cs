@@ -10,6 +10,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Xml.Linq;
 using System;
+using Newtonsoft.Json.Linq;
 
 namespace DataImportHelper
 {
@@ -20,7 +21,10 @@ namespace DataImportHelper
         Task ImportLTSAccoTypes();
         Task ImportLTSAccommodationChanged(DateTime datefrom);
         Task ImportLTSAccommodationDeleted(DateTime datefrom);
-        Task ImportLTSAccommodationSingle(string rid);
+        Task ImportLTSAccommodationSingle(string rid, string? identifier = null);
+        Task ImportHGVAccommodationSingle(string rid, string? identifier = null);
+        Task ImportHGVAccommodationRoomList(string rid, string? identifier = null);
+        Task ImportAccommodationFinished(JObject json, string? identifier = null);
     }
 
     public class DataImport : IDataImport
@@ -44,9 +48,11 @@ namespace DataImportHelper
             rabbitsend = new RabbitMQSend(settings.RabbitConnection);
         }
 
-        public DataImport(LTSCredentials ltscredentials, string rabbitconnection)
+        public DataImport(LTSCredentials ltscredentials, HGVCredentials hgvcredentials, string rabbitconnection)
         {
             ltsapi = new LtsApi(ltscredentials);
+            hgvapi = new HgvApi(hgvcredentials);
+
             if (ltscredentials.opendata)
                 opendata = "_opendata";
             else
@@ -57,6 +63,9 @@ namespace DataImportHelper
 
         //This import methods are used by the Api and Console Application
         #region Import Methods
+
+
+
 
         /// <summary>
         /// Imports the LTS Accommodation Amenities and pushes it to RabbitMQ
@@ -120,25 +129,25 @@ namespace DataImportHelper
             rabbitsend.Send("lts/accommodationdeleted", ltsdata);
         }
 
-        public async Task ImportLTSAccommodationSingle(string rid)
+        public async Task ImportLTSAccommodationSingle(string rid, string? identifier = null)
         {
             var qs = new LTSQueryStrings() { page_size = 1 };
             var dict = ltsapi.GetLTSQSDictionary(qs);
 
             var ltsdata = await ltsapi.AccommodationDetailRequest(rid, null);
-            rabbitsend.Send("lts/accommodationdetail" + opendata, ltsdata);
+            rabbitsend.Send("lts/accommodationdetail" + opendata, ltsdata, identifier);
         }
 
-        public async Task ImportHGVAccommodationSingle(string rid)
+        public async Task ImportHGVAccommodationSingle(string rid, string? identifier = null)
         {
             var qs = new LTSQueryStrings() { page_size = 1 };
             var dict = ltsapi.GetLTSQSDictionary(qs);
 
             var ltsdata = await ltsapi.AccommodationDetailRequest(rid, null);
-            rabbitsend.Send("lts/accommodationdetail" + opendata, ltsdata);
+            rabbitsend.Send("lts/accommodationdetail" + opendata, ltsdata, identifier);
         }
 
-        public async Task ImportHGVAccommodationRoomList(string rid)
+        public async Task ImportHGVAccommodationRoomList(string rid, string? identifier = null)
         {
             XElement roomdetail = new XElement("room_details", 69932);
 
@@ -150,7 +159,12 @@ namespace DataImportHelper
             
             XElement fullresponse = XElement.Parse(roomresponsecontent);
 
-            rabbitsend.Send("hgv/accoommodationroom" + opendata, fullresponse);
+            rabbitsend.Send("hgv/accoommodationroom", fullresponse, identifier);
+        }
+
+        public async Task ImportAccommodationFinished(JObject json, string? identifier = null)
+        {
+            rabbitsend.Send("base/accommodationimported", json, identifier);
         }
 
         #endregion

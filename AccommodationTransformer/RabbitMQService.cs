@@ -4,6 +4,7 @@
 
 using AccommodationTransformer.Parser;
 using DataImportHelper;
+using DataModel;
 using Helper;
 using LTSAPI;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +19,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -25,7 +27,7 @@ using System.Xml.Linq;
 using TransformerHelper;
 
 namespace AccommodationTransformer
-{   
+{
     public interface IReadAccommodation : IReadMessage
     {
 
@@ -35,7 +37,6 @@ namespace AccommodationTransformer
     {
         public override async Task<bool> TransformData(MongoDBObject data, string routingkey)
         {
-        
             var json = JToken.Parse(data.rawdata);
             var jsonarray = JArray.FromObject(json);
 
@@ -51,7 +52,7 @@ namespace AccommodationTransformer
 
                     Console.WriteLine("rid: " + rid);
 
-                    await dataimport["idm"].ImportLTSAccommodationSingle(rid);
+                    await dataimport["idm"].ImportLTSAccommodationSingle(rid, rid);
 
                     await dataimport["open"].ImportLTSAccommodationSingle(rid);
                 }
@@ -63,56 +64,112 @@ namespace AccommodationTransformer
             else if (routingkey == "lts.accommodationdetail")
             {
                 Console.WriteLine("Read Accommodation DETAIL called");
-               
-                JObject accomodationdetail = jsonarray.FirstOrDefault().Value<JObject>();
-                              
-                Console.WriteLine("Processing Accommodation " + accomodationdetail["data"]["rid"].Value<string>());
 
+                JObject accomodationdetail = jsonarray.FirstOrDefault().Value<JObject>();
+                var identifier = accomodationdetail["data"]["rid"].Value<string>();
+                            
+                //GET HGV Room Data if 
+                if (!String.IsNullOrEmpty(accomodationdetail["data"]["hgvid"].Value<string>()))
+                    await dataimport["idm"].ImportHGVAccommodationRoomList(identifier, data.id);
+                else
+                {                    
+                    await dataimport["idm"].ImportAccommodationFinished(JObject.FromObject(new AccommodationFinished() { Id = identifier, HasHGVRooms = false }), data.id);
+                }
+
+                return true;
+            }
+            //else if (routingkey == "lts.accommodationdetail_open")
+            //{
+            //    Console.WriteLine("Read Accommodation DETAIL OPEN called");
+
+            //    JObject accomodationdetail = jsonarray.FirstOrDefault()["data"].Value<JObject>();
+
+            //    //TODO PARSE ACCOMMODATION
+            //    var name = accomodationdetail["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"].Value<JObject>();
+            //    string namede = "";
+
+            //    if (name != null)
+            //    {
+            //        JToken token = name["de"];
+            //        if (token != null)
+            //        {
+            //            namede = token.Value<string>();
+            //        }
+            //    }
+
+            //    Console.WriteLine("Processing Accommodation " + accomodationdetail["rid"].Value<string>() + " " + namede);
+
+            //    return true;
+            //}
+            else if (routingkey == "hgv.accoommodationroom")
+            {
+                //Launch accommodation Room HGV Import
+
+                Console.WriteLine("Read Accommodation HGV ROOMS called");
+           
+                await dataimport["idm"].ImportAccommodationFinished(JObject.FromObject(new AccommodationFinished() { Id = data.id, HasHGVRooms = true }), data.id);
+
+                return true;
+            }
+            else if (routingkey == "base.accommodationimported")
+            {
+                //If this is called all Information was collected
+
+                JObject accommodationimporteddetailraw = jsonarray.FirstOrDefault().Value<JObject>();
+                var accommodationimporteddetail = accommodationimporteddetailraw.ToObject<AccommodationFinished>();
+
+                var identifier = accommodationimporteddetail.Id;
+
+                //We get only the ID
+                //We have to load the elaborated data?
+                Console.WriteLine("Processing Accommodation " + identifier);
+
+                var accommodationobjectmongo = await LoadDataFromMongo(new RabbitNotifyMessage() { collection = "accommodationdetail", db = "lts", id = identifier });
+                var accommodationobjectmongojson = JToken.Parse(accommodationobjectmongo.rawdata);
+                var accommodationobjectmongojsonarray = JArray.FromObject(accommodationobjectmongojson);
+                JObject accomodationdetail = accommodationobjectmongojsonarray.FirstOrDefault().Value<JObject>();
+                
                 //Load all XDocuments
                 var xmlfiles = LoadXmlFiles(Path.Combine(".\\xml\\"));
 
                 //Parse the Accommodation
                 var accommodation = AccommodationParser.ParseLTSAccommodation(accomodationdetail.ToObject<AccoLTS>(), false, xmlfiles);
 
-                //Parse Rooms
+                //Parse Rooms LTS
                 var accommodationrooms = AccommodationParser.ParseLTSAccommodationRoom(accomodationdetail.ToObject<AccoLTS>(), false, xmlfiles);
 
-                //Add Parsed Rooms to Accommodation Object QUESTION IF THIS SHOULD BE DONE ON ODH API CORE SIDE?
+                var accommodationroomshgv = default(IEnumerable<AccommodationRoomLinked>);
 
-                //GET HGV Room Data
+                if (accommodationimporteddetail.HasHGVRooms)
+                {
+                    var accommodationhgvroomlistmongo = await LoadDataFromMongo(new RabbitNotifyMessage() { collection = "accommodationrooms", db = "hgv", id = identifier });
+                    var accommodationhgvroomxml = XElement.Load(accommodationobjectmongo.rawdata);
 
-                //How to write down the AccommodationRooms? delete all rooms that aren't present anymore etc...
+                    //Parse the Accommodation
+                    accommodationroomshgv = AccommodationParser.ParseHGVAccommodationRoom("de", accommodationhgvroomxml, xmlfiles);
+                }
 
-                //GET HGV Accommodation Overview  SHOULD A PATCH METHOD IMPLEMENTED? Or should 
 
+                //TODO Check if there are orphaned Rooms and Delete them from the DB
+                
+                //TODO Let's write the AccoRoomDetail Object? (Or do it on api side?)
+
+                //GET HGV Accommodation Overview  SHOULD A PATCH METHOD IMPLEMENTED? Or should the accommodation data be loaded before?
+
+
+                //Write all rooms to thee ODH Api and pass referer + use a service account
+                foreach(var accommodationroom in accommodationrooms)
+                {
+                    var apiresponserooms = await odhapiconnector.PushToODHApiCore(accommodation, accommodation.Id, "AccommodationRoom");
+                }
+
+                if (accommodationroomshgv != null)
+                {
+                    var apiresponseroomshgv = await odhapiconnector.PushToODHApiCore(accommodation, accommodation.Id, "AccommodationRoom");
+                }
 
                 //Write to the ODH Api and pass referer + use a service account
                 var apiresponse = await odhapiconnector.PushToODHApiCore(accommodation, accommodation.Id, "Accommodation");
-
-                //Write all rooms to thee ODH Api and pass referer + use a service account
-
-                return true;
-            }
-            else if (routingkey == "lts.accommodationdetail_open")
-            {
-                Console.WriteLine("Read Accommodation DETAIL OPEN called");
-
-                JObject accomodationdetail = jsonarray.FirstOrDefault()["data"].Value<JObject>();
-
-                //TODO PARSE ACCOMMODATION
-                var name = accomodationdetail["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"].Value<JObject>();
-                string namede = "";
-
-                if (name != null)
-                {
-                    JToken token = name["de"];
-                    if (token != null)
-                    {
-                        namede = token.Value<string>();
-                    }
-                }
-
-                Console.WriteLine("Processing Accommodation " + accomodationdetail["rid"].Value<string>() + " " + namede);
 
                 return true;
             }
@@ -145,6 +202,21 @@ namespace AccommodationTransformer
 
             return myxmlfiles;
         }
-    }    
 
+        public IDictionary<string, XDocument> LoadXmlFiles(string directory, string filename)
+        {
+            //TODO move this files to Database
+
+            IDictionary<string, XDocument> myxmlfiles = new Dictionary<string, XDocument>();
+            myxmlfiles.Add(filename, XDocument.Load(directory + filename + ".xml"));
+            
+            return myxmlfiles;
+        }
+    }
+
+    public class AccommodationFinished()
+    {
+        public string Id { get; set; }
+        public bool HasHGVRooms { get; set; }
+    }
 }

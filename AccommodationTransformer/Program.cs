@@ -41,8 +41,8 @@ namespace AccommodationTransformer
                         settings.ODHApiCoreConfiguration.ApiEndpoint);
 
 
-                    DataImport dataimport = new DataImport(settings.LtsCredentials, settings.RabbitConnection);                    
-                    DataImport dataimportopen = new DataImport(settings.LtsCredentialsOpen, settings.RabbitConnection);
+                    DataImport dataimport = new DataImport(settings.LtsCredentials, settings.HgvCredentials, settings.RabbitConnection);                    
+                    DataImport dataimportopen = new DataImport(settings.LtsCredentialsOpen, settings.HgvCredentials, settings.RabbitConnection);
 
                     IDictionary<string, DataImport> dataimportlist = new Dictionary<string, DataImport>()
                     {

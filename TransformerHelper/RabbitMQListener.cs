@@ -88,7 +88,7 @@ namespace TransformerHelper
             return await TransformData(data, e.RoutingKey);
         }
 
-        private async Task<MongoDBObject> LoadDataFromMongo(RabbitNotifyMessage message)
+        public async Task<MongoDBObject> LoadDataFromMongo(RabbitNotifyMessage message)
         {
             MongoDBReader mongoreader = new MongoDBReader(mongodbconnection);
             return await mongoreader.GetFromMongoAsObject(message);

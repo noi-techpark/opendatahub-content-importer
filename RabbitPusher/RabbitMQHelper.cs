@@ -30,7 +30,7 @@ namespace RabbitPusher
             rabbitMQconn = connectionstring;
         }
 
-        public void Send(string provider, object obj)
+        public void Send(string provider, object obj, string? objectid = null)
         {
             var factory = new ConnectionFactory { Uri = new Uri(rabbitMQconn) };
 
@@ -46,7 +46,7 @@ namespace RabbitPusher
 
             var message = new RabbitIngressMessage()
             {
-                id = Guid.NewGuid().ToString(),
+                id = objectid == null ? Guid.NewGuid().ToString() : objectid,
                 provider = provider,
                 timestamp = DateTime.UtcNow.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK"),
                 //rawdata = obj
