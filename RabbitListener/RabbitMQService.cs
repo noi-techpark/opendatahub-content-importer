@@ -40,7 +40,7 @@ namespace RabbitListener
             return StartReading<T>(channel, queue);            
         }
 
-        private async Task StartReading<T>(IModel channel, string queueName)
+        private Task StartReading<T>(IModel channel, string queueName)
         {
             // connect to the queue
             channel.QueueDeclare(queueName,
@@ -60,9 +60,11 @@ namespace RabbitListener
             // Start pushing messages to our consumer
             channel.BasicConsume(queueName, true, consumer);
 
-            Console.WriteLine("Consumer is running");            
+            Console.WriteLine("Consumer is running");
 
-            Console.ReadLine();
+            //Console.ReadLine();
+
+            return Task.CompletedTask;
         }
 
         private void ManageMessage<T>(BasicDeliverEventArgs e)
