@@ -29,7 +29,9 @@ namespace RabbitListener
             while (!stoppingToken.IsCancellationRequested)
             {
                 // Run the Read method
-                await Task.Run(() => _readMessage.Read<TestObject>(_configuration.RabbitConnectionString, _configuration.ReadQueue, _configuration.MongoDBConnectionString));
+                //await Task.Run(() => _readMessage.Read<TestObject>(_configuration.RabbitConnectionString, _configuration.ReadQueue, _configuration.MongoDBConnectionString));
+
+                await _readMessage.Read<TestObject>(_configuration.RabbitConnectionString, _configuration.ReadQueue, _configuration.MongoDBConnectionString);
             }
 
             //sync

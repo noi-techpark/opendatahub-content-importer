@@ -21,6 +21,8 @@ DataImport dataimport = new DataImport(settings);
 
 await dataimport.ImportLTSAccommodationSingle("2657B7CBCb85380B253D2fBE28AF100E");
 
+await dataimport.ImportLTSAccommodationSingle("525B5D14566741D3B5910721027B5ED7");
+
 //RabbitMQSend rabbitsend = new RabbitMQSend(config.GetConnectionString("RabbitConnection"));
 
 //var ltsamenities = await ltsapi.AccommodationAmenitiesRequest(null, true);

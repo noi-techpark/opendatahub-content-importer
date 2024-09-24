@@ -20,14 +20,14 @@ namespace RabbitListener
 {    
     public interface IReadMessage
     {
-        void Read<T>(string connectionstring, string queue, string mongoconnection);
+        Task Read<T>(string connectionstring, string queue, string mongoconnection);
     }
 
     public class ReadMessage : IReadMessage
     {
         private string mongodbconnection;
 
-        public void Read<T>(string connectionstring, string queue, string mongoconnection)
+        public Task Read<T>(string connectionstring, string queue, string mongoconnection)
         {           
             var _rabbitMQServer = new ConnectionFactory() { Uri = new Uri(connectionstring) };
             
@@ -37,10 +37,10 @@ namespace RabbitListener
 
             mongodbconnection = mongoconnection;
 
-            StartReading<T>(channel, queue);            
+            return StartReading<T>(channel, queue);            
         }
 
-        private async void StartReading<T>(IModel channel, string queueName)
+        private async Task StartReading<T>(IModel channel, string queueName)
         {
             // connect to the queue
             channel.QueueDeclare(queueName,
