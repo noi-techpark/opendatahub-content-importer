@@ -133,10 +133,10 @@ namespace AccommodationTransformer
                 var xmlfiles = LoadXmlFiles(Path.Combine(".\\xml\\"));
 
                 //Parse the Accommodation
-                var accommodation = AccommodationParser.ParseLTSAccommodation(accomodationdetail.ToObject<AccoLTS>(), false, xmlfiles);
+                var accommodation = AccommodationParser.ParseLTSAccommodation(accomodationdetail.ToObject<LTSAcco>(), false, xmlfiles);
 
                 //Parse Rooms LTS
-                var accommodationrooms = AccommodationParser.ParseLTSAccommodationRoom(accomodationdetail.ToObject<AccoLTS>(), false, xmlfiles);
+                var accommodationrooms = AccommodationParser.ParseLTSAccommodationRoom(accomodationdetail.ToObject<LTSAcco>(), false, xmlfiles);
 
                 var accommodationroomshgv = default(IEnumerable<AccommodationRoomLinked>);
 

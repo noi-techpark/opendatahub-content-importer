@@ -24,7 +24,7 @@ namespace AccommodationTransformer.Parser
         {
             try
             {
-                AccoLTS accoltsdetail = accomodationdetail.ToObject<AccoLTS>();
+                LTSAcco accoltsdetail = accomodationdetail.ToObject<LTSAcco>();
 
                 return ParseLTSAccommodation(accoltsdetail, reduced, xmlfiles);
             }
@@ -69,7 +69,7 @@ namespace AccommodationTransformer.Parser
             }          
         }
 
-        public static AccommodationLinked ParseLTSAccommodation(AccoLTS accommodation, 
+        public static AccommodationLinked ParseLTSAccommodation(LTSAcco accommodation, 
             bool reduced,
             IDictionary<string, XDocument> xmlfiles)
         {
@@ -633,7 +633,7 @@ namespace AccommodationTransformer.Parser
             return accommodationlinked;
         }
 
-        public static IEnumerable<AccommodationRoomLinked> ParseLTSAccommodationRoom(AccoLTS accommodation,
+        public static IEnumerable<AccommodationRoomLinked> ParseLTSAccommodationRoom(LTSAcco accommodation,
             bool reduced,
             IDictionary<string, XDocument> xmlfiles)
         {
