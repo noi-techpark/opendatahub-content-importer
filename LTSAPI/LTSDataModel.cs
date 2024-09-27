@@ -16,8 +16,8 @@ namespace LTSAPI
     public class LTSDistrict
     {
         public string rid { get; set; }
-    }  
-    
+    }
+
     public class LTSAccoContact
     {
         public LTSAddress address { get; set; }
@@ -35,6 +35,18 @@ namespace LTSAPI
         public string phone { get; set; }
         public IDictionary<string, string> website { get; set; }
     }
+
+    public class LTSGastronomyContact
+    {
+        public string type { get; set; }
+        public string phone { get; set; }
+        public string fax { get; set; }
+        public string website { get; set; }
+        public string email { get; set; }
+        public LTSAddress address { get; set; }
+        public string postalCode { get; set; }
+        public string country { get; set; }
+    }   
 
     public class LTSAddress
     {
@@ -146,7 +158,7 @@ namespace LTSAPI
     {
         public string rid { get; set; }
     }
-  
+
     public class LTSOverview
     {
         public LTSCamping camping { get; set; }
@@ -222,7 +234,7 @@ namespace LTSAPI
     {
         public string rid { get; set; }
     }
-      
+
     public class LTSGallery
     {
         public LTSImage[] images { get; set; }
@@ -306,7 +318,7 @@ namespace LTSAPI
     #region Event
 
     public class LTSEvent : LTSData<LTSEventData>
-    {        
+    {
         public new LTSEventData data { get; set; }
     }
 
@@ -334,7 +346,7 @@ namespace LTSAPI
         public IDictionary<string, string> registration { get; set; }
         public LTSShopconfiguration shopConfiguration { get; set; }
         public LTSEventTag[] tags { get; set; }
-        public IDictionary<string,string> urlAlias { get; set; }
+        public IDictionary<string, string> urlAlias { get; set; }
         public LTSUrl[] urls { get; set; }
     }
 
@@ -342,7 +354,7 @@ namespace LTSAPI
     {
         public string rid { get; set; }
     }
-    
+
     public class LTSOrganizer
     {
         public string rid { get; set; }
@@ -354,7 +366,7 @@ namespace LTSAPI
         public bool isActive { get; set; }
     }
 
-    
+
 
     public class LTSPeriod
     {
@@ -428,11 +440,105 @@ namespace LTSAPI
     {
         public string type { get; set; }
         public IDictionary<string, string> url { get; set; }
-    }    
+    }
 
     #endregion
 
     #region Gastronomy
+
+    public class LTSGastronomy : LTSData<LTSGastronomyData>
+    {
+        public new LTSGastronomyData data { get; set; }
+    }
+
+    public class LTSGastronomyData
+    {
+        public string rid { get; set; }
+        public int id { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public bool isActive { get; set; }
+        public string representationMode { get; set; }
+        public LTSDistrict district { get; set; }
+        public LTSTourismorganization tourismOrganization { get; set; }
+        public LTSPosition position { get; set; }
+        public int maxSeatingCapacity { get; set; }
+        public LTSAreamap areaMap { get; set; }
+        public LTSCategory[] categories { get; set; }
+        public LTSGastronomyContact[] contacts { get; set; }
+        public IDictionary<string,string> description { get; set; }
+        public LTSImage[] images { get; set; }
+        public LTSFacility[] facilities { get; set; }
+        public LTSOpeningschedule[] openingSchedules { get; set; }
+        public LTSCeremonyseatingcapacity[] ceremonySeatingCapacities { get; set; }
+        public LTSDishrate[] dishRates { get; set; }
+    }
+
+    public class Image
+    {
+        public string rid { get; set; }
+        public string url { get; set; }
+        public int widthPixel { get; set; }
+        public int heightPixel { get; set; }
+        public int order { get; set; }
+        public bool isMainImage { get; set; }
+        public bool isCurrentMainImage { get; set; }
+        public string applicableStartDate { get; set; }
+        public string applicableEndDate { get; set; }
+        public string copyright { get; set; }
+        public string license { get; set; }
+        public IDictionary<string,string>? name { get; set; }
+    }    
+
+    public class LTSFacility
+    {
+        public string rid { get; set; }
+    }
+
+    public class LTSOpeningschedule
+    {
+        public string startDate { get; set; }
+        public string endDate { get; set; }
+        public bool isOpen { get; set; }
+        public bool isMondayOpen { get; set; }
+        public bool isTuesdayOpen { get; set; }
+        public bool isWednesdayOpen { get; set; }
+        public bool isThursdayOpen { get; set; }
+        public bool isFridayOpen { get; set; }
+        public bool isSaturdayOpen { get; set; }
+        public bool isSundayOpen { get; set; }
+        public LTSOpeningtime[] openingTimes { get; set; }
+    }
+
+    public class LTSOpeningtime
+    {
+        public string startTime { get; set; }
+        public string endTime { get; set; }
+        public string type { get; set; }
+    }
+
+    public class LTSCeremonyseatingcapacity
+    {
+        public LTSCeremony ceremony { get; set; }
+        public int maxSeatingCapacity { get; set; }
+    }
+
+    public class LTSCeremony
+    {
+        public string rid { get; set; }
+    }
+
+    public class LTSDishrate
+    {
+        public LTSDish dish { get; set; }
+        public float minAmount { get; set; }
+        public float maxAmount { get; set; }
+    }
+
+    public class LTSDish
+    {
+        public string rid { get; set; }
+    }
+
 
     #endregion
 
