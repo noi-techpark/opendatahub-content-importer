@@ -69,11 +69,11 @@ namespace AccommodationTransformer.Parser
             }          
         }
 
-        public static AccommodationLinked ParseLTSAccommodation(LTSAcco accommodation, 
+        public static AccommodationV2 ParseLTSAccommodation(LTSAcco accommodation, 
             bool reduced,
             IDictionary<string, XDocument> xmlfiles)
         {
-            AccommodationLinked accommodationlinked = new AccommodationLinked();
+            AccommodationV2 accommodationlinked = new AccommodationV2();
 
             accommodationlinked.Id = accommodation.data.rid;
             accommodationlinked._Meta = new Metadata() { Id = accommodationlinked.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "accommodation", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
@@ -107,7 +107,6 @@ namespace AccommodationTransformer.Parser
                     accommodationlinked.PublishedOn.TryRemoveOnList("idm-marketplace");
             }
 
-
             AccoProperties accoproperties = new AccoProperties();
             accoproperties.HasApartment = accommodation.data.hasApartments;
             accoproperties.HasDorm = accommodation.data.hasDorms;
@@ -120,7 +119,6 @@ namespace AccommodationTransformer.Parser
             accoproperties.TVMember = accommodation.data.isTourismOrganizationMember;
 
             accommodationlinked.AccoProperties = accoproperties;
-
 
             //Overview
             if (accommodation.data.overview != null)
@@ -633,15 +631,15 @@ namespace AccommodationTransformer.Parser
             return accommodationlinked;
         }
 
-        public static IEnumerable<AccommodationRoomLinked> ParseLTSAccommodationRoom(LTSAcco accommodation,
+        public static IEnumerable<AccommodationRoomV2> ParseLTSAccommodationRoom(LTSAcco accommodation,
             bool reduced,
             IDictionary<string, XDocument> xmlfiles)
         {
-            List<AccommodationRoomLinked> roomlist = new List<AccommodationRoomLinked>();
+            List<AccommodationRoomV2> roomlist = new List<AccommodationRoomV2>();
 
             foreach (var accoroom in accommodation.data.roomGroups)
             {
-                AccommodationRoomLinked room = new AccommodationRoomLinked();
+                AccommodationRoomV2 room = new AccommodationRoomV2();
 
                 room.A0RID = accoroom.rid;
                 //room.Id = accoroom.; TO CHECK
@@ -785,16 +783,16 @@ namespace AccommodationTransformer.Parser
             return roomlist;
         }
 
-        public static AccommodationLinked ParseHGVAccommodations(AccoHGV accommodation)
+        public static AccommodationV2 ParseHGVAccommodations(AccoHGV accommodation)
         {
             throw new NotImplementedException();
         }
 
-        public static IEnumerable<AccommodationRoomLinked> ParseHGVAccommodationRoom(string lang, XElement mssresponse, IDictionary<string, XDocument> xmlfiles)
+        public static IEnumerable<AccommodationRoomV2> ParseHGVAccommodationRoom(string lang, XElement mssresponse, IDictionary<string, XDocument> xmlfiles)
         {
             var myresult = mssresponse.Elements("result").Elements("hotel");
 
-            List<AccommodationRoomLinked> myroomlist = new List<AccommodationRoomLinked>();
+            List<AccommodationRoomV2> myroomlist = new List<AccommodationRoomV2>();
 
             foreach (var myhotelresult in myresult)
             {
@@ -804,13 +802,13 @@ namespace AccommodationTransformer.Parser
             return myroomlist;
         }
 
-        private static List<AccommodationRoomLinked> HGVRoomResponseParser(XElement myresult, IDictionary<string, XDocument> xmlfiles, string language)
+        private static List<AccommodationRoomV2> HGVRoomResponseParser(XElement myresult, IDictionary<string, XDocument> xmlfiles, string language)
         {
             try
             {
                 CultureInfo culturede = CultureInfo.CreateSpecificCulture("de");
 
-                List<AccommodationRoomLinked> myaccorooms = new List<AccommodationRoomLinked>();
+                List<AccommodationRoomV2> myaccorooms = new List<AccommodationRoomV2>();
 
                 string A0RID = myresult.Element("id_lts").Value;
                 string HgvId = myresult.Element("id").Value;
@@ -828,7 +826,7 @@ namespace AccommodationTransformer.Parser
 
                             foreach (var myroom in myroomlist)
                             {
-                                AccommodationRoomLinked myroomtosave = new AccommodationRoomLinked();
+                                AccommodationRoomV2 myroomtosave = new AccommodationRoomV2();
 
                                 string roomid = myroom.Element("room_id").Value;
                                 string roomidlts = myroom.Element("room_lts_id").Value != null ? myroom.Element("room_lts_id").Value : "";
@@ -999,7 +997,7 @@ namespace AccommodationTransformer.Parser
 
 
         //Special Mapping etc...
-        private static void MapFeaturetoMarketingGroup(AccommodationLinked myacco, string featureid)
+        private static void MapFeaturetoMarketingGroup(AccommodationV2 myacco, string featureid)
         {
             if (myacco.Features != null && myacco.Features.Count > 0 && myacco.Features.Select(x => x.Id).ToList().Contains(featureid))
             {
@@ -1011,7 +1009,7 @@ namespace AccommodationTransformer.Parser
         }
 
         //Update Badge Information
-        private static void UpdateBadges(AccommodationLinked myacco, XDocument myvinumlist)
+        private static void UpdateBadges(AccommodationV2 myacco, XDocument myvinumlist)
         {
             myacco.BadgeIds = new List<string>();
 
@@ -1082,7 +1080,7 @@ namespace AccommodationTransformer.Parser
         }
 
         //Update Theme Information
-        private static void UpdateThemes(AccommodationLinked myacco, XDocument mywinelist, XDocument mycitylist, XDocument myskiarealist, XDocument mymediterranenlist, XDocument dolomiteslist, XDocument alpinelist)
+        private static void UpdateThemes(AccommodationV2 myacco, XDocument mywinelist, XDocument mycitylist, XDocument myskiarealist, XDocument mymediterranenlist, XDocument dolomiteslist, XDocument alpinelist)
         {
             myacco.ThemeIds = new List<string>();
 
@@ -1472,7 +1470,7 @@ namespace AccommodationTransformer.Parser
         }
 
         //Update SpecialFeatures Information
-        private static void UpdateSpecialFeatures(AccommodationLinked myacco)
+        private static void UpdateSpecialFeatures(AccommodationV2 myacco)
         {
             myacco.SpecialFeaturesIds = new List<string>();
 
@@ -1647,7 +1645,7 @@ namespace AccommodationTransformer.Parser
             }
         }
 
-        private static void UpdateAusstattungToSmgTags(AccommodationLinked myacco)
+        private static void UpdateAusstattungToSmgTags(AccommodationV2 myacco)
         {
             RemoveTagIf("035577098B254201A865684EF050C851", "bozencardplus", myacco);
             RemoveTagIf("CEE3703E4E3B44E3BD1BEE3F559DD31C", "rittencard", myacco);
@@ -1719,7 +1717,7 @@ namespace AccommodationTransformer.Parser
             RemoveTagIf("5F22AD3E93D54E99B7E6F97719A47153", "accomodation bett bike sport", myacco);
         }
 
-        private static void UpdateBadgesToSmgTags(AccommodationLinked myacco, string badgename, string tagname)
+        private static void UpdateBadgesToSmgTags(AccommodationV2 myacco, string badgename, string tagname)
         {
             if (myacco.BadgeIds != null && myacco.BadgeIds.Count() > 0)
             {
@@ -1750,7 +1748,7 @@ namespace AccommodationTransformer.Parser
             }
         }
 
-        private static void RemoveTagIf(string featureId, string tagname, AccommodationLinked myacco)
+        private static void RemoveTagIf(string featureId, string tagname, AccommodationV2 myacco)
         {
             if (myacco.Features != null)
             {
@@ -1780,7 +1778,7 @@ namespace AccommodationTransformer.Parser
             }
         }
 
-        private static void RemoveTagIf(List<string> featurelist, string tagname, AccommodationLinked myacco)
+        private static void RemoveTagIf(List<string> featurelist, string tagname, AccommodationV2 myacco)
         {
             if (myacco.Features != null)
             {
@@ -1926,7 +1924,6 @@ namespace AccommodationTransformer.Parser
                 default: return 0;
             }            
         }
-
     }
 
     public class AlpineBitsHelper
