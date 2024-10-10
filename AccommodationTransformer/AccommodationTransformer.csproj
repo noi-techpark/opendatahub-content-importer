@@ -29,8 +29,7 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\odh-api-core\DataModel\DataModel.csproj" />    
+  <ItemGroup>    
     <ProjectReference Include="..\DataImportHelper\DataImportHelper.csproj" />
     <ProjectReference Include="..\Helper\Helper.csproj" />
     <ProjectReference Include="..\HGVApi\HGVApi.csproj" />
