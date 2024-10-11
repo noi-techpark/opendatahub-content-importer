@@ -23,6 +23,12 @@ namespace LTSAPI
             this.credentials = _credentials;                        
         }
 
+        public LtsApi(string _serviceurl, string _username, string _password, string _xltsclientid, bool _opendata = false)
+        {
+            this.baseurl = _serviceurl;
+            this.credentials = new LTSCredentials(_serviceurl, _username, _password, _xltsclientid, _opendata);
+        }
+
         private async Task<HttpResponseMessage> LTSRESTRequest()
         {
             try
