@@ -1,5 +1,5 @@
 ﻿using DataImportHelper;
-using Helper;
+using GenericHelper;
 using MongoDBConnector;
 using Newtonsoft.Json;
 using RabbitMQ.Client;

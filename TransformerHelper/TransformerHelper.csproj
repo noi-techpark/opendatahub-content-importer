@@ -11,11 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\odh-importer-v2\DataImportHelper\DataImportHelper.csproj" />
-    <ProjectReference Include="..\..\odh-importer-v2\Helper\Helper.csproj" />
     <ProjectReference Include="..\..\odh-importer-v2\MongoDBConnector\MongoDBConnector.csproj" />
+    <ProjectReference Include="..\DataImportApi\DataImportApi.csproj" />
     <ProjectReference Include="..\DataImportHelper\DataImportHelper.csproj" />
-    <ProjectReference Include="..\Helper\Helper.csproj" />
+    <ProjectReference Include="..\GenericHelper\GenericHelper.csproj" />
     <ProjectReference Include="..\HGVApi\HGVApi.csproj" />
     <ProjectReference Include="..\LTSAPI\LTSAPI.csproj" />
     <ProjectReference Include="..\MongoDBConnector\MongoDBConnector.csproj" />

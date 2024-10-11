@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.Threading.Tasks;
 using DataImportHelper;
-using Helper;
+using GenericHelper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Configuration.UserSecrets;

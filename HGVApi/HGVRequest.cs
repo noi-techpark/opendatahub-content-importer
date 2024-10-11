@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Text;
 using System.Xml.Linq;
-using Helper;
+using GenericHelper;
 
 namespace HGVApi
 {    

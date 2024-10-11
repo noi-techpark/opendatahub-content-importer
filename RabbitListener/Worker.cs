@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Helper;
+using GenericHelper;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;

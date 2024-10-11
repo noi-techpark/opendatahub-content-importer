@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Helper\Helper.csproj" />
     <ProjectReference Include="..\HGVApi\HGVApi.csproj" />
     <ProjectReference Include="..\LTSAPI\LTSAPI.csproj" />
     <ProjectReference Include="..\RabbitPusher\RabbitPusher.csproj" />

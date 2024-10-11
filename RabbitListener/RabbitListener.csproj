@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Helper\Helper.csproj" />
+    <ProjectReference Include="..\GenericHelper\GenericHelper.csproj" />
     <ProjectReference Include="..\MongoDBConnector\MongoDBConnector.csproj" />
   </ItemGroup>
 

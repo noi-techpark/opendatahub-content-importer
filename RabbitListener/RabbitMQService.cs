@@ -14,7 +14,7 @@ using System.Configuration;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using MongoDBConnector;
-using Helper;
+using GenericHelper;
 
 namespace RabbitListener
 {    

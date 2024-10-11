@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using RabbitPusher;
 using DataImportHelper;
-using Helper;
+using GenericHelper;
 
 Console.WriteLine("Test!");
 var builder = new ConfigurationBuilder()

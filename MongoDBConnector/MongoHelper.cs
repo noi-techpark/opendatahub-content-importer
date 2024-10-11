@@ -6,7 +6,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
-using Helper;
+using GenericHelper;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace MongoDBConnector

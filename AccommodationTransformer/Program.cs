@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Helper;
+using GenericHelper;
 
 namespace AccommodationTransformer
 {

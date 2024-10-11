@@ -5,7 +5,7 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Net.NetworkInformation;
-using Helper;
+using GenericHelper;
 
 namespace LTSAPI
 {

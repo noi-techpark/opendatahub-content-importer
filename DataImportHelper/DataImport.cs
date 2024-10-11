@@ -1,6 +1,6 @@
 ﻿using LTSAPI;
 using HGVApi;
-using Helper;
+using GenericHelper;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RabbitPusher;

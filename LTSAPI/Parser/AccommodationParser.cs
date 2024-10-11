@@ -1,5 +1,5 @@
 ﻿using DataModel;
-using Helper;
+using GenericHelper;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -208,7 +208,7 @@ namespace LTSAPI.Parser
             ltsriddict.TryAddOrUpdate("a0r_id", accommodation.data.id.ToString());
             //Add Cin Code
             if(!string.IsNullOrEmpty(accommodation.data.cinCode))
-                ltsriddict.TryAddOrUpdate("cinCode", accommodation.data.cinCode);
+                ltsriddict.TryAddOrUpdate("cincode", accommodation.data.cinCode);
 
             accommodationlinked.Mapping.TryAddOrUpdate("lts", ltsriddict);
                       
