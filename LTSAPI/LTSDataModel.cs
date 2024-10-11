@@ -138,6 +138,7 @@ namespace LTSAPI
         public bool isCamping { get; set; }
         public bool isSuedtirolInfoActive { get; set; }
         public bool isTourismOrganizationMember { get; set; }
+        public string? cinCode { get; set; }
         public DateTime lastUpdate { get; set; }
         public DateTime lastUpdatePrices { get; set; }
         public DateTime lastUpdateAvailability { get; set; }

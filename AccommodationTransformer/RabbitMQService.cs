@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using AccommodationTransformer.Parser;
 using DataImportHelper;
 using DataModel;
 using Helper;
@@ -133,10 +132,10 @@ namespace AccommodationTransformer
                 var xmlfiles = LoadXmlFiles(Path.Combine(".\\xml\\"));
 
                 //Parse the Accommodation
-                var accommodation = AccommodationParser.ParseLTSAccommodation(accomodationdetail.ToObject<LTSAcco>(), false, xmlfiles);
+                var accommodation = LTSAPI.Parser.AccommodationParser.ParseLTSAccommodation(accomodationdetail.ToObject<LTSAcco>(), false, xmlfiles);
 
                 //Parse Rooms LTS
-                var accommodationrooms = AccommodationParser.ParseLTSAccommodationRoom(accomodationdetail.ToObject<LTSAcco>(), false, xmlfiles);
+                var accommodationrooms = LTSAPI.Parser.AccommodationParser.ParseLTSAccommodationRoom(accomodationdetail.ToObject<LTSAcco>(), false, xmlfiles);
 
                 var accommodationroomshgv = default(IEnumerable<AccommodationRoomLinked>);
 
@@ -146,7 +145,7 @@ namespace AccommodationTransformer
                     var accommodationhgvroomxml = XElement.Load(accommodationobjectmongo.rawdata);
 
                     //Parse the Accommodation
-                    accommodationroomshgv = AccommodationParser.ParseHGVAccommodationRoom("de", accommodationhgvroomxml, xmlfiles);
+                    accommodationroomshgv = HGVApi.Parser.AccommodationParser.ParseHGVAccommodationRoom("de", accommodationhgvroomxml, xmlfiles);
                 }
 
 

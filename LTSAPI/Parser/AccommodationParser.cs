@@ -206,8 +206,12 @@ namespace LTSAPI.Parser
             var ltsriddict = new Dictionary<string, string>() { { "rid", accommodation.data.rid } };
             //Add LTS A0R_ID as Mapping     
             ltsriddict.TryAddOrUpdate("a0r_id", accommodation.data.id.ToString());
-            accommodationlinked.Mapping.TryAddOrUpdate("lts", ltsriddict);
+            //Add Cin Code
+            if(!string.IsNullOrEmpty(accommodation.data.cinCode))
+                ltsriddict.TryAddOrUpdate("cinCode", accommodation.data.cinCode);
 
+            accommodationlinked.Mapping.TryAddOrUpdate("lts", ltsriddict);
+                      
             //Add HGV Mapping if present and delete it if no more present
             if (!String.IsNullOrEmpty(accommodation.data.hgvId))
             {
