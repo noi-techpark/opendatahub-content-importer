@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>opendatahub-ltsapi-importer</PackageId>
     <Title>Open Data Hub LTS Api Helper Library</Title>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Authors>r.thoeni</Authors>
     <Company>NOI AG</Company>
     <Product>$(AssemblyName)</Product>
@@ -23,10 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GenericHelper\GenericHelper.csproj" PrivateAssets="all" />
+    <PackageReference Include="opendatahub-importer-helper" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,12 +4,31 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>opendatahub-importer-helper</PackageId>
+    <Title>Open Data Hub - Importer Helper</Title>
+    <Version>1.0.0</Version>
+    <Authors>r.thoeni</Authors>
+    <Company>NOI AG</Company>
+    <Description>A Helper library created for the Open Data Hub Project that contains all classes and Extension Methods relevant for importing
+data via the new V2 Importer.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/noi-techpark/odh-importer-v2-core</RepositoryUrl>
+    <PackageTags>opendatahub</PackageTags>
+    <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
     <PackageReference Include="opendatahub-datamodel-tourism" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
+    </None>
   </ItemGroup>
 
 </Project>
