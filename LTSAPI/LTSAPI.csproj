@@ -23,7 +23,11 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="opendatahub-importer-helper" Version="1.0.0" />
+    <PackageReference Include="opendatahub-datamodel-tourism" Version="1.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GenericHelper\GenericHelper.csproj" />
   </ItemGroup>
 
   <ItemGroup>

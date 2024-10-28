@@ -17,6 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LTSAPI", "LTSAPI\LTSAPI.csproj", "{8A4C54AA-5C10-4DD3-AAD4-A0F67113CB1E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3BD3BB02-BA03-475B-8F26-A00F0A16461D} = {3BD3BB02-BA03-475B-8F26-A00F0A16461D}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestConsole", "TestConsole\TestConsole.csproj", "{EF528732-53AC-49C8-A0E2-869199786842}"
 EndProject

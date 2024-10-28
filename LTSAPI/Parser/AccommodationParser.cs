@@ -1,5 +1,4 @@
 ﻿using DataModel;
-using GenericHelper;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -12,6 +11,7 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using GenericHelper;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace LTSAPI.Parser
