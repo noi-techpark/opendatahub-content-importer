@@ -76,7 +76,7 @@ namespace DataImportHelper
             var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
             var dict = ltsapi.GetLTSQSDictionary(qs);
 
-            var ltsdata = await ltsapi.AccommodationAmenitiesRequest(null, true);
+            var ltsdata = await ltsapi.AccommodationAmenityRequest(null, true);
             rabbitsend.Send("lts/accommodationamenities", ltsdata);                        
         }
 
@@ -89,7 +89,7 @@ namespace DataImportHelper
             var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
             var dict = ltsapi.GetLTSQSDictionary(qs);
 
-            var ltsdata = await ltsapi.AccommodationCategoriesRequest(null, true);
+            var ltsdata = await ltsapi.AccommodationCategoryRequest(null, true);
             rabbitsend.Send("lts/accommodationcategories", ltsdata);
         }
 
@@ -102,7 +102,7 @@ namespace DataImportHelper
             var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
             var dict = ltsapi.GetLTSQSDictionary(qs);
 
-            var ltsdata = await ltsapi.AccommodationTypesRequest(null, true);
+            var ltsdata = await ltsapi.AccommodationTypeRequest(null, true);
             rabbitsend.Send("lts/accommodationtypes", ltsdata);
         }
 
