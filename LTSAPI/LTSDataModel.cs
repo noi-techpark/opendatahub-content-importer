@@ -31,9 +31,9 @@ namespace LTSAPI
     public class LTSEventContact
     {
         public LTSAddress address { get; set; }
-        public IDictionary<string, string> email { get; set; }
+        public IDictionary<string, string?>? email { get; set; }
         public string phone { get; set; }
-        public IDictionary<string, string> website { get; set; }
+        public IDictionary<string, string?>? website { get; set; }
     }
 
     public class LTSGastronomyContact
@@ -50,12 +50,12 @@ namespace LTSAPI
 
     public class LTSAddress
     {
-        public Dictionary<string, string> city { get; set; }
+        public Dictionary<string, string?>? city { get; set; }
         public string country { get; set; }
-        public Dictionary<string, string> name { get; set; }
-        public Dictionary<string, string> name2 { get; set; }
+        public Dictionary<string, string?>? name { get; set; }
+        public Dictionary<string, string?>? name2 { get; set; }
         public string postalCode { get; set; }
-        public Dictionary<string, string> street { get; set; }
+        public Dictionary<string, string?>? street { get; set; }
     }
 
 
@@ -73,7 +73,7 @@ namespace LTSAPI
         public string url { get; set; }
         public int widthPixel { get; set; }
 
-        public Dictionary<string, string>? name { get; set; }
+        public Dictionary<string, string?>? name { get; set; }
     }
 
     public class LTSPosition
@@ -98,7 +98,7 @@ namespace LTSAPI
 
     public class LTSDescription
     {
-        public Dictionary<string, string> description { get; set; }
+        public Dictionary<string, string?>? description { get; set; }
         public string type { get; set; }
     }
 
@@ -211,17 +211,19 @@ namespace LTSAPI
 
     public class LTSAccessibility
     {
-        public Dictionary<string, string> website { get; set; }
-        public Dictionary<string, string> description { get; set; }
+        public Dictionary<string, string?>? website { get; set; }
+        public Dictionary<string, string?>? description { get; set; }
     }
 
     public class LTSRateplan
     {
         public string chargeType { get; set; }
         public string code { get; set; }
-        public Dictionary<string, string>? descriptions { get; set; }
+        public Dictionary<string, string?>? descriptions { get; set; }
+
+        public bool iusSpecialOffer { get; set; }
         public DateTime lastUpdate { get; set; }
-        public Dictionary<string, string> name { get; set; }
+        public Dictionary<string, string?>? name { get; set; }
         public string rid { get; set; }
         public string? visibility { get; set; }
     }
@@ -273,7 +275,7 @@ namespace LTSAPI
         public int livingRooms { get; set; }
         public float minAmountPerPersonPerDay { get; set; }
         public float minAmountPerUnitPerDay { get; set; }
-        public Dictionary<string, string> name { get; set; }
+        public Dictionary<string, string?>? name { get; set; }
         public LTSOccupancy occupancy { get; set; }
         public string rid { get; set; }
         public int roomQuantity { get; set; }
@@ -337,17 +339,17 @@ namespace LTSAPI
         public bool isRegistrationRequired { get; set; }
         public bool isTicketRequired { get; set; }
         public DateTime lastUpdate { get; set; }
-        public IDictionary<string, string> location { get; set; }
-        public IDictionary<string, string> meetingPoint { get; set; }
-        public IDictionary<string, string> name { get; set; }
+        public IDictionary<string, string?>? location { get; set; }
+        public IDictionary<string, string?>? meetingPoint { get; set; }
+        public IDictionary<string, string?>? name { get; set; }
         public LTSOrganizer organizer { get; set; }
         public LTSPeriod[] periods { get; set; }
         public LTSPosition position { get; set; }
         public LTSPublishersetting[] publisherSettings { get; set; }
-        public IDictionary<string, string> registration { get; set; }
+        public IDictionary<string, string?>? registration { get; set; }
         public LTSShopconfiguration shopConfiguration { get; set; }
         public LTSEventTag[] tags { get; set; }
-        public IDictionary<string, string> urlAlias { get; set; }
+        public IDictionary<string, string?>? urlAlias { get; set; }
         public LTSUrl[] urls { get; set; }
     }
 
@@ -363,7 +365,7 @@ namespace LTSAPI
 
     public class LTSShopconfiguration
     {
-        public IDictionary<string, string> bookingUrl { get; set; }
+        public IDictionary<string, string?>? bookingUrl { get; set; }
         public bool isActive { get; set; }
     }
 
@@ -372,10 +374,10 @@ namespace LTSAPI
     public class LTSPeriod
     {
         public string rid { get; set; }
-        public IDictionary<string, string>? cancellationDescription { get; set; }
-        public IDictionary<string, string>? guide { get; set; }
-        public IDictionary<string, string>? description { get; set; }
-        public IDictionary<string, string>? registrationWithin { get; set; }
+        public IDictionary<string, string?>? cancellationDescription { get; set; }
+        public IDictionary<string, string?>? guide { get; set; }
+        public IDictionary<string, string?>? description { get; set; }
+        public IDictionary<string, string?>? registrationWithin { get; set; }
         public double? minAmount { get; set; }
         public string startDate { get; set; }
         public string endDate { get; set; }
@@ -440,7 +442,7 @@ namespace LTSAPI
     public class LTSUrl
     {
         public string type { get; set; }
-        public IDictionary<string, string> url { get; set; }
+        public IDictionary<string, string?>? url { get; set; }
     }
 
     #endregion

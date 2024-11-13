@@ -70,7 +70,8 @@ namespace LTSAPI.Parser
             }          
         }
 
-        public static AccommodationV2 ParseLTSAccommodation(LTSAccoData accommodation, 
+        public static AccommodationV2 ParseLTSAccommodation(
+            LTSAccoData accommodation, 
             bool reduced,
             IDictionary<string, XDocument> xmlfiles,
             IDictionary<string, JArray> jsonfiles)
