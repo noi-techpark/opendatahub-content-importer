@@ -19,9 +19,9 @@ DataImport dataimport = new DataImport(settings);
 
 //var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
 
-await dataimport.ImportLTSAccommodationSingle("2657B7CBCb85380B253D2fBE28AF100E");
+await dataimport.ImportLTSAccommodationSingle("1DF9C17D6F24E87E4EDAAB3408588A6C");
 
-await dataimport.ImportLTSAccommodationSingle("525B5D14566741D3B5910721027B5ED7");
+//await dataimport.ImportLTSAccommodationSingle("525B5D14566741D3B5910721027B5ED7");
 
 //RabbitMQSend rabbitsend = new RabbitMQSend(config.GetConnectionString("RabbitConnection"));
 

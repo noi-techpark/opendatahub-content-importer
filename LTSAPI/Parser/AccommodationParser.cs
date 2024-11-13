@@ -630,7 +630,12 @@ namespace LTSAPI.Parser
                     RatePlan rateplan = new RatePlan();
                     rateplan.RatePlanId = rateplanlts.rid;
                     rateplan.Name = rateplanlts.name;
-                    rateplan.Description = rateplanlts.descriptions;
+
+                    //rateplan.Description = rateplanlts.descriptions;
+
+                    rateplan.LongDescription = rateplanlts.descriptions.Where(x => x.type == "longDescription").FirstOrDefault()?.description;
+                    rateplan.ShortDescription = rateplanlts.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description;
+
                     rateplan.Visibility = rateplanlts.visibility;
                     rateplan.Code = rateplanlts.code;
                     rateplan.ChargeType = rateplanlts.chargeType;

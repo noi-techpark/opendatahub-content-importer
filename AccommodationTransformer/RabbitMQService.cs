@@ -65,6 +65,10 @@ namespace AccommodationTransformer
                 Console.WriteLine("Read Accommodation DETAIL called");
 
                 JObject accomodationdetail = jsonarray.FirstOrDefault().Value<JObject>();
+
+                ////TEST PArsing
+                //var test = accomodationdetail["data"].ToObject<LTSAccoData>();
+
                 var identifier = accomodationdetail["data"]["rid"].Value<string>();
                             
                 //GET HGV Room Data if 
