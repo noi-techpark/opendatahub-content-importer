@@ -130,12 +130,13 @@ namespace AccommodationTransformer
                 
                 //Load all XDocuments
                 var xmlfiles = LoadXmlFiles(Path.Combine(".\\xml\\"));
+                var jsonfiles = await LoadJsonFiles("Features", Path.Combine(".\\json\\"));
 
                 //Parse the Accommodation
-                var accommodation = LTSAPI.Parser.AccommodationParser.ParseLTSAccommodation(accomodationdetail["data"].ToObject<LTSAccoData>(), false, xmlfiles);
+                var accommodation = LTSAPI.Parser.AccommodationParser.ParseLTSAccommodation(accomodationdetail["data"].ToObject<LTSAccoData>(), false, xmlfiles, jsonfiles);
 
                 //Parse Rooms LTS
-                var accommodationrooms = LTSAPI.Parser.AccommodationParser.ParseLTSAccommodationRoom(accomodationdetail["data"].ToObject<LTSAccoData>(), false, xmlfiles);
+                var accommodationrooms = LTSAPI.Parser.AccommodationParser.ParseLTSAccommodationRoom(accomodationdetail["data"].ToObject<LTSAccoData>(), false, xmlfiles, jsonfiles);
 
                 var accommodationroomshgv = default(IEnumerable<AccommodationRoomLinked>);
 
@@ -211,6 +212,25 @@ namespace AccommodationTransformer
             
             return myxmlfiles;
         }
+
+        public static async Task<IDictionary<string, JArray>> LoadJsonFiles(string directory, string filename)
+        {
+            IDictionary<string, JArray> myjsonfiles = new Dictionary<string, JArray>();
+            myjsonfiles.Add(filename, await LoadFromJsonAndDeSerialize(filename, directory));
+
+            return myjsonfiles;
+        }
+
+        public static async Task<JArray> LoadFromJsonAndDeSerialize(string filename, string path)
+        {
+            using (StreamReader r = new StreamReader(Path.Combine(path, filename + ".json")))
+            {
+                string json = await r.ReadToEndAsync();
+
+                return JArray.Parse(json) ?? new JArray();
+            }
+        }
+
     }
 
     public class AccommodationFinished()

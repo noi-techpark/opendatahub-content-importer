@@ -134,7 +134,7 @@ namespace DataImportHelper
             var qs = new LTSQueryStrings() { page_size = 1 };
             var dict = ltsapi.GetLTSQSDictionary(qs);
 
-            var ltsdata = await ltsapi.AccommodationDetailRequest(rid, null);
+            var ltsdata = await ltsapi.AccommodationDetailRequest(rid, dict);
             rabbitsend.Send("lts/accommodationdetail" + opendata, ltsdata, identifier);
         }
 

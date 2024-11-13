@@ -18,13 +18,16 @@ namespace LTSAPI.Parser
 {
     public class AccommodationParser
     {
-        public static AccommodationLinked ParseLTSAccommodation(JObject accomodationdetail, bool reduced, IDictionary<string, XDocument> xmlfiles)
+        public static AccommodationLinked ParseLTSAccommodation(
+            JObject accomodationdetail, bool reduced, 
+            IDictionary<string, XDocument> xmlfiles,
+            IDictionary<string, JArray> jsonfiles)
         {
             try
             {
                 LTSAcco accoltsdetail = accomodationdetail.ToObject<LTSAcco>();
 
-                return ParseLTSAccommodation(accoltsdetail.data, reduced, xmlfiles);
+                return ParseLTSAccommodation(accoltsdetail.data, reduced, xmlfiles, jsonfiles);
             }
             catch(Exception ex)
             {
@@ -69,7 +72,8 @@ namespace LTSAPI.Parser
 
         public static AccommodationV2 ParseLTSAccommodation(LTSAccoData accommodation, 
             bool reduced,
-            IDictionary<string, XDocument> xmlfiles)
+            IDictionary<string, XDocument> xmlfiles,
+            IDictionary<string, JArray> jsonfiles)
         {
             //if the xml files are null reload ít
 
@@ -273,16 +277,14 @@ namespace LTSAPI.Parser
 
             foreach (var tin in accommodation.amenities)
             {
-                var myfeature = xmlfiles["Features"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == tin.rid).FirstOrDefault();
+                var myfeature = jsonfiles["Features"].Where(x => x["rid"].Value<string>() == tin.rid).FirstOrDefault();
 
                 if (myfeature != null)
                 {
-                    var myfeatureparsed = myfeature.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault();
+                    var myfeatureparsed = myfeature["name"]["en"].Value<string>();
 
                     if (myfeatureparsed != null)
-                    {
-                        var myfeatureparsed2 = myfeatureparsed.Attribute("T1Des").Value;
-
+                    {                        
                         //Getting HGV ID if available
 
                         string hgvamenityid = "";
@@ -294,9 +296,7 @@ namespace LTSAPI.Parser
                         if (myamenity != null)
                             hgvamenityid = myamenity.Element("hgvid").Value;
 
-
-                        if (myfeatureparsed2 != null)
-                            featurelist.Add(new AccoFeatureLinked() { Id = tin.rid, Name = myfeatureparsed2, HgvId = hgvamenityid });
+                        featurelist.Add(new AccoFeatureLinked() { Id = tin.rid, Name = myfeatureparsed, HgvId = hgvamenityid });
                     }
                     else
                     {
@@ -667,7 +667,8 @@ namespace LTSAPI.Parser
 
         public static IEnumerable<AccommodationRoomV2> ParseLTSAccommodationRoom(LTSAccoData accommodation,
             bool reduced,
-            IDictionary<string, XDocument> xmlfiles)
+            IDictionary<string, XDocument> xmlfiles,
+            IDictionary<string, JArray> jsonfiles)
         {
             List<AccommodationRoomV2> roomlist = new List<AccommodationRoomV2>();
 
