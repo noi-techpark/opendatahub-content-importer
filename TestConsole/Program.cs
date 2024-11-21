@@ -59,18 +59,20 @@ Settings settings = new Settings(config);
 
 LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
 
-LTSAvailabilitySeachBody body = new LTSAvailabilitySeachBody() {
+LTSAvailabilitySearchRequestBody body = new LTSAvailabilitySearchRequestBody() {
     accommodationRids = new List<string>() { "B2D5F382CE2611D1BAAA00805A13E75D" },
     startDate = "2024-12-14",
     endDate = "2024-12-15",
-    paging = new LTSPaging() { pageNumber = 1, pageSize = 10000 },
+    paging = new LTSAvailabilitySearchRequestPaging() { pageNumber = 1, pageSize = 10000 },
     cacheLifeTimeInSeconds = 300,    
     onlySuedtirolInfoActive = true,
-    roomOptions = new List<LTSAvailabilitySearchRoomoption>() { new LTSAvailabilitySearchRoomoption() { id = 1, guests = 2, guestAges = new List<int>() { 18, 18 } } }
+    roomOptions = new List<LTSAvailabilitySearchRequestRoomoption>() { new LTSAvailabilitySearchRequestRoomoption() { id = 1, guests = 2, guestAges = new List<int>() { 18, 18 } } }
 };
 
 
 var ltsavailablilitysearch = await ltsapi.AccommodationAvailabilitySearchRequest(null, body);
+
+var parsedavailabilitysearch = ltsavailablilitysearch[0].ToObject<LTSAvailabilitySearchResult>();
 
 var testlts = await ltsapi.AccommodationDetailRequest("2657B7CBCb85380B253D2fBE28AF100E", null);
 

@@ -175,9 +175,9 @@ namespace LTSAPI
 
         #region AccommodationAvailability
 
-        public async Task<List<JObject>> AccommodationAvailabilitySearchRequest(IDictionary<string, string>? _parameters, LTSAvailabilitySeachBody _body)
+        public async Task<List<JObject>> AccommodationAvailabilitySearchRequest(IDictionary<string, string>? _parameters, LTSAvailabilitySearchRequestBody _body)
         {
-            return await LTSRequestMethod<LTSAvailabilitySeachBody>("accommodations/availabilities/search", _parameters, false, _body);
+            return await LTSRequestMethod<LTSAvailabilitySearchRequestBody>("accommodations/availabilities/search", _parameters, false, _body);
         }
 
 
@@ -861,13 +861,13 @@ namespace LTSAPI
         public T parameters { get; set; }
     }
 
-    public class LTSAvailabilitySeachBody
+    public class LTSAvailabilitySearchRequestBody
     {
-        public LTSAvailabilitySeachBody()
+        public LTSAvailabilitySearchRequestBody()
         {
             marketingGroupRids = new List<string>();
             accommodationRids = new List<string>();
-            roomOptions = new List<LTSAvailabilitySearchRoomoption>();
+            roomOptions = new List<LTSAvailabilitySearchRequestRoomoption>();
         }
 
         public ICollection<string> marketingGroupRids { get; set; }
@@ -876,17 +876,17 @@ namespace LTSAPI
         public int cacheLifeTimeInSeconds { get; set; }
         public string startDate { get; set; }
         public string endDate { get; set; }
-        public LTSPaging paging { get; set; }
-        public ICollection<LTSAvailabilitySearchRoomoption> roomOptions { get; set; }
+        public LTSAvailabilitySearchRequestPaging paging { get; set; }
+        public ICollection<LTSAvailabilitySearchRequestRoomoption> roomOptions { get; set; }
     }   
 
-    public class LTSPaging
+    public class LTSAvailabilitySearchRequestPaging
     {
         public int pageNumber { get; set; }
         public int pageSize { get; set; }
     }
 
-    public class LTSAvailabilitySearchRoomoption
+    public class LTSAvailabilitySearchRequestRoomoption
     {
         public int id { get; set; }
         public int guests { get; set; }

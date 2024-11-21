@@ -13,6 +13,11 @@ namespace LTSAPI
         public T data { get; set; }
     }
 
+    public class GenericLTSRidResult
+    {
+        public string rid { get; set; }
+    }
+
     public class LTSDistrict
     {
         public string rid { get; set; }
@@ -46,7 +51,7 @@ namespace LTSAPI
         public LTSAddress address { get; set; }
         public string postalCode { get; set; }
         public string country { get; set; }
-    }   
+    }
 
     public class LTSAddress
     {
@@ -226,7 +231,7 @@ namespace LTSAPI
         public Dictionary<string, string>? name { get; set; }
         public string rid { get; set; }
         public string? visibility { get; set; }
-    }    
+    }
 
     public class LTSAddressgroup
     {
@@ -447,6 +452,61 @@ namespace LTSAPI
 
     #endregion
 
+    #region Accommodation Availablity
+
+    public class LTSAvailabilitySearchResult
+    {
+        public bool success { get; set; }
+        public LTSPaging paging { get; set; }
+        public LTSAvailabilitySearchResultset resultSet { get; set; }
+        public LTSAvailabilitySearchData[] data { get; set; }
+    }
+
+    public class LTSPaging
+    {
+        public int resultsQuantity { get; set; }
+        public int pageNumber { get; set; }
+        public int pageSize { get; set; }
+        public int pagesQuantity { get; set; }
+    }
+
+    public class LTSAvailabilitySearchResultset
+    {
+        public string rid { get; set; }
+        public float lowestMinAmount { get; set; }
+        public float highestMaxAmount { get; set; }
+    }
+
+    public class LTSAvailabilitySearchData
+    {
+        public GenericLTSRidResult accommodation { get; set; }
+        public float minAmount { get; set; }
+        public LTSAvailabilitySearchRoomoption[] roomOptions { get; set; }
+    }    
+
+    public class LTSAvailabilitySearchRoomoption
+    {
+        public GenericLTSRidResult roomGroup { get; set; }
+        public int availableRooms { get; set; }
+        public int bookableRooms { get; set; }
+        public LTSAvailabilitySearchRate[] rates { get; set; }
+    }
+
+    public class LTSAvailabilitySearchRate
+    {
+        public int roomOptionId { get; set; }
+        public bool isBookable { get; set; }
+        public bool isSpecialOffer { get; set; }
+        public GenericLTSRidResult ratePlan { get; set; }
+        public float? allInclusiveAmount { get; set; }
+        public float? bedAndBreakfastAmount { get; set; }
+        public float? fullBoardAmount { get; set; }
+        public float? halfBoardAmount { get; set; }
+        public float? roomOnlyAmount { get; set; }
+    }
+
+    #endregion
+
     #region Gastronomy
 
     public class LTSGastronomy : LTSData<LTSGastronomyData>
@@ -468,7 +528,7 @@ namespace LTSAPI
         public LTSAreamap areaMap { get; set; }
         public LTSCategory[] categories { get; set; }
         public LTSGastronomyContact[] contacts { get; set; }
-        public IDictionary<string,string> description { get; set; }
+        public IDictionary<string, string> description { get; set; }
         public LTSImage[] images { get; set; }
         public LTSFacility[] facilities { get; set; }
         public LTSOpeningschedule[] openingSchedules { get; set; }
@@ -489,8 +549,8 @@ namespace LTSAPI
         public string applicableEndDate { get; set; }
         public string copyright { get; set; }
         public string license { get; set; }
-        public IDictionary<string,string>? name { get; set; }
-    }    
+        public IDictionary<string, string>? name { get; set; }
+    }
 
     public class LTSFacility
     {
