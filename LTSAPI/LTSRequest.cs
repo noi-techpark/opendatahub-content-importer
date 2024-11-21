@@ -4,8 +4,10 @@ using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using System.Net.NetworkInformation;
 using GenericHelper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using System.Net.Http.Json;
 
 namespace LTSAPI
 {
@@ -13,14 +15,15 @@ namespace LTSAPI
     {
         LTSCredentials credentials;
         string baseurl;
-        IDictionary<string,string>? parameters;
+        IDictionary<string, string>? parameters;
         string endpoint;
         bool getallpages = false;
+        StringContent body;
 
-        public LtsApi(LTSCredentials _credentials) 
-        {            
+        public LtsApi(LTSCredentials _credentials)
+        {
             this.baseurl = _credentials.serviceurl;
-            this.credentials = _credentials;                        
+            this.credentials = _credentials;
         }
 
         public LtsApi(string _serviceurl, string _username, string _password, string _xltsclientid, bool _opendata = false)
@@ -29,13 +32,13 @@ namespace LTSAPI
             this.credentials = new LTSCredentials(_serviceurl, _username, _password, _xltsclientid, _opendata);
         }
 
-        private async Task<HttpResponseMessage> LTSRESTRequest()
+        private async Task<HttpResponseMessage> LTSGETRequest()
         {
             try
             {
                 var querystring = parameters != null ? "?" + string.Join("&", parameters.Select(x => String.Join("=", x.Key, x.Value))) : "";
                 var serviceurl = baseurl + "/" + endpoint + querystring;
-             
+
                 using (var client = new HttpClient())
                 {
                     client.Timeout = TimeSpan.FromSeconds(30);
@@ -53,9 +56,44 @@ namespace LTSAPI
             }
         }
 
-        private async Task<List<JObject>> RequestAndParseToJObject()
+        private async Task<HttpResponseMessage> LTSPOSTRequest()
         {
-            var response = await LTSRESTRequest();
+            try
+            {
+                var querystring = parameters != null ? "?" + string.Join("&", parameters.Select(x => String.Join("=", x.Key, x.Value))) : "";
+                var serviceurl = baseurl + "/" + endpoint + querystring;
+ 
+                using (var client = new HttpClient())
+                {
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(credentials.username + ":" + credentials.password)));
+                    client.DefaultRequestHeaders.Add("X-LTS-ClientID", credentials.ltsclientid);
+
+                    var myresponse = await client.PostAsync(serviceurl, body);
+
+                    return myresponse;
+                }
+            }
+            catch (Exception ex)
+            {
+                return new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest, Content = new StringContent(ex.Message) };
+            }
+        }
+
+        private async Task<HttpResponseMessage> LTSRESTRequest(string method = "GET")
+        {
+            if (method == HttpMethods.Post)
+            {
+                return await LTSPOSTRequest();
+            }
+            else
+                return await LTSGETRequest();
+        }
+
+
+        private async Task<List<JObject>> RequestAndParseToJObject(string method = "GET")
+        {
+            var response = await LTSRESTRequest(method);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -89,7 +127,7 @@ namespace LTSAPI
                     int.TryParse(currentpage, out int currentpageint);
 
                     var resultrid = "";
-                    if(contentjson.ContainsKey("resultSet"))
+                    if (contentjson.ContainsKey("resultSet"))
                         resultrid = (string)contentjson["resultSet"]["rid"];
 
 
@@ -98,11 +136,11 @@ namespace LTSAPI
                         //Add page parameter
                         parameters.TryAddOrUpdate("page[number]", (currentpageint + 1).ToString());
                         //Add filter[resultSet][rid]
-                        if(!String.IsNullOrEmpty(resultrid))
+                        if (!String.IsNullOrEmpty(resultrid))
                             parameters.TryAddOrUpdate("filter[resultSet][rid]", resultrid);
                         //Request again
                         jobjectlist.AddRange(await RequestAndParseToJObject());
-                    }                  
+                    }
                 }
 
                 return jobjectlist;
@@ -110,7 +148,7 @@ namespace LTSAPI
             else
             {
                 var error = await response.Content.ReadAsStringAsync();
-                return new List<JObject>() { new JObject(new { error = true, message = "LTS Api error ", exception = error  }) };
+                return new List<JObject>() { new JObject(new { error = true, message = "LTS Api error ", exception = error }) };
             }
         }
 
@@ -123,11 +161,32 @@ namespace LTSAPI
             return await RequestAndParseToJObject();
         }
 
+        private async Task<List<JObject>> LTSRequestMethod<T>(string _endpoint, IDictionary<string, string>? _parameters, bool _getallpages, T _body)
+        {
+            endpoint = _endpoint;
+            parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
+            getallpages = _getallpages;
+            var postbody = new LTSPostBody<T>() { parameters = _body };
+            //body = JsonContent.Create(postbody);
+            body = new StringContent(JsonConvert.SerializeObject(postbody), Encoding.UTF8, "application/json");
+
+            return await RequestAndParseToJObject("POST");
+        }
+
+        #region AccommodationAvailability
+
+        public async Task<List<JObject>> AccommodationAvailabilitySearchRequest(IDictionary<string, string>? _parameters, LTSAvailabilitySeachBody _body)
+        {
+            return await LTSRequestMethod<LTSAvailabilitySeachBody>("accommodations/availabilities/search", _parameters, false, _body);
+        }
+
+
+        #endregion
 
         #region Accommodation
 
         public async Task<List<JObject>> AccommodationAmenityRequest(IDictionary<string, string>? _parameters, bool _getallpages)
-        {            
+        {
             return await LTSRequestMethod("amenities", _parameters, _getallpages);
         }
 
@@ -147,7 +206,7 @@ namespace LTSAPI
         }
 
         public async Task<List<JObject>> AccommodationTypeRequest(IDictionary<string, string>? _parameters, bool _getallpages)
-        {            
+        {
             return await LTSRequestMethod("accommodations/types", _parameters, _getallpages);
         }
 
@@ -182,13 +241,13 @@ namespace LTSAPI
         }
 
         public async Task<List<JObject>> AccommodationListRequest(IDictionary<string, string>? _parameters, bool _getallpages)
-        {            
+        {
             return await LTSRequestMethod("accommodations", _parameters, _getallpages);
         }
 
         public async Task<List<JObject>> AccommodationDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("accommodations/" + id, _parameters, false);            
+            return await LTSRequestMethod("accommodations/" + id, _parameters, false);
         }
 
 
@@ -203,7 +262,7 @@ namespace LTSAPI
         }
 
         public async Task<List<JObject>> AccommodationDeleteRequest(IDictionary<string, string>? _parameters, bool _getallpages)
-        {            
+        {
             return await LTSRequestMethod("accommodations/deleted", _parameters, _getallpages);
         }
 
@@ -376,7 +435,7 @@ namespace LTSAPI
         public async Task<List<JObject>> EventDateRequest(IDictionary<string, string>? _parameters, bool _getallpages)
         {
             return await LTSRequestMethod("events/dates", _parameters, _getallpages);
-        }        
+        }
 
         public async Task<List<JObject>> EventOrganizerRequest(IDictionary<string, string>? _parameters, bool _getallpages)
         {
@@ -530,7 +589,7 @@ namespace LTSAPI
         {
             return await LTSRequestMethod("suedtirolguestpass/cardtypes/" + id, _parameters, _getallpages);
         }
-        
+
         public async Task<List<JObject>> SuedtirolGuestPassBenefitsRequest(IDictionary<string, string>? _parameters, bool _getallpages)
         {
             return await LTSRequestMethod("suedtirolguestpass/benefits", _parameters, _getallpages);
@@ -643,7 +702,7 @@ namespace LTSAPI
         public async Task<List<JObject>> PositionCategoryDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
         {
             return await LTSRequestMethod("positions/categories/" + id, _parameters, _getallpages);
-        }        
+        }
 
         #endregion
 
@@ -653,13 +712,13 @@ namespace LTSAPI
         public IDictionary<string, string> GetLTSQSDictionary(LTSQueryStrings qs)
         {
             IDictionary<string, string> qsdict = new Dictionary<string, string>();
-            
+
             foreach (var prop in qs.GetType().GetProperties())
             {
                 string propkey = "";
                 var propkeysplitted = prop.Name.Split("_");
                 int i = 0;
-                foreach(var pk in propkeysplitted)
+                foreach (var pk in propkeysplitted)
                 {
                     if (i == 0)
                         propkey = propkey + pk;
@@ -675,7 +734,7 @@ namespace LTSAPI
                 {
                     string? valuetoadd = null;
 
-                    if(prop.PropertyType == typeof(DateTime?))
+                    if (prop.PropertyType == typeof(DateTime?))
                     {
                         valuetoadd = String.Format("{0:yyyy-MM-ddThh:mm:ss.fff}", (DateTime)propvalue);
                     }
@@ -688,7 +747,7 @@ namespace LTSAPI
                     if (!String.IsNullOrEmpty(valuetoadd))
                         qsdict.Add(propkey, valuetoadd);
                 }
-                    
+
             }
 
             return qsdict;
@@ -697,7 +756,7 @@ namespace LTSAPI
         #endregion
     }
 
-    
+
 
     public class LTSQueryStrings
     {
@@ -718,7 +777,7 @@ namespace LTSAPI
         //accommodation
         public string? filter_tourismOrganizationRids { get; set; }
         public string? filter_marketingGroupRids { get; set; }
-        public bool? filter_onlySuedtirolInfoActive { get; set; }        
+        public bool? filter_onlySuedtirolInfoActive { get; set; }
         public int? filter_minAltitude { get; set; }
         public int? filter_maxAltitude { get; set; }
         public string? filter_representationMode { get; set; }
@@ -727,7 +786,7 @@ namespace LTSAPI
         public string? filter_roomGroup_amenityRids { get; set; }
         public string? filter_typeRids { get; set; }
         public bool? filter_hasRooms { get; set; }
-        public bool? filter_hasApartments { get; set; }        
+        public bool? filter_hasApartments { get; set; }
         public string? filter_holidayPackageRids { get; set; }
         public string? filter_addressGroupRids { get; set; }
         public bool? filter_onlyBookable { get; set; }
@@ -742,19 +801,19 @@ namespace LTSAPI
         public string? filter_posId { get; set; }
         public string? filter_startDate { get; set; }
         public string? filter_endDate { get; set; }
-        public int? filter_publisherSettingMinImportanceRate { get; set; }        
-        public string? filter_zoneRids { get; set; }        
+        public int? filter_publisherSettingMinImportanceRate { get; set; }
+        public string? filter_zoneRids { get; set; }
         public string? filter_organizerRids { get; set; }
         public bool? filter_onlyVisibleInEventFinder { get; set; }
 
         //poi
 
         public bool? filter_hasFreeEntry { get; set; }
-        public bool? filter_isOpen { get; set; }        
-        public bool? filter_favouriteFor { get; set; }        
+        public bool? filter_isOpen { get; set; }
+        public bool? filter_favouriteFor { get; set; }
         public string? filter_tagRids { get; set; }
         public string? filter_ownerRids { get; set; }
-        public string? filter_areaRids { get; set; }        
+        public string? filter_areaRids { get; set; }
         public string? filter_aroundPosition_ { get; set; }
         public string? filter_coordinates_example { get; set; }
         public string? filter_radiusInMeters { get; set; }
@@ -783,7 +842,7 @@ namespace LTSAPI
         public bool? filter_onlyTourismOrganizationMember { get; set; }
         public string? filter_facilityRids { get; set; }
         public DateTime? filter_openOnDate { get; set; }
-        
+
         //webcams
         public bool? filter_excludeOutOfOrder { get; set; }
 
@@ -796,5 +855,42 @@ namespace LTSAPI
         public int? filter_level { get; set; }
         public string? filter_entity { get; set; }
     }
-    
+
+    public class LTSPostBody<T>
+    {
+        public T parameters { get; set; }
+    }
+
+    public class LTSAvailabilitySeachBody
+    {
+        public LTSAvailabilitySeachBody()
+        {
+            marketingGroupRids = new List<string>();
+            accommodationRids = new List<string>();
+            roomOptions = new List<LTSAvailabilitySearchRoomoption>();
+        }
+
+        public ICollection<string> marketingGroupRids { get; set; }
+        public ICollection<string> accommodationRids { get; set; }
+        public bool onlySuedtirolInfoActive { get; set; }
+        public int cacheLifeTimeInSeconds { get; set; }
+        public string startDate { get; set; }
+        public string endDate { get; set; }
+        public LTSPaging paging { get; set; }
+        public ICollection<LTSAvailabilitySearchRoomoption> roomOptions { get; set; }
+    }   
+
+    public class LTSPaging
+    {
+        public int pageNumber { get; set; }
+        public int pageSize { get; set; }
+    }
+
+    public class LTSAvailabilitySearchRoomoption
+    {
+        public int id { get; set; }
+        public int guests { get; set; }
+        public ICollection<int> guestAges { get; set; }
+    }
+
 }
