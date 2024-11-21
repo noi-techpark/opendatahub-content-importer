@@ -60,7 +60,8 @@ Settings settings = new Settings(config);
 LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
 
 LTSAvailabilitySearchRequestBody body = new LTSAvailabilitySearchRequestBody() {
-    accommodationRids = new List<string>() { "B2D5F382CE2611D1BAAA00805A13E75D" },
+    //accommodationRids = new List<string>() { "B2D5F382CE2611D1BAAA00805A13E75D" },
+    marketingGroupRids = new List<string>() { "" },
     startDate = "2024-12-14",
     endDate = "2024-12-15",
     paging = new LTSAvailabilitySearchRequestPaging() { pageNumber = 1, pageSize = 10000 },
