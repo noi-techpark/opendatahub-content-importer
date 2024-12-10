@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using RabbitPusher;
 using DataImportHelper;
 using GenericHelper;
+using System.Diagnostics;
 
 Console.WriteLine("Test!");
 var builder = new ConfigurationBuilder()
@@ -57,13 +58,21 @@ Settings settings = new Settings(config);
 //var ltsacco2 = await ltsapi.AccommodationDetailRequest("2657B7CBCb85380B253D2fBE28AF100E", null);
 //rabbitsend.Send("lts/accommodationdetail", ltsacco2);
 
+Console.WriteLine("key to start");
+
+Console.ReadLine();
+
+Stopwatch watch = Stopwatch.StartNew();
+
 LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
 
+https://tourism.api.opendatahub.bz.it/v1/Accommodation?pagenumber=1&pagesize=10000&arrival=2025-02-03&departure=2025-02-10&roominfo=0-18%2C18&language=de&availabilitychecklanguage=de&availabilitycheck=true&removenullvalues=false&bookablefilter=true&fields=Id%2CMssResponseShort&idfilter=FF050E6BE1F245FAD5E61495E17522D2&bokfilter=lts
+
 LTSAvailabilitySearchRequestBody body = new LTSAvailabilitySearchRequestBody() {
-    //accommodationRids = new List<string>() { "B2D5F382CE2611D1BAAA00805A13E75D" },
-    marketingGroupRids = new List<string>() { "" },
-    startDate = "2024-12-14",
-    endDate = "2024-12-15",
+    accommodationRids = new List<string>() { "FF050E6BE1F245FAD5E61495E17522D2" },
+    //marketingGroupRids = new List<string>() { "" },
+    startDate = "2025-02-03",
+    endDate = "2025-02-10",
     paging = new LTSAvailabilitySearchRequestPaging() { pageNumber = 1, pageSize = 10000 },
     cacheLifeTimeInSeconds = 300,    
     onlySuedtirolInfoActive = true,
@@ -75,6 +84,12 @@ var ltsavailablilitysearch = await ltsapi.AccommodationAvailabilitySearchRequest
 
 var parsedavailabilitysearch = ltsavailablilitysearch[0].ToObject<LTSAvailabilitySearchResult>();
 
-var testlts = await ltsapi.AccommodationDetailRequest("2657B7CBCb85380B253D2fBE28AF100E", null);
+//var testlts = await ltsapi.AccommodationDetailRequest("2657B7CBCb85380B253D2fBE28AF100E", null);
 
-int i = 0;
+Console.WriteLine(parsedavailabilitysearch.success);
+
+watch.Stop();
+
+Console.WriteLine("elapsed time: " + watch.ElapsedMilliseconds);
+
+Console.ReadLine();

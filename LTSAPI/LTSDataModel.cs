@@ -79,6 +79,7 @@ namespace LTSAPI
         public int widthPixel { get; set; }
 
         public Dictionary<string, string>? name { get; set; }
+        public bool? isMainImage { get; set; }
     }
 
     public class LTSPosition
@@ -482,7 +483,7 @@ namespace LTSAPI
         public GenericLTSRidResult accommodation { get; set; }
         public float minAmount { get; set; }
         public LTSAvailabilitySearchRoomoption[] roomOptions { get; set; }
-    }    
+    }
 
     public class LTSAvailabilitySearchRoomoption
     {
@@ -607,9 +608,207 @@ namespace LTSAPI
 
     #region Activities
 
+    public class LTSActivity
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public string code { get; set; }
+        public string specificNumberCode { get; set; }
+        public int? order { get; set; }
+        public LTSMountainbike mountainBike { get; set; }
+        public LTSTourismorganization tourismOrganization { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public LTSDescription[] descriptions { get; set; }
+        public LTSRating rating { get; set; }
+        public IDictionary<string, string> location { get; set; }
+        public LTSLiftpointcard liftPointCard { get; set; }
+        public LTSArea[] areas { get; set; }
+        public bool isIlluminated { get; set; }
+        public bool hasRental { get; set; }
+        public bool? hasLift { get; set; }
+        public bool? isPossibleClimbByFeet { get; set; }
+        public bool? hasBikeTransport { get; set; }
+        public string minRopeLength { get; set; }
+        public string quantityQuickDraws { get; set; }
+        public bool isActive { get; set; }
+        public bool isOpen { get; set; }
+        public bool isPrepared { get; set; }
+        public bool hasCopyright { get; set; }
+        public bool isReadOnly { get; set; }
+        public string favouriteFor { get; set; }
+        public bool isPossibleRunToValley { get; set; }
+        public object snowType { get; set; }
+        public LTSSnowpark snowPark { get; set; }
+        public IDictionary<string, string> novelty { get; set; }
+        public LTSActivityOpeningschedule[] openingSchedules { get; set; }
+        public LTSEventContact contact { get; set; }
+        public LTSGeodata geoData { get; set; }
+        public LTSTag[] tags { get; set; }
+        public LTSImage[] images { get; set; }
+        public LTSVideo[] videos { get; set; }
+    }
+
+    public class LTSMountainbike
+    {
+        public bool? isPermitted { get; set; }
+        public int? officialWayNumber { get; set; }
+    }
+
+    public class LTSRating
+    {
+        public int? stamina { get; set; }
+        public int? experience { get; set; }
+        public int? landscape { get; set; }
+        public int? difficulty { get; set; }
+        public int? technique { get; set; }
+        public string? viaFerrataTechnique { get; set; }
+        public string? scaleUIAATechnique { get; set; }
+        public string? singletrackScale { get; set; }
+    }
+
+    public class LTSLiftpointcard
+    {
+        public int? pointsSingleTripUp { get; set; }
+        public int? pointsSingleTripDown { get; set; }
+    }
+
+    public class LTSSnowpark
+    {
+        public bool isInground { get; set; }
+        public bool hasPipe { get; set; }
+        public bool hasBoarderCross { get; set; }
+        public bool hasArtificiallySnow { get; set; }
+        public int jibsNumber { get; set; }
+        public LTSJumpsnumber jumpsNumber { get; set; }
+        public LTSLinesnumber linesNumber { get; set; }
+    }
+
+    public class LTSJumpsnumber
+    {
+        public int blu { get; set; }
+        public int red { get; set; }
+        public int black { get; set; }
+    }
+
+    public class LTSLinesnumber
+    {
+        public int blu { get; set; }
+        public int red { get; set; }
+        public int black { get; set; }
+    }
+
+    public class LTSGeodata
+    {
+        public LTSAltitudedifference altitudeDifference { get; set; }
+        public LTSDistance distance { get; set; }
+        public LTSExposition[] exposition { get; set; }
+        public LTSPositionExtended[] positions { get; set; }
+        public LTSGpstrack[] gpsTracks { get; set; }
+    }
+
+    public class LTSAltitudedifference
+    {
+        public int difference { get; set; }
+        public int? max { get; set; }
+        public int? min { get; set; }
+    }
+
+    public class LTSDistance
+    {
+        public int length { get; set; }
+        public string duration { get; set; }
+        public int? sumUp { get; set; }
+        public int? sumDown { get; set; }
+    }
+
+    public class LTSExposition
+    {
+        public string value { get; set; }
+    }
+
+    public class LTSPositionExtended : LTSPosition
+    {
+        public GenericLTSRidResult category { get; set; }
+    }
+
+    public class LTSGpstrack
+    {
+        public string rid { get; set; }
+        public LTSFile file { get; set; }
+    }
+
+    public class LTSFile
+    {
+        public float filesize { get; set; }
+        public string url { get; set; }
+    }
+
+    public class LTSArea
+    {
+        public string rid { get; set; }
+    }
+
+    public class LTSActivityOpeningschedule
+    {
+        public string rid { get; set; }
+        public string type { get; set; }
+        public string validFrom { get; set; }
+        public string validTo { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public LTSOpeningschedule[] openingTimes { get; set; }
+    }
+
+    public class LTSTag
+    {
+        public string rid { get; set; }
+        public GenericLTSRidResult[] properties { get; set; }
+    }
+
+    public class LTSVideo
+    {
+        public string rid { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public string source { get; set; }
+        public GenericLTSRidResult genre { get; set; }
+        public bool isActive { get; set; }
+        public IDictionary<string, string> url { get; set; }
+        public IDictionary<string, string> htmlSnippet { get; set; }
+        public string copyright { get; set; }
+        public string license { get; set; }
+    }
+
     #endregion
 
     #region Pois
+
+    public class LTSPointofInterest
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public bool isTourismOrganizationMember { get; set; }
+        public string code { get; set; }
+        public LTSDistrict district { get; set; }
+        public LTSTourismorganization tourismOrganization { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public LTSDescription[] descriptions { get; set; }
+        public IDictionary<string, string> location { get; set; }
+        public LTSArea[] areas { get; set; }
+        public bool isActive { get; set; }
+        public bool isOpen { get; set; }
+        public bool isReadOnly { get; set; }
+        public bool hasFreeEntry { get; set; }
+        public string favouriteFor { get; set; }
+        public bool hasCopyright { get; set; }
+        public LTSActivityOpeningschedule[] openingSchedules { get; set; }
+        public LTSEventContact contact { get; set; }
+        public LTSGeodata position { get; set; }
+        public LTSTag[] tags { get; set; }
+        public LTSImage[] images { get; set; }
+        public LTSVideo[] videos { get; set; }
+        public IDictionary<string, string> novelty { get; set; }
+        public GenericLTSRidResult[] beacons { get; set; }
+    }
+
 
     #endregion
 
@@ -632,5 +831,12 @@ namespace LTSAPI
     #region Tags
 
     #endregion
+
+
+
+
+
+
+
 
 }
