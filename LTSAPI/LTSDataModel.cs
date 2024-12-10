@@ -608,7 +608,12 @@ namespace LTSAPI
 
     #region Activities
 
-    public class LTSActivity
+    public class LTSActivity : LTSData<LTSActivityData>
+    {
+        public new LTSActivityData data { get; set; }
+    }
+
+    public class LTSActivityData
     {
         public string rid { get; set; }
         public DateTime lastUpdate { get; set; }
@@ -781,7 +786,12 @@ namespace LTSAPI
 
     #region Pois
 
-    public class LTSPointofInterest
+    public class LTSPointofInterest : LTSData<LTSPointofInterestData>
+    {
+        public new LTSPointofInterestData data { get; set; }
+    }
+
+    public class LTSPointofInterestData
     {
         public string rid { get; set; }
         public DateTime lastUpdate { get; set; }
@@ -808,7 +818,6 @@ namespace LTSAPI
         public IDictionary<string, string> novelty { get; set; }
         public GenericLTSRidResult[] beacons { get; set; }
     }
-
 
     #endregion
 

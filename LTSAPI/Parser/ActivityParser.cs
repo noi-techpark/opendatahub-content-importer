@@ -19,14 +19,14 @@ namespace LTSAPI.Parser
     public class ActivityParser
     {
         public static ODHActivityPoiLinked ParseLTSActivity(
-            JObject activitydetail, bool reduced
+            JObject activitylts, bool reduced
             )
         {
             try
             {
-                LTSActivity accoltsdetail = activitydetail.ToObject<LTSActivity>();
+                LTSActivity activityltsdetail = activitylts.ToObject<LTSActivity>();
 
-                return ParseLTSActivity(accoltsdetail.data, reduced);
+                return ParseLTSActivity(activityltsdetail.data, reduced);
             }
             catch(Exception ex)
             {           
@@ -35,7 +35,7 @@ namespace LTSAPI.Parser
         }
 
         public static ODHActivityPoiLinked ParseLTSActivity(
-            LTSActivity activity, 
+            LTSActivityData activity, 
             bool reduced)
         {
             ODHActivityPoiLinked odhactivitypoi = new ODHActivityPoiLinked();
