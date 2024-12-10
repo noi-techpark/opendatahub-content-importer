@@ -22,9 +22,11 @@ Settings settings = new Settings(config);
 
 LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
 
-var ltspoi = await ltsapi.PoiDetailRequest("B9F7D5CE855542C03F95B1CCE8169A12", null);
-var parsed = PointofInterestParser.ParseLTSPointofInterest(ltspoi.FirstOrDefault().Value<JObject>(), false);
-    
+var ltspoi = await ltsapi.PoiDetailRequest("66F53CD24EF7359F64F9E7411846F332", null);
+var parsedpoi = PointofInterestParser.ParseLTSPointofInterest(ltspoi.FirstOrDefault().Value<JObject>(), false);
+
+var ltsactivity = await ltsapi.PoiDetailRequest("B9F7D5CE855542C03F95B1CCE8169A12", null);
+var parsedactivity = PointofInterestParser.ParseLTSPointofInterest(ltspoi.FirstOrDefault().Value<JObject>(), false);
 
 //DataImport dataimport = new DataImport(settings);
 
