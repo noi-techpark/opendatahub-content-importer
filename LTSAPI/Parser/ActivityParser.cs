@@ -41,7 +41,7 @@ namespace LTSAPI.Parser
             ODHActivityPoiLinked odhactivitypoi = new ODHActivityPoiLinked();
 
             odhactivitypoi.Id = activity.rid;
-            odhactivitypoi._Meta = new Metadata() { Id = activity.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "odhactivitypoi", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
+            odhactivitypoi._Meta = new Metadata() { Id = odhactivitypoi.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "odhactivitypoi", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
             odhactivitypoi.Source = "lts";
 
             return odhactivitypoi;

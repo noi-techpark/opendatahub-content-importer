@@ -56,6 +56,7 @@ namespace LTSAPI
     public class LTSAddress
     {
         public Dictionary<string, string>? city { get; set; }
+        public Dictionary<string, string>? complement { get; set; }
         public string country { get; set; }
         public Dictionary<string, string>? name { get; set; }
         public Dictionary<string, string>? name2 { get; set; }
@@ -84,7 +85,7 @@ namespace LTSAPI
 
     public class LTSPosition
     {
-        public int altitude { get; set; }
+        public int? altitude { get; set; }
         public float[] coordinates { get; set; }
         public string type { get; set; }
     }
@@ -823,23 +824,161 @@ namespace LTSAPI
 
     #region Venues
 
+    public class LTSVenue
+    {
+        public string rid { get; set; }
+        public GenericLTSRidResult accommodation { get; set; }
+        public LTSEventContact contact { get; set; }
+        public LTSDescription[] descriptions { get; set; }
+        public LTSHall[] halls { get; set; }
+        public bool isActive { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public LTSOpeningtime[] openingTimes { get; set; }
+        public LTSTourismorganization tourismOrganization { get; set; }
+        public LTSPosition position { get; set; }
+    }
+
+    public class LTSHall
+    {
+        public LTSDescription[] descriptions { get; set; }
+        public LTSHallDimension dimension { get; set; }
+        public GenericLTSRidResult[] features { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public string placement { get; set; }
+        public LTSHallPurposesofuse[] purposesOfUse { get; set; }
+        public string rid { get; set; }
+    }
+
+    public class LTSHallDimension
+    {
+        public int? doorHeightInCentimeters { get; set; }
+        public int? doorWidthInCentimeters { get; set; }
+        public int? roomDepthInMeters { get; set; }
+        public int? roomHeightInCentimeters { get; set; }
+        public int? roomWidthInMeters { get; set; }
+        public int? squareMeters { get; set; }
+    }
+
+    public class LTSHallPurposesofuse
+    {
+        public int maxCapacity { get; set; }
+        public string type { get; set; }
+    }
+
     #endregion
 
     #region Webcams
+
+    public class LTSWebcam
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public string url { get; set; }
+        public string previewUrl { get; set; }
+        public string streamUrl { get; set; }
+        public LTSTourismorganization tourismOrganization { get; set; }
+        public bool isActive { get; set; }
+        public bool hasCopyright { get; set; }
+        public bool isOutOfOrder { get; set; }
+        public bool isReadOnly { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public LTSArea[] areas { get; set; }
+        public LTSPosition position { get; set; }
+    }
 
     #endregion
 
     #region WeatherSnow
 
+    public class LTSWeatherSnows
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public LTSTourismorganization tourismOrganization { get; set; }
+        public bool isActive { get; set; }
+        public bool isOutOfOrder { get; set; }
+        public bool isReadOnly { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public LTSArea[] areas { get; set; }
+        public LTSWeatherSnowsConditions conditions { get; set; }
+        public LTSPosition position { get; set; }
+    }
+
+    public class LTSWeatherSnowsConditions
+    {
+        public float? temperature { get; set; }
+        public LTSSnow snow { get; set; }
+        public LTSWeatherforecasts weatherForecasts { get; set; }
+    }
+
+    public class LTSSnow
+    {
+        public int? height { get; set; }
+        public DateTime? lastEvent { get; set; }
+        public int? lastEventHeight { get; set; }
+    }
+
+    public class LTSWeatherforecasts
+    {
+        public int? regionId { get; set; }
+        public LTSWeatherForecast[] forecasts { get; set; }
+    }
+
+    public class LTSWeatherForecast
+    {
+        public string rid { get; set; }
+        public string date { get; set; }
+        public int iconId { get; set; }
+        public IDictionary<string, string> description { get; set; }
+    }
+
     #endregion
 
     #region SuedtirolGuestpass
+
+    public class LTSGuestcardTypes
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public bool isActive { get; set; }
+    }
 
     #endregion
 
     #region Tags
 
+    public class LTSTagsTypes
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public string code { get; set; }
+        public string entityType { get; set; }
+        public int level { get; set; }
+        public string mainTagRid { get; set; }
+        public string parentTagRid { get; set; }
+        public bool isActive { get; set; }
+        public bool isSelectable { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public IDictionary<string, string> description { get; set; }
+        public GenericLTSRidResult[] properties { get; set; }
+    }
+
     #endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
