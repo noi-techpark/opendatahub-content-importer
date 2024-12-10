@@ -145,10 +145,26 @@ namespace LTSAPI
 
                 return jobjectlist;
             }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+
+                JObject.FromObject(new { error = true, message = "LTS Api error ", exception = error });
+
+                return new List<JObject>() { JObject.FromObject(new { error = true, message = "404 LTS Api error ", exception = error }) };
+            }
+            else if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+
+                JObject.FromObject(new { error = true, message = "LTS Api error ", exception = error });
+
+                return new List<JObject>() { JObject.FromObject(new { error = true, message = "500 LTS Api error ", exception = error }) };
+            }
             else
             {
                 var error = await response.Content.ReadAsStringAsync();
-                return new List<JObject>() { new JObject(new { error = true, message = "LTS Api error ", exception = error }) };
+                return new List<JObject>() { JObject.FromObject(new { error = true, message = "Generic LTS Api error ", exception = error }) };
             }
         }
 
@@ -275,9 +291,9 @@ namespace LTSAPI
             return await LTSRequestMethod("pointofinterests", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> PoiDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> PoiDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("pointofinterests/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("pointofinterests/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> PoiDeletedRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -313,9 +329,9 @@ namespace LTSAPI
             return await LTSRequestMethod("gastronomies", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> GastronomyDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> GastronomyDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("gastronomies/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("gastronomies/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> GastronomyDeletedRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -328,9 +344,9 @@ namespace LTSAPI
             return await LTSRequestMethod("gastronomies/categories", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> GastronomyCategoryDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> GastronomyCategoryDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("gastronomies/categories/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("gastronomies/categories/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> GastronomyFacilityRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -372,9 +388,9 @@ namespace LTSAPI
             return await LTSRequestMethod("beacons", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> BeaconDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> BeaconDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("beacons/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("beacons/" + id, _parameters, false);
         }
 
         //not listed in lts api
@@ -392,9 +408,9 @@ namespace LTSAPI
             return await LTSRequestMethod("events", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> EventDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> EventDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("events/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("events/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> EventDeletedRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -407,9 +423,9 @@ namespace LTSAPI
             return await LTSRequestMethod("events/categories", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> EventCategoryDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> EventCategoryDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("events/categories/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("events/categories/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> EventTagRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -417,9 +433,9 @@ namespace LTSAPI
             return await LTSRequestMethod("events/tags", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> EventTagDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> EventTagDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("events/tags/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("events/tags/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> EventClassificationRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -427,9 +443,9 @@ namespace LTSAPI
             return await LTSRequestMethod("events/classifications", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> EventClassificationDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> EventClassificationDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("events/classifications/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("events/classifications/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> EventDateRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -442,18 +458,18 @@ namespace LTSAPI
             return await LTSRequestMethod("events/organizers", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> EventOrganizerDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> EventOrganizerDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("events/organizers/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("events/organizers/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> EventPickupListRequest(IDictionary<string, string>? _parameters, bool _getallpages)
         {
             return await LTSRequestMethod("events/pickuplist", _parameters, _getallpages);
         }
-        public async Task<List<JObject>> EventPickupListDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> EventPickupListDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("events/pickuplist/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("events/pickuplist/" + id, _parameters, false);
         }
 
 
@@ -462,9 +478,9 @@ namespace LTSAPI
             return await LTSRequestMethod("events/allotmentmaps", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> EventAllotmentMapDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> EventAllotmentMapDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("events/allotmentmaps/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("events/allotmentmaps/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> EventVariantCategoryRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -472,9 +488,9 @@ namespace LTSAPI
             return await LTSRequestMethod("events/variantcategories", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> EventVariantCategoryDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> EventVariantCategoryDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("events/variantcategories/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("events/variantcategories/" + id, _parameters, false);
         }
 
         #endregion
@@ -485,9 +501,9 @@ namespace LTSAPI
             return await LTSRequestMethod("venues", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> VenueDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> VenueDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("venues/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("venues/" + id, _parameters, false);
         }
 
         //not listed in lts api
@@ -501,9 +517,9 @@ namespace LTSAPI
             return await LTSRequestMethod("venues/categories", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> VenueCategoryDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> VenueCategoryDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("venues/categories/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("venues/categories/" + id, _parameters, false);
         }
 
         #endregion
@@ -515,9 +531,9 @@ namespace LTSAPI
             return await LTSRequestMethod("webcams", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> WebcamDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> WebcamDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("webcams/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("webcams/" + id, _parameters, false);
         }
 
         //not listed in lts api
@@ -535,9 +551,9 @@ namespace LTSAPI
             return await LTSRequestMethod("weathersnows", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> WeatherSnowDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> WeatherSnowDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("weathersnows/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("weathersnows/" + id, _parameters, false);
         }
 
         //not listed in lts api
@@ -555,9 +571,9 @@ namespace LTSAPI
             return await LTSRequestMethod("tags", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> TagDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> TagDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("tags/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("tags/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> TagPropertyListRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -565,9 +581,9 @@ namespace LTSAPI
             return await LTSRequestMethod("tags/properties", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> TagPropertyDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> TagPropertyDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("tags/properties/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("tags/properties/" + id, _parameters, false);
         }
 
         //not listed in lts api
@@ -585,9 +601,9 @@ namespace LTSAPI
             return await LTSRequestMethod("suedtirolguestpass/cardtypes", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> SuedtirolGuestPassCardTypesDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> SuedtirolGuestPassCardTypesDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("suedtirolguestpass/cardtypes/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("suedtirolguestpass/cardtypes/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> SuedtirolGuestPassBenefitsRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -595,9 +611,9 @@ namespace LTSAPI
             return await LTSRequestMethod("suedtirolguestpass/benefits", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> SuedtirolGuestPassBenefitsDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> SuedtirolGuestPassBenefitsDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("suedtirolguestpass/benefits/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("suedtirolguestpass/benefits/" + id, _parameters, false);
         }
 
         #endregion
@@ -609,9 +625,9 @@ namespace LTSAPI
             return await LTSRequestMethod("municipalities", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> MunicipalitiesDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> MunicipalitiesDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("municipalities/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("municipalities/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> DistrictsListRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -619,9 +635,9 @@ namespace LTSAPI
             return await LTSRequestMethod("districts", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> DistrictsDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> DistrictsDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("districts/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("districts/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> CountriesListRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -629,9 +645,9 @@ namespace LTSAPI
             return await LTSRequestMethod("countries", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> CountriesDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> CountriesDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("countries/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("countries/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> AreasListRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -639,9 +655,9 @@ namespace LTSAPI
             return await LTSRequestMethod("areas", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> AreasDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> AreasDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("areas/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("areas/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> VideoGenreListRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -649,9 +665,9 @@ namespace LTSAPI
             return await LTSRequestMethod("videogenres", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> VideoGenreDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> VideoGenreDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("videogenres/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("videogenres/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> TaxRateListRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -659,9 +675,9 @@ namespace LTSAPI
             return await LTSRequestMethod("taxrate", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> TaxRateDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> TaxRateDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("taxrate/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("taxrate/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> AmenityListRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -669,9 +685,9 @@ namespace LTSAPI
             return await LTSRequestMethod("amenities", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> AmenityDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> AmenityDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("amenities/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("amenities/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> TourismOrganizationListRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -679,9 +695,9 @@ namespace LTSAPI
             return await LTSRequestMethod("tourismorganizations", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> TourismOrganizationDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> TourismOrganizationDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("tourismorganizations/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("tourismorganizations/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> AddressGroupListRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -689,9 +705,9 @@ namespace LTSAPI
             return await LTSRequestMethod("addressgroups", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> AddressGroupDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> AddressGroupDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("addressgroups/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("addressgroups/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> PositionCategoryListRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -699,9 +715,9 @@ namespace LTSAPI
             return await LTSRequestMethod("positions/categories", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> PositionCategoryDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> PositionCategoryDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("positions/categories/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("positions/categories/" + id, _parameters, false);
         }
 
         #endregion

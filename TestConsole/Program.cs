@@ -4,6 +4,9 @@ using RabbitPusher;
 using DataImportHelper;
 using GenericHelper;
 using System.Diagnostics;
+using Newtonsoft.Json.Linq;
+using LTSAPI.Parser;
+using System.Text.Json.Nodes;
 
 Console.WriteLine("Test!");
 var builder = new ConfigurationBuilder()
@@ -14,6 +17,14 @@ var builder = new ConfigurationBuilder()
 IConfiguration config = builder.Build();
 
 Settings settings = new Settings(config);
+
+//var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
+
+LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+
+var ltspoi = await ltsapi.PoiDetailRequest("B9F7D5CE855542C03F95B1CCE8169A12", null);
+var parsed = PointofInterestParser.ParseLTSPointofInterest(ltspoi.FirstOrDefault().Value<JObject>(), false);
+    
 
 //DataImport dataimport = new DataImport(settings);
 
@@ -58,38 +69,38 @@ Settings settings = new Settings(config);
 //var ltsacco2 = await ltsapi.AccommodationDetailRequest("2657B7CBCb85380B253D2fBE28AF100E", null);
 //rabbitsend.Send("lts/accommodationdetail", ltsacco2);
 
-Console.WriteLine("key to start");
+//Console.WriteLine("key to start");
 
-Console.ReadLine();
+//Console.ReadLine();
 
-Stopwatch watch = Stopwatch.StartNew();
+//Stopwatch watch = Stopwatch.StartNew();
 
-LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+//LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
 
-https://tourism.api.opendatahub.bz.it/v1/Accommodation?pagenumber=1&pagesize=10000&arrival=2025-02-03&departure=2025-02-10&roominfo=0-18%2C18&language=de&availabilitychecklanguage=de&availabilitycheck=true&removenullvalues=false&bookablefilter=true&fields=Id%2CMssResponseShort&idfilter=FF050E6BE1F245FAD5E61495E17522D2&bokfilter=lts
+//https://tourism.api.opendatahub.bz.it/v1/Accommodation?pagenumber=1&pagesize=10000&arrival=2025-02-03&departure=2025-02-10&roominfo=0-18%2C18&language=de&availabilitychecklanguage=de&availabilitycheck=true&removenullvalues=false&bookablefilter=true&fields=Id%2CMssResponseShort&idfilter=FF050E6BE1F245FAD5E61495E17522D2&bokfilter=lts
 
-LTSAvailabilitySearchRequestBody body = new LTSAvailabilitySearchRequestBody() {
-    accommodationRids = new List<string>() { "FF050E6BE1F245FAD5E61495E17522D2" },
-    //marketingGroupRids = new List<string>() { "" },
-    startDate = "2025-02-03",
-    endDate = "2025-02-10",
-    paging = new LTSAvailabilitySearchRequestPaging() { pageNumber = 1, pageSize = 10000 },
-    cacheLifeTimeInSeconds = 300,    
-    onlySuedtirolInfoActive = true,
-    roomOptions = new List<LTSAvailabilitySearchRequestRoomoption>() { new LTSAvailabilitySearchRequestRoomoption() { id = 1, guests = 2, guestAges = new List<int>() { 18, 18 } } }
-};
+//LTSAvailabilitySearchRequestBody body = new LTSAvailabilitySearchRequestBody() {
+//    accommodationRids = new List<string>() { "FF050E6BE1F245FAD5E61495E17522D2" },
+//    //marketingGroupRids = new List<string>() { "" },
+//    startDate = "2025-02-03",
+//    endDate = "2025-02-10",
+//    paging = new LTSAvailabilitySearchRequestPaging() { pageNumber = 1, pageSize = 10000 },
+//    cacheLifeTimeInSeconds = 300,    
+//    onlySuedtirolInfoActive = true,
+//    roomOptions = new List<LTSAvailabilitySearchRequestRoomoption>() { new LTSAvailabilitySearchRequestRoomoption() { id = 1, guests = 2, guestAges = new List<int>() { 18, 18 } } }
+//};
 
 
-var ltsavailablilitysearch = await ltsapi.AccommodationAvailabilitySearchRequest(null, body);
+//var ltsavailablilitysearch = await ltsapi.AccommodationAvailabilitySearchRequest(null, body);
 
-var parsedavailabilitysearch = ltsavailablilitysearch[0].ToObject<LTSAvailabilitySearchResult>();
+//var parsedavailabilitysearch = ltsavailablilitysearch[0].ToObject<LTSAvailabilitySearchResult>();
 
-//var testlts = await ltsapi.AccommodationDetailRequest("2657B7CBCb85380B253D2fBE28AF100E", null);
+////var testlts = await ltsapi.AccommodationDetailRequest("2657B7CBCb85380B253D2fBE28AF100E", null);
 
-Console.WriteLine(parsedavailabilitysearch.success);
+//Console.WriteLine(parsedavailabilitysearch.success);
 
-watch.Stop();
+//watch.Stop();
 
-Console.WriteLine("elapsed time: " + watch.ElapsedMilliseconds);
+//Console.WriteLine("elapsed time: " + watch.ElapsedMilliseconds);
 
-Console.ReadLine();
+//Console.ReadLine();

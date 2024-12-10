@@ -47,6 +47,7 @@ namespace LTSAPI.Parser
             odhactivitypoi.LastChange = activity.lastUpdate;
 
             //Tourism Organization
+            odhactivitypoi.TourismorganizationId = activity.tourismOrganization.rid;
 
             //Detail Information
 
