@@ -824,7 +824,12 @@ namespace LTSAPI
 
     #region Venues
 
-    public class LTSVenue
+    public class LTSVenue : LTSData<LTSVenueData>
+    {
+        public new LTSVenueData data { get; set; }
+    }
+
+    public class LTSVenueData
     {
         public string rid { get; set; }
         public GenericLTSRidResult accommodation { get; set; }
@@ -870,7 +875,12 @@ namespace LTSAPI
 
     #region Webcams
 
-    public class LTSWebcam
+    public class LTSWebcam : LTSData<LTSWebcamData>
+    {
+        public new LTSWebcamData data { get; set; }
+    }
+
+    public class LTSWebcamData
     {
         public string rid { get; set; }
         public DateTime lastUpdate { get; set; }

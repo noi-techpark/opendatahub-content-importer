@@ -2,49 +2,41 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
-using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using GenericHelper;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace LTSAPI.Parser
-{
-    public class ActivityParser
+{    
+    public class PointofInterestParser
     {
-        public static ODHActivityPoiLinked ParseLTSActivity(
-            JObject activitylts, bool reduced
+        public static ODHActivityPoiLinked ParseLTSPointofInterest(
+            JObject poilts, bool reduced
             )
         {
             try
             {
-                LTSActivity activityltsdetail = activitylts.ToObject<LTSActivity>();
+                LTSPointofInterest poiltsdetail = poilts.ToObject<LTSPointofInterest>();
 
-                return ParseLTSActivity(activityltsdetail.data, reduced);
+                return ParseLTSPointofInterest(poiltsdetail.data, reduced);
             }
-            catch(Exception ex)
-            {           
+            catch (Exception ex)
+            {
                 return null;
-            }          
+            }
         }
 
-        public static ODHActivityPoiLinked ParseLTSActivity(
-            LTSActivityData activity, 
+        public static ODHActivityPoiLinked ParseLTSPointofInterest(
+            LTSPointofInterestData poi,
             bool reduced)
         {
             ODHActivityPoiLinked odhactivitypoi = new ODHActivityPoiLinked();
 
-            odhactivitypoi.Id = activity.rid;
+            odhactivitypoi.Id = poi.rid;
             odhactivitypoi._Meta = new Metadata() { Id = odhactivitypoi.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "odhactivitypoi", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
             odhactivitypoi.Source = "lts";
 
-            odhactivitypoi.LastChange = activity.lastUpdate;
+            odhactivitypoi.LastChange = poi.lastUpdate;
 
             //Tourism Organization
 

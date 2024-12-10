@@ -16,17 +16,17 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace LTSAPI.Parser
 {
-    public class ActivityParser
+    public class EventParser
     {
-        public static ODHActivityPoiLinked ParseLTSActivity(
+        public static EventV2 ParseLTSEvent(
             JObject activitylts, bool reduced
             )
         {
             try
             {
-                LTSActivity activityltsdetail = activitylts.ToObject<LTSActivity>();
+                LTSEvent eventltsdetail = activitylts.ToObject<LTSEvent>();
 
-                return ParseLTSActivity(activityltsdetail.data, reduced);
+                return ParseLTSEvent(eventltsdetail.data, reduced);
             }
             catch(Exception ex)
             {           
@@ -34,17 +34,17 @@ namespace LTSAPI.Parser
             }          
         }
 
-        public static ODHActivityPoiLinked ParseLTSActivity(
-            LTSActivityData activity, 
+        public static EventV2 ParseLTSEvent(
+            LTSEventData activity, 
             bool reduced)
         {
-            ODHActivityPoiLinked odhactivitypoi = new ODHActivityPoiLinked();
+            EventV2 eventv1 = new EventV2();
 
-            odhactivitypoi.Id = activity.rid;
-            odhactivitypoi._Meta = new Metadata() { Id = odhactivitypoi.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "odhactivitypoi", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
-            odhactivitypoi.Source = "lts";
+            eventv1.Id = activity.rid;
+            eventv1._Meta = new Metadata() { Id = eventv1.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "event", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
+            eventv1.Source = "lts";
 
-            odhactivitypoi.LastChange = activity.lastUpdate;
+            eventv1.LastChange = activity.lastUpdate;
 
             //Tourism Organization
 
@@ -63,7 +63,7 @@ namespace LTSAPI.Parser
             //Custom Fields
 
 
-            return odhactivitypoi;
+            return eventv1;
         }
     }
 

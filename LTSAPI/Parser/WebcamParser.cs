@@ -16,17 +16,17 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace LTSAPI.Parser
 {
-    public class ActivityParser
+    public class WebcamParser
     {
-        public static ODHActivityPoiLinked ParseLTSActivity(
-            JObject activitylts, bool reduced
+        public static WebcamInfoLinked ParseLTSWebcam(
+            JObject webcamlts, bool reduced
             )
         {
             try
             {
-                LTSActivity activityltsdetail = activitylts.ToObject<LTSActivity>();
+                LTSWebcam ltswebcam = webcamlts.ToObject<LTSWebcam>();
 
-                return ParseLTSActivity(activityltsdetail.data, reduced);
+                return ParseLTSWebcam(ltswebcam.data, reduced);
             }
             catch(Exception ex)
             {           
@@ -34,17 +34,17 @@ namespace LTSAPI.Parser
             }          
         }
 
-        public static ODHActivityPoiLinked ParseLTSActivity(
-            LTSActivityData activity, 
+        public static WebcamInfoLinked ParseLTSWebcam(
+            LTSWebcamData ltswebcam, 
             bool reduced)
         {
-            ODHActivityPoiLinked odhactivitypoi = new ODHActivityPoiLinked();
+            WebcamInfoLinked webcam = new WebcamInfoLinked();
 
-            odhactivitypoi.Id = activity.rid;
-            odhactivitypoi._Meta = new Metadata() { Id = odhactivitypoi.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "odhactivitypoi", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
-            odhactivitypoi.Source = "lts";
+            webcam.Id = ltswebcam.rid;
+            webcam._Meta = new Metadata() { Id = webcam.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "odhactivitypoi", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
+            webcam.Source = "lts";
 
-            odhactivitypoi.LastChange = activity.lastUpdate;
+            webcam.LastChange = ltswebcam.lastUpdate;
 
             //Tourism Organization
 
@@ -63,7 +63,7 @@ namespace LTSAPI.Parser
             //Custom Fields
 
 
-            return odhactivitypoi;
+            return webcam;
         }
     }
 
