@@ -820,7 +820,7 @@ namespace LTSAPI
         public bool hasCopyright { get; set; }
         public LTSActivityOpeningschedule[] openingSchedules { get; set; }
         public LTSActivityPoiContact contact { get; set; }
-        public LTSGeodata position { get; set; }
+        public LTSPosition position { get; set; }
         public LTSTag[] tags { get; set; }
         public LTSImage[] images { get; set; }
         public LTSVideo[] videos { get; set; }

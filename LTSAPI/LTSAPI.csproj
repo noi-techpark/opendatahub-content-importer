@@ -24,7 +24,7 @@
   <ItemGroup>
     <PackageReference Include="Combinatorics" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="opendatahub-datamodel-tourism" Version="1.0.5" />
+    <PackageReference Include="opendatahub-datamodel-tourism" Version="1.0.6" />
   </ItemGroup>
 
   <ItemGroup>
