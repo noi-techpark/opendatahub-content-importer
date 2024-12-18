@@ -970,7 +970,12 @@ namespace LTSAPI
 
     #region Tags
 
-    public class LTSTagsTypes
+    public class LTSTags : LTSData<LTSTagsData>
+    {
+        public new LTSTagsData data { get; set; }
+    }
+
+    public class LTSTagsData
     {
         public string rid { get; set; }
         public DateTime lastUpdate { get; set; }
