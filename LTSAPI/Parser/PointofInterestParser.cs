@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LTSAPI.Utils;
 using GenericHelper;
+using Microsoft.OpenApi.Any;
 
 namespace LTSAPI.Parser
 {    
@@ -192,27 +193,105 @@ namespace LTSAPI.Parser
             odhactivitypoi.IsPrepared = null;
             odhactivitypoi.IsWithLigth = null;
             odhactivitypoi.HasRentals = null;
-            //ltspoi.isReadOnly ???
-            //ltspoi.favouriteFor
-            //ltspoi.hasCopyright
+            odhactivitypoi.FeetClimb = null;
+            odhactivitypoi.CopyrightChecked = ltspoi.hasCopyright;
 
+            //ltspoi.isReadOnly ???
             
+            //Beacons
+            if(ltspoi.beacons != null)
+            {
+                odhactivitypoi.ChildPoiIds = new List<string>();
+                foreach (var beacon in ltspoi.beacons)
+                {
+                    odhactivitypoi.ChildPoiIds.Add(beacon.rid);
+                }
+            }
 
             //Videos
+            if(ltspoi.videos != null)
+            {
+                odhactivitypoi.VideoItems = new Dictionary<string, ICollection<VideoItems>>();
 
-            //Custom Fields
+                List<VideoItems> allvideoitems = new List<VideoItems>();
+                List<string> videolanguages = new List<string>();
+
+                foreach(var videos in ltspoi.videos)
+                {
+                    foreach(var lang in videos.url.Keys)
+                    {
+                        videolanguages.Add(lang);
+                        VideoItems videoitem = new VideoItems();
+                        videoitem.Active = videos.isActive;
+                        videoitem.VideoTitle = videos.name[lang];
+                        videoitem.Bitrate = null;
+                        videoitem.CopyRight = videos.copyright;
+                        videoitem.Definition = null;
+                        videoitem.Duration = null;
+                        videoitem.Height = null;
+                        videoitem.Language = lang;
+                        videoitem.License = videos.license;
+                        videoitem.LicenseHolder = null;
+                        videoitem.Name = null;
+                        videoitem.Resolution = null;
+                        videoitem.StreamingSource = null;
+                        videoitem.Url = null;
+                        videoitem.VideoDesc = null;
+                        videoitem.VideoSource = null;
+                        videoitem.VideoTitle = null;
+                        videoitem.VideoType = null;
+                        videoitem.Width = null;
+
+                        allvideoitems.Add(videoitem);
+                    }                    
+                }
+                foreach(var lang in videolanguages)
+                {
+                    odhactivitypoi.VideoItems.TryAddOrUpdate(lang, allvideoitems.Where(x => x.Language == lang).ToList());
+                }
+            }
+
 
             //Opening Schedules
-            foreach (var openingtime in ltspoi.openingSchedules)
+            List<OperationSchedule> operationschedulelist = new List<OperationSchedule>();            
+            foreach (var operationschedulelts in ltspoi.openingSchedules)
             {
+                OperationSchedule operationschedule = new OperationSchedule();
+                operationschedule.Start = Convert.ToDateTime(operationschedulelts.validFrom);
+                operationschedule.Stop = Convert.ToDateTime(operationschedulelts.validTo);
+                operationschedule.Type = ParserHelper.ParseOperationScheduleType(operationschedulelts.type);
+                operationschedule.OperationscheduleName = operationschedulelts.name;
 
+                if (operationschedulelts.openingTimes != null)
+                {
+                    operationschedule.OperationScheduleTime = new List<OperationScheduleTime>();
+                    foreach (var openingtimelts in operationschedulelts.openingTimes)
+                    {
+                        OperationScheduleTime openingtime = new OperationScheduleTime();
+                        openingtime.Start = TimeSpan.Parse(openingtimelts.startDate);
+                        openingtime.End = TimeSpan.Parse(openingtimelts.endDate);
+                        openingtime.Monday = openingtimelts.isMondayOpen;
+                        openingtime.Tuesday = openingtimelts.isTuesdayOpen;
+                        openingtime.Wednesday = openingtimelts.isWednesdayOpen;
+                        openingtime.Thursday = openingtimelts.isThursdayOpen;
+                        openingtime.Friday = openingtimelts.isFridayOpen;
+                        openingtime.Saturday = openingtimelts.isSaturdayOpen;
+                        openingtime.Sunday = openingtimelts.isSundayOpen;
+                        openingtime.State = 2;
+                        openingtime.Timecode = 1;
+
+                        operationschedule.OperationScheduleTime.Add(openingtime);
+                    }
+                }                
             }
+            odhactivitypoi.OperationSchedule = operationschedulelist;
 
 
             //Mapping
             var ltsmapping = new Dictionary<string, string>();
             ltsmapping.Add("rid", ltspoi.rid);
             ltsmapping.Add("code", ltspoi.code);
+            ltsmapping.Add("favouriteFor", ltspoi.favouriteFor);
             ltsmapping.Add("location_de", ltspoi.location["de"]);
             ltsmapping.Add("location_it", ltspoi.location["it"]);
             ltsmapping.Add("location_en", ltspoi.location["en"]);
