@@ -287,7 +287,6 @@ namespace LTSAPI.Parser
             }
             odhactivitypoi.OperationSchedule = operationschedulelist;
 
-
             //Mapping
             var ltsmapping = new Dictionary<string, string>();
             ltsmapping.Add("rid", ltspoi.rid);
@@ -298,6 +297,7 @@ namespace LTSAPI.Parser
             ltsmapping.Add("location_it", ltspoi.location["it"]);
             ltsmapping.Add("location_en", ltspoi.location["en"]);
 
+            odhactivitypoi.Mapping.TryAddOrUpdate("lts", ltsmapping);
 
             return odhactivitypoi;
         }

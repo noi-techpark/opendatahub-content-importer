@@ -185,7 +185,6 @@ namespace LTSAPI.Parser
             }
             odhactivitypoi.OperationSchedule = operationschedulelist;
 
-
             //Tags
             if (ltsactivity.tags != null && ltsactivity.tags.Count() > 0)
             {
@@ -283,6 +282,59 @@ namespace LTSAPI.Parser
             //isReadOnly
             //snowType
             //snowPark
+
+            //Mapping
+            var ltsmapping = new Dictionary<string, string>();
+            ltsmapping.Add("rid", ltsactivity.rid);
+            ltsmapping.Add("code", ltsactivity.code);
+            ltsmapping.Add("specificNumberCode", ltsactivity.specificNumberCode);
+            ltsmapping.Add("order", ltsactivity.order.ToString());
+            if(ltsactivity.mountainBike.isPermitted != null)
+                ltsmapping.Add("mountainBike.isPermitted", ltsactivity.mountainBike.isPermitted.ToString());
+            if (ltsactivity.mountainBike.officialWayNumber != null)
+                ltsmapping.Add("mountainBike.officialWayNumber", ltsactivity.mountainBike.officialWayNumber.ToString());
+            ltsmapping.Add("tourismOrganization", ltsactivity.tourismOrganization.rid);
+
+            if (ltsactivity.rating != null && ltsactivity.rating.viaFerrataTechnique != null)
+                ltsmapping.Add("rating.viaFerrataTechnique", ltsactivity.rating.viaFerrataTechnique);
+            if (ltsactivity.rating != null && ltsactivity.rating.scaleUIAATechnique != null)
+                ltsmapping.Add("rating.scaleUIAATechnique", ltsactivity.rating.scaleUIAATechnique);
+            if (ltsactivity.rating != null && ltsactivity.rating.singletrackScale != null)
+                ltsmapping.Add("rating.singletrackScale", ltsactivity.rating.singletrackScale);
+
+            if (ltsactivity.liftPointCard.pointsSingleTripUp != null)
+                ltsmapping.Add("liftPointCard.pointsSingleTripUp", ltsactivity.liftPointCard.pointsSingleTripUp.ToString());
+            if (ltsactivity.liftPointCard.pointsSingleTripDown != null)
+                ltsmapping.Add("liftPointCard.pointsSingleTripDown", ltsactivity.liftPointCard.pointsSingleTripDown.ToString());
+
+            if (ltsactivity.hasLift != null)
+                ltsmapping.Add("hasLift", ltsactivity.hasLift.ToString());
+            if (ltsactivity.minRopeLength != null)
+                ltsmapping.Add("minRopeLength", ltsactivity.minRopeLength);
+            if (ltsactivity.quantityQuickDraws != null)
+                ltsmapping.Add("quantityQuickDraws", ltsactivity.quantityQuickDraws);
+            if (ltsactivity.snowType != null)
+                ltsmapping.Add("snowType", ltsactivity.snowType.rid);
+            if (ltsactivity.snowPark != null)
+            {
+                ltsmapping.Add("snowPark.hasPipe", ltsactivity.snowPark.hasPipe.ToString());
+                ltsmapping.Add("snowPark.linesNumber", ltsactivity.snowPark.linesNumber.ToString());
+                ltsmapping.Add("snowPark.jumpsNumber", ltsactivity.snowPark.jumpsNumber.ToString());
+                ltsmapping.Add("snowPark.isInground", ltsactivity.snowPark.isInground.ToString());
+                ltsmapping.Add("snowPark.hasArtificiallySnow", ltsactivity.snowPark.hasArtificiallySnow.ToString());
+                ltsmapping.Add("snowPark.hasBoarderCross", ltsactivity.snowPark.hasBoarderCross.ToString());
+                ltsmapping.Add("snowPark.hasPipe", ltsactivity.snowPark.hasPipe.ToString());                
+            }
+
+
+            ltsmapping.Add("isReadOnly", ltsactivity.isReadOnly.ToString());
+            ltsmapping.Add("favouriteFor", ltsactivity.favouriteFor);
+            ltsmapping.Add("location_de", ltsactivity.location["de"]);
+            ltsmapping.Add("location_it", ltsactivity.location["it"]);
+            ltsmapping.Add("location_en", ltsactivity.location["en"]);
+
+            odhactivitypoi.Mapping.TryAddOrUpdate("lts", ltsmapping);
+
 
 
             return odhactivitypoi;

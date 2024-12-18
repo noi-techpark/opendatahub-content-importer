@@ -651,7 +651,7 @@ namespace LTSAPI
         public bool isReadOnly { get; set; }
         public string favouriteFor { get; set; }
         public bool isPossibleRunToValley { get; set; }
-        public object snowType { get; set; }
+        public GenericLTSRidResult snowType { get; set; }
         public LTSSnowpark snowPark { get; set; }
         public IDictionary<string, string> novelty { get; set; }
         public LTSActivityOpeningschedule[] openingSchedules { get; set; }
