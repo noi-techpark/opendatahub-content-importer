@@ -1789,7 +1789,6 @@ namespace LTSAPI.Parser
                 {"5F22AD3E93D54E99B7E6F97719A47153","accomodation bett bike sport" },
             };
         }
-
     }
 
 }

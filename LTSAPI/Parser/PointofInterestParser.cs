@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using LTSAPI.Utils;
 using GenericHelper;
-using Microsoft.OpenApi.Any;
 
 namespace LTSAPI.Parser
 {    
@@ -80,11 +79,11 @@ namespace LTSAPI.Parser
                 detail.GetThereText = ltspoi.descriptions.Where(x => x.type == "howToArrive").FirstOrDefault()?.description.GetValue(language);
                 detail.IntroText = ltspoi.descriptions.Where(x => x.type == "generalDescription").FirstOrDefault()?.description.GetValue(language);
 
-                detail.AdditionalText = ltspoi.descriptions.Where(x => x.type == "").FirstOrDefault()?.description.GetValue(language);
-                detail.PublicTransportationInfo = ltspoi.descriptions.Where(x => x.type == "").FirstOrDefault()?.description.GetValue(language);
-                detail.AuthorTip = ltspoi.descriptions.Where(x => x.type == "").FirstOrDefault()?.description.GetValue(language);
-                detail.SafetyInfo = ltspoi.descriptions.Where(x => x.type == "").FirstOrDefault()?.description.GetValue(language);
-                detail.EquipmentInfo = ltspoi.descriptions.Where(x => x.type == "").FirstOrDefault()?.description.GetValue(language);
+                detail.AdditionalText = ltspoi.descriptions.Where(x => x.type == "routeDescription").FirstOrDefault()?.description.GetValue(language);
+                detail.PublicTransportationInfo = ltspoi.descriptions.Where(x => x.type == "publicTransport").FirstOrDefault()?.description.GetValue(language);
+                detail.AuthorTip = ltspoi.descriptions.Where(x => x.type == "authorTip").FirstOrDefault()?.description.GetValue(language);
+                detail.SafetyInfo = ltspoi.descriptions.Where(x => x.type == "safetyInstructions").FirstOrDefault()?.description.GetValue(language);
+                detail.EquipmentInfo = ltspoi.descriptions.Where(x => x.type == "equipment").FirstOrDefault()?.description.GetValue(language);
 
                 odhactivitypoi.Detail.TryAddOrUpdate(language, detail);
             }
@@ -109,6 +108,9 @@ namespace LTSAPI.Parser
             //Position
             if (ltspoi.position != null && ltspoi.position.coordinates.Length == 2)
             {
+                if (odhactivitypoi.GpsInfo == null)
+                    odhactivitypoi.GpsInfo = new List<GpsInfo>();
+
                 GpsInfo gpsinfo = new GpsInfo();
                 gpsinfo.Gpstype = "position";
                 gpsinfo.Latitude = ltspoi.position.coordinates[1];
@@ -122,8 +124,8 @@ namespace LTSAPI.Parser
             //Tags
             if(ltspoi.tags != null && ltspoi.tags.Count() > 0)
             {
-                if (odhactivitypoi.Tags == null)
-                    odhactivitypoi.Tags = new List<Tags>();
+                if (odhactivitypoi.TagIds == null)
+                    odhactivitypoi.TagIds = new List<string>();
 
                 foreach (var tag in ltspoi.tags)
                 {
@@ -218,12 +220,11 @@ namespace LTSAPI.Parser
 
                 foreach(var videos in ltspoi.videos)
                 {
-                    foreach(var lang in videos.url.Keys)
+                    foreach(var lang in videos.url.Where(x => x.Value != null).Select(x => x.Key))
                     {
                         videolanguages.Add(lang);
                         VideoItems videoitem = new VideoItems();
-                        videoitem.Active = videos.isActive;
-                        videoitem.VideoTitle = videos.name[lang];
+                        videoitem.Active = videos.isActive;                        
                         videoitem.Bitrate = null;
                         videoitem.CopyRight = videos.copyright;
                         videoitem.Definition = null;
@@ -232,14 +233,14 @@ namespace LTSAPI.Parser
                         videoitem.Language = lang;
                         videoitem.License = videos.license;
                         videoitem.LicenseHolder = null;
-                        videoitem.Name = null;
+                        videoitem.Name = videos.genre.rid;
                         videoitem.Resolution = null;
-                        videoitem.StreamingSource = null;
-                        videoitem.Url = null;
+                        videoitem.StreamingSource = videos.url[lang];
+                        videoitem.Url = videos.htmlSnippet[lang];
                         videoitem.VideoDesc = null;
-                        videoitem.VideoSource = null;
-                        videoitem.VideoTitle = null;
-                        videoitem.VideoType = null;
+                        videoitem.VideoSource = videos.source;
+                        videoitem.VideoTitle = videos.name[lang];
+                        videoitem.VideoType = videos.genre.rid;
                         videoitem.Width = null;
 
                         allvideoitems.Add(videoitem);
@@ -291,6 +292,7 @@ namespace LTSAPI.Parser
             var ltsmapping = new Dictionary<string, string>();
             ltsmapping.Add("rid", ltspoi.rid);
             ltsmapping.Add("code", ltspoi.code);
+            ltsmapping.Add("isReadOnly", ltspoi.isReadOnly.ToString());
             ltsmapping.Add("favouriteFor", ltspoi.favouriteFor);
             ltsmapping.Add("location_de", ltspoi.location["de"]);
             ltsmapping.Add("location_it", ltspoi.location["it"]);
