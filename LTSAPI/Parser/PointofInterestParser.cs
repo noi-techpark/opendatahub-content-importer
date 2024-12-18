@@ -45,6 +45,16 @@ namespace LTSAPI.Parser
             odhactivitypoi.TourismorganizationId = ltspoi.tourismOrganization != null ? ltspoi.tourismOrganization.rid : null;
             odhactivitypoi.LocationInfo = new LocationInfoLinked();
 
+            //Area Id
+            if(ltspoi.areas != null)
+            {
+                odhactivitypoi.AreaId = new HashSet<string>();
+                foreach (var area in ltspoi.areas)
+                {
+                    odhactivitypoi.AreaId.Add(area.rid);
+                }
+            }     
+
             odhactivitypoi.LocationInfo.DistrictInfo = new DistrictInfoLinked() { Id = ltspoi.district.rid };
 
             odhactivitypoi.HasLanguage = new List<string>();
@@ -119,9 +129,7 @@ namespace LTSAPI.Parser
                     odhactivitypoi.TagIds.Add(tag.rid);
                 }
             }
-
-            //Opening Schedules            
-
+            
             //Images
             //Images (Main Images with ValidFrom)
             List<ImageGallery> imagegallerylist = new List<ImageGallery>();
@@ -177,9 +185,37 @@ namespace LTSAPI.Parser
 
             odhactivitypoi.ImageGallery = imagegallerylist;
 
+            //Properties
+            odhactivitypoi.Active = ltspoi.isActive;
+            odhactivitypoi.HasFreeEntrance = ltspoi.hasFreeEntry;
+            odhactivitypoi.IsOpen = ltspoi.isOpen;
+            odhactivitypoi.IsPrepared = null;
+            odhactivitypoi.IsWithLigth = null;
+            odhactivitypoi.HasRentals = null;
+            //ltspoi.isReadOnly ???
+            //ltspoi.favouriteFor
+            //ltspoi.hasCopyright
+
+            
+
             //Videos
 
             //Custom Fields
+
+            //Opening Schedules
+            foreach (var openingtime in ltspoi.openingSchedules)
+            {
+
+            }
+
+
+            //Mapping
+            var ltsmapping = new Dictionary<string, string>();
+            ltsmapping.Add("rid", ltspoi.rid);
+            ltsmapping.Add("code", ltspoi.code);
+            ltsmapping.Add("location_de", ltspoi.location["de"]);
+            ltsmapping.Add("location_it", ltspoi.location["it"]);
+            ltsmapping.Add("location_en", ltspoi.location["en"]);
 
 
             return odhactivitypoi;
