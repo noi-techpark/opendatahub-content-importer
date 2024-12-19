@@ -217,6 +217,8 @@ namespace LTSAPI.Parser
             if(!string.IsNullOrEmpty(accommodation.cinCode))
                 ltsriddict.TryAddOrUpdate("cincode", accommodation.cinCode);
 
+            //Add Mapping 
+
             accommodationlinked.Mapping.TryAddOrUpdate("lts", ltsriddict);
                       
             //Add HGV Mapping if present and delete it if no more present

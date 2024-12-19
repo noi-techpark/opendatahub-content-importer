@@ -113,11 +113,22 @@ namespace LTSAPI.Parser
                 }
             }
 
+            odhactivitypoi.HasLanguage = new List<string>();
+            odhactivitypoi.Detail = new Dictionary<string, Detail>();
+
+            //Let's find out for which languages there is a name
+            foreach (var name in ltsactivity.name)
+            {
+                if (!String.IsNullOrEmpty(name.Value))
+                    odhactivitypoi.HasLanguage.Add(name.Key);
+            }
+
             //Detail Information
             foreach (var language in odhactivitypoi.HasLanguage)
             {
                 Detail detail = new Detail();
 
+                detail.Language = language;
                 detail.Title = ltsactivity.name[language];
                 detail.BaseText = ltsactivity.descriptions.Where(x => x.type == "generalDescription").FirstOrDefault()?.description.GetValue(language);
                 detail.IntroText = ltsactivity.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description.GetValue(language);
@@ -139,6 +150,7 @@ namespace LTSAPI.Parser
             {
                 ContactInfos contactinfo = new ContactInfos();
 
+                contactinfo.Language = language;
                 contactinfo.CompanyName = ltsactivity.contact.address.name.GetValue(language);
                 contactinfo.Address = ltsactivity.contact.address.street.GetValue(language);
                 contactinfo.City = ltsactivity.contact.address.city.GetValue(language);
@@ -334,6 +346,7 @@ namespace LTSAPI.Parser
             }
 
             ltsmapping.Add("isReadOnly", ltsactivity.isReadOnly.ToString());
+            ltsmapping.Add("hasCopyright", ltsactivity.hasCopyright.ToString());
             ltsmapping.Add("favouriteFor", ltsactivity.favouriteFor);
 
             odhactivitypoi.Mapping.TryAddOrUpdate("lts", ltsmapping);

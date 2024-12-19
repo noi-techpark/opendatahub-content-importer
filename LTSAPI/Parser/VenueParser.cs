@@ -26,7 +26,7 @@ namespace LTSAPI.Parser
             {
                 LTSVenue ltsvenue = webcamlts.ToObject<LTSVenue>();
 
-                return ParseLTSWebcam(ltsvenue.data, reduced);
+                return ParseLTSVenue(ltsvenue.data, reduced);
             }
             catch(Exception ex)
             {           
@@ -34,7 +34,7 @@ namespace LTSAPI.Parser
             }          
         }
 
-        public static VenueV2 ParseLTSWebcam(
+        public static VenueV2 ParseLTSVenue(
             LTSVenueData ltsvenue, 
             bool reduced)
         {

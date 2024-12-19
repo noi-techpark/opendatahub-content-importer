@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LTSAPI.Parser
+namespace LTSAPI.Utils
 {
     public static class ParserHelper
     {

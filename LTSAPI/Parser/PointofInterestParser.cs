@@ -72,6 +72,7 @@ namespace LTSAPI.Parser
             {
                 Detail detail = new Detail();
 
+                detail.Language = language;
                 detail.Title = ltspoi.name[language];
                 detail.BaseText = ltspoi.descriptions.Where(x => x.type == "generalDescription").FirstOrDefault()?.description.GetValue(language);
                 detail.IntroText = ltspoi.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description.GetValue(language);
@@ -93,6 +94,7 @@ namespace LTSAPI.Parser
             {
                 ContactInfos contactinfo = new ContactInfos();
 
+                contactinfo.Language = language;
                 contactinfo.CompanyName = ltspoi.contact.address.name.GetValue(language);
                 contactinfo.Address = ltspoi.contact.address.street.GetValue(language);
                 contactinfo.City = ltspoi.contact.address.city.GetValue(language);
@@ -297,6 +299,7 @@ namespace LTSAPI.Parser
             ltsmapping.Add("rid", ltspoi.rid);
             ltsmapping.Add("code", ltspoi.code);
             ltsmapping.Add("isReadOnly", ltspoi.isReadOnly.ToString());
+            ltsmapping.Add("hasCopyright", ltspoi.hasCopyright.ToString());
             ltsmapping.Add("favouriteFor", ltspoi.favouriteFor);
 
             if(ltspoi.district == null && !String.IsNullOrEmpty(ltspoi.district.rid))
