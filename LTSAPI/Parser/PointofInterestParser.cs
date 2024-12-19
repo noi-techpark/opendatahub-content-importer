@@ -102,6 +102,11 @@ namespace LTSAPI.Parser
                 contactinfo.Phonenumber = ltspoi.contact.phone;
                 contactinfo.Url = ltspoi.contact.website;
 
+                if(ltspoi.location != null && ltspoi.location.ContainsKey(language))
+                {
+                    contactinfo.Area = ltspoi.location[language];
+                }
+
                 odhactivitypoi.ContactInfos.TryAddOrUpdate(language, contactinfo);
             }
 
@@ -293,9 +298,16 @@ namespace LTSAPI.Parser
             ltsmapping.Add("code", ltspoi.code);
             ltsmapping.Add("isReadOnly", ltspoi.isReadOnly.ToString());
             ltsmapping.Add("favouriteFor", ltspoi.favouriteFor);
-            ltsmapping.Add("location_de", ltspoi.location["de"]);
-            ltsmapping.Add("location_it", ltspoi.location["it"]);
-            ltsmapping.Add("location_en", ltspoi.location["en"]);
+
+            if(ltspoi.district == null && !String.IsNullOrEmpty(ltspoi.district.rid))
+                ltsmapping.Add("district", ltspoi.district.rid);
+            if (ltspoi.tourismOrganization == null && !String.IsNullOrEmpty(ltspoi.tourismOrganization.rid))
+                ltsmapping.Add("tourismOrganization", ltspoi.tourismOrganization.rid);
+
+            //Adding the Location to the Contactinfo
+            //ltsmapping.Add("location_de", ltspoi.location["de"]);
+            //ltsmapping.Add("location_it", ltspoi.location["it"]);
+            //ltsmapping.Add("location_en", ltspoi.location["en"]);
 
             odhactivitypoi.Mapping.TryAddOrUpdate("lts", ltsmapping);
 

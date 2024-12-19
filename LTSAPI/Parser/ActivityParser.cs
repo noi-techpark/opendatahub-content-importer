@@ -148,6 +148,11 @@ namespace LTSAPI.Parser
                 contactinfo.Phonenumber = ltsactivity.contact.phone;
                 contactinfo.Url = ltsactivity.contact.website;
 
+                if (ltsactivity.location != null && ltsactivity.location.ContainsKey(language))
+                {
+                    contactinfo.Area = ltsactivity.location[language];
+                }
+
                 odhactivitypoi.ContactInfos.TryAddOrUpdate(language, contactinfo);
             }
 
@@ -289,10 +294,12 @@ namespace LTSAPI.Parser
             ltsmapping.Add("code", ltsactivity.code);
             ltsmapping.Add("specificNumberCode", ltsactivity.specificNumberCode);
             ltsmapping.Add("order", ltsactivity.order.ToString());
+            
             if(ltsactivity.mountainBike.isPermitted != null)
                 ltsmapping.Add("mountainBike.isPermitted", ltsactivity.mountainBike.isPermitted.ToString());
             if (ltsactivity.mountainBike.officialWayNumber != null)
                 ltsmapping.Add("mountainBike.officialWayNumber", ltsactivity.mountainBike.officialWayNumber.ToString());
+            
             ltsmapping.Add("tourismOrganization", ltsactivity.tourismOrganization.rid);
 
             if (ltsactivity.rating != null && ltsactivity.rating.viaFerrataTechnique != null)
@@ -326,16 +333,10 @@ namespace LTSAPI.Parser
                 ltsmapping.Add("snowPark.hasPipe", ltsactivity.snowPark.hasPipe.ToString());                
             }
 
-
             ltsmapping.Add("isReadOnly", ltsactivity.isReadOnly.ToString());
             ltsmapping.Add("favouriteFor", ltsactivity.favouriteFor);
-            ltsmapping.Add("location_de", ltsactivity.location["de"]);
-            ltsmapping.Add("location_it", ltsactivity.location["it"]);
-            ltsmapping.Add("location_en", ltsactivity.location["en"]);
 
             odhactivitypoi.Mapping.TryAddOrUpdate("lts", ltsmapping);
-
-
 
             return odhactivitypoi;
         }
