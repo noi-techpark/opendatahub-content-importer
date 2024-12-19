@@ -213,6 +213,7 @@ namespace LTSAPI.Parser
             var ltsriddict = new Dictionary<string, string>() { { "rid", accommodation.rid } };
             //Add LTS A0R_ID as Mapping     
             ltsriddict.TryAddOrUpdate("a0r_id", accommodation.id.ToString());
+            ltsriddict.TryAddOrUpdate("representationMode", accommodation.representationMode);
             //Add Cin Code
             if(!string.IsNullOrEmpty(accommodation.cinCode))
                 ltsriddict.TryAddOrUpdate("cincode", accommodation.cinCode);
