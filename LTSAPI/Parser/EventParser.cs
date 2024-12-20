@@ -12,7 +12,7 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using GenericHelper;
-using static System.Net.Mime.MediaTypeNames;
+using LTSAPI.Utils;
 
 namespace LTSAPI.Parser
 {
@@ -38,13 +38,13 @@ namespace LTSAPI.Parser
             LTSEventData activity, 
             bool reduced)
         {
-            EventV2 eventv1 = new EventV2();
+            EventV2 eventv2 = new EventV2();
 
-            eventv1.Id = activity.rid;
-            eventv1._Meta = new Metadata() { Id = eventv1.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "event", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
-            eventv1.Source = "lts";
+            eventv2.Id = activity.rid;
+            eventv2._Meta = new Metadata() { Id = eventv2.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "event", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
+            eventv2.Source = "lts";
 
-            eventv1.LastChange = activity.lastUpdate;
+            eventv2.LastChange = activity.lastUpdate;
             
             //Detail Information
 
@@ -61,7 +61,7 @@ namespace LTSAPI.Parser
             //Custom Fields
 
 
-            return (new List<EventV2>() { eventv1 }, new VenueV2());
+            return (new List<EventV2>() { eventv2 }, new VenueV2());
         }
 
         public static EventLinked ParseLTSEventV1(
@@ -81,20 +81,53 @@ namespace LTSAPI.Parser
         }
 
         public static EventLinked ParseLTSEventV1(
-            LTSEventData activity,
+            LTSEventData ltsevent,
             bool reduced)
         {
             EventLinked eventv1 = new EventLinked();
 
-            eventv1.Id = activity.rid;
+            eventv1.Id = ltsevent.rid;
             eventv1._Meta = new Metadata() { Id = eventv1.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "event", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
             eventv1.Source = "lts";
 
-            eventv1.LastChange = activity.lastUpdate;
+            eventv1.LastChange = ltsevent.lastUpdate;
+
+            //Let's find out for which languages there is a name
+            foreach (var name in ltsevent.name)
+            {
+                if (!String.IsNullOrEmpty(name.Value))
+                    eventv1.HasLanguage.Add(name.Key);
+            }
+
+            //Classification
+            eventv1.ClassificationRID = ltsevent.classification.rid;
+            
+            //Topics
+            foreach (var category in ltsevent.categories)
+            {
+                eventv1.TopicRIDs.Add(category.rid);
+            }
 
             //Detail Information
 
             //Contact Information
+            foreach (var language in eventv1.HasLanguage)
+            {
+                ContactInfos contactinfo = new ContactInfos();
+
+                contactinfo.Language = language;
+                contactinfo.CompanyName = ltsevent.contact.address.name.GetValue(language);
+                contactinfo.Address = ltsevent.contact.address.street.GetValue(language);
+                contactinfo.City = ltsevent.contact.address.city.GetValue(language);
+                contactinfo.CountryCode = ltsevent.contact.address.country;
+                contactinfo.ZipCode = ltsevent.contact.address.postalCode;
+                contactinfo.Email = ltsevent.contact.email.GetValue(language);
+                contactinfo.Phonenumber = ltsevent.contact.phone;
+                contactinfo.Url = ltsevent.contact.website.GetValue(language);
+
+                eventv1.ContactInfos.TryAddOrUpdate(language, contactinfo);
+            }
+
 
             //Opening Schedules
 

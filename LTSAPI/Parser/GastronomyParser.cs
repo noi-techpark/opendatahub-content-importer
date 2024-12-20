@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using GenericHelper;
 using static System.Net.Mime.MediaTypeNames;
+using LTSAPI.Utils;
 
 namespace LTSAPI.Parser
 {
@@ -45,23 +46,184 @@ namespace LTSAPI.Parser
             gastronomy.Source = "lts";
 
             gastronomy.LastChange = ltsgastronomy.lastUpdate;
+            gastronomy.Active = ltsgastronomy.isActive;
 
-            //Tourism Organization
+            //Let's find out for which languages there is a name
+            foreach (var desc in ltsgastronomy.description)
+            {
+                if (!String.IsNullOrEmpty(desc.Value))
+                    gastronomy.HasLanguage.Add(desc.Key);
+            }
 
-            //Detail Information
+            //Tourism Organization, District
+            gastronomy.TourismorganizationId = ltsgastronomy.tourismOrganization != null ? ltsgastronomy.tourismOrganization.rid : null;
+            gastronomy.LocationInfo.DistrictInfo = new DistrictInfoLinked() { Id = ltsgastronomy.district.rid };
+
+            gastronomy.MaxSeatingCapacity = ltsgastronomy.maxSeatingCapacity;
+
+            //Categories
+            foreach(var category in ltsgastronomy.categories)
+            {
+                //to check categorycode has the shortname inside
+            }
+            //Dishcodes
+            foreach (var dishcode in ltsgastronomy.dishRates)
+            {
+                //to check categorycode has the shortname inside
+            }
+            //Categories
+            foreach (var facility in ltsgastronomy.facilities)
+            {
+                //to check categorycode has the shortname inside
+            }
+            //Categories
+            foreach (var ceremonycode in ltsgastronomy.ceremonySeatingCapacities)
+            {
+                //to check categorycode has the shortname inside
+            }
+
 
             //Contact Information
+            //array here why?
+            foreach (var language in gastronomy.HasLanguage)
+            {
+                ContactInfos contactinfo = new ContactInfos();
+
+                contactinfo.Language = language;
+                contactinfo.CompanyName = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().address.name.GetValue(language);
+                contactinfo.Address = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().address.street.GetValue(language);
+                contactinfo.City = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().address.city.GetValue(language);
+                contactinfo.CountryCode = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().address.country;
+                contactinfo.ZipCode = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().address.postalCode;
+                contactinfo.Email = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().email;
+                contactinfo.Phonenumber = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().phone;
+                contactinfo.Url = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().website;
+
+                gastronomy.ContactInfos.TryAddOrUpdate(language, contactinfo);
+            }
+
+            //Detail Information
+            foreach (var language in gastronomy.HasLanguage)
+            {
+                Detail detail = new Detail();
+
+                detail.Language = language;
+                detail.Title = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().address.name.GetValue(language);
+                detail.BaseText = ltsgastronomy.description.GetValue(language);
+            
+                gastronomy.Detail.TryAddOrUpdate(language, detail);
+            }
 
             //Opening Schedules
+            List<OperationSchedule> operationschedulelist = new List<OperationSchedule>();
+            foreach (var operationschedulelts in ltsgastronomy.openingSchedules)
+            {
+                OperationSchedule operationschedule = new OperationSchedule();
+                operationschedule.Start = Convert.ToDateTime(operationschedulelts.startDate);
+                operationschedule.Stop = Convert.ToDateTime(operationschedulelts.endDate);
+                //operationschedule.Type = ParserHelper.ParseOperationScheduleType(operationschedulelts.type);
+                //operationschedule.OperationscheduleName = operationschedulelts.name;
+                //"isOpen": true
+
+                if (operationschedulelts.openingTimes != null)
+                {
+                    operationschedule.OperationScheduleTime = new List<OperationScheduleTime>();
+                    foreach (var openingtimelts in operationschedulelts.openingTimes)
+                    {
+                        OperationScheduleTime openingtime = new OperationScheduleTime();
+                        openingtime.Start = TimeSpan.Parse(openingtimelts.startTime);
+                        openingtime.End = TimeSpan.Parse(openingtimelts.endTime);
+                        openingtime.Monday = operationschedulelts.isMondayOpen;
+                        openingtime.Tuesday = operationschedulelts.isTuesdayOpen;
+                        openingtime.Wednesday = operationschedulelts.isWednesdayOpen;
+                        openingtime.Thursday = operationschedulelts.isThursdayOpen;
+                        openingtime.Friday = operationschedulelts.isFridayOpen;
+                        openingtime.Saturday = operationschedulelts.isSaturdayOpen;
+                        openingtime.Sunday = operationschedulelts.isSundayOpen;
+
+                        //TODO PARSE type
+                        //openingtime.State = 2;
+                        //openingtime.Timecode = 1;
+
+                        operationschedule.OperationScheduleTime.Add(openingtime);
+                    }
+                }
+            }
+            gastronomy.OperationSchedule = operationschedulelist;
+
 
             //Tags
 
             //Images
+            //Images (Main Images with ValidFrom)
+            List<ImageGallery> imagegallerylist = new List<ImageGallery>();
+
+            if (ltsgastronomy.images != null)
+            {
+                foreach (var image in ltsgastronomy.images)
+                {
+                    ImageGallery imagepoi = new ImageGallery();
+
+                    imagepoi.ImageName = image.rid;
+                    imagepoi.ImageTitle = image.name;
+                    imagepoi.CopyRight = image.copyright;
+                    imagepoi.License = image.license;
+
+                    imagepoi.ImageUrl = image.url;
+                    imagepoi.IsInGallery = true;
+
+                    imagepoi.Height = image.heightPixel;
+                    imagepoi.Width = image.widthPixel;
+                    imagepoi.ValidFrom = image.applicableStartDate;
+                    imagepoi.ValidTo = image.applicableEndDate;
+                    imagepoi.ListPosition = image.order;
+
+                    //"isMainImage": true,
+                    //"isCurrentMainImage": true,
+
+                    imagegallerylist.Add(imagepoi);
+                }
+            }
+
+            gastronomy.ImageGallery = imagegallerylist;
+
 
             //Videos
 
-            //Custom Fields
+            //Position
+            if (ltsgastronomy.position != null && ltsgastronomy.position.coordinates.Length == 2)
+            {
+                if (gastronomy.GpsInfo == null)
+                    gastronomy.GpsInfo = new List<GpsInfo>();
 
+                GpsInfo gpsinfo = new GpsInfo();
+                gpsinfo.Gpstype = "position";
+                gpsinfo.Latitude = ltsgastronomy.position.coordinates[1];
+                gpsinfo.Longitude = ltsgastronomy.position.coordinates[0];
+                gpsinfo.Altitude = ltsgastronomy.position.altitude;
+                gpsinfo.AltitudeUnitofMeasure = "m";
+
+                gastronomy.GpsInfo.Add(gpsinfo);
+            }
+
+            //Custom Fields
+            //Mapping
+            var ltsmapping = new Dictionary<string, string>();
+            ltsmapping.Add("rid", ltsgastronomy.rid);
+            ltsmapping.Add("id", ltsgastronomy.id.ToString());
+            ltsmapping.Add("representationMode", ltsgastronomy.representationMode);
+          
+            if (ltsgastronomy.district == null && !String.IsNullOrEmpty(ltsgastronomy.district.rid))
+                ltsmapping.Add("district", ltsgastronomy.district.rid);
+            if (ltsgastronomy.tourismOrganization == null && !String.IsNullOrEmpty(ltsgastronomy.tourismOrganization.rid))
+                ltsmapping.Add("tourismOrganization", ltsgastronomy.tourismOrganization.rid);
+
+            //Adding the Location to the Contactinfo
+            //ltsmapping.Add("location_de", ltspoi.location["de"]);
+            //ltsmapping.Add("location_it", ltspoi.location["it"]);
+            //ltsmapping.Add("location_en", ltspoi.location["en"]);
+
+            gastronomy.Mapping.TryAddOrUpdate("lts", ltsmapping);
 
             return gastronomy;
         }
