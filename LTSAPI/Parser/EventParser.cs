@@ -30,7 +30,7 @@ namespace LTSAPI.Parser
             }
             catch(Exception ex)
             {           
-                return null;
+                return (null, null);
             }          
         }
 
@@ -61,7 +61,7 @@ namespace LTSAPI.Parser
             //Custom Fields
 
 
-            return (new List<EventV2>() { eventv1 }, new VenueV2);
+            return (new List<EventV2>() { eventv1 }, new VenueV2());
         }
 
         public static EventLinked ParseLTSEventV1(
