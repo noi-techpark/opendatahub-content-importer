@@ -78,8 +78,7 @@ namespace LTSAPI.Parser
                 detail.IntroText = ltspoi.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description.GetValue(language);
                 detail.ParkingInfo = ltspoi.descriptions.Where(x => x.type == "howToPark").FirstOrDefault()?.description.GetValue(language);
                 detail.GetThereText = ltspoi.descriptions.Where(x => x.type == "howToArrive").FirstOrDefault()?.description.GetValue(language);
-                detail.IntroText = ltspoi.descriptions.Where(x => x.type == "generalDescription").FirstOrDefault()?.description.GetValue(language);
-
+                
                 detail.AdditionalText = ltspoi.descriptions.Where(x => x.type == "routeDescription").FirstOrDefault()?.description.GetValue(language);
                 detail.PublicTransportationInfo = ltspoi.descriptions.Where(x => x.type == "publicTransport").FirstOrDefault()?.description.GetValue(language);
                 detail.AuthorTip = ltspoi.descriptions.Where(x => x.type == "authorTip").FirstOrDefault()?.description.GetValue(language);

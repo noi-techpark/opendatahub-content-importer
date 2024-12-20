@@ -134,8 +134,7 @@ namespace LTSAPI.Parser
                 detail.IntroText = ltsactivity.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description.GetValue(language);
                 detail.ParkingInfo = ltsactivity.descriptions.Where(x => x.type == "howToPark").FirstOrDefault()?.description.GetValue(language);
                 detail.GetThereText = ltsactivity.descriptions.Where(x => x.type == "howToArrive").FirstOrDefault()?.description.GetValue(language);
-                detail.IntroText = ltsactivity.descriptions.Where(x => x.type == "generalDescription").FirstOrDefault()?.description.GetValue(language);
-
+                
                 detail.AdditionalText = ltsactivity.descriptions.Where(x => x.type == "routeDescription").FirstOrDefault()?.description.GetValue(language);
                 detail.PublicTransportationInfo = ltsactivity.descriptions.Where(x => x.type == "publicTransport").FirstOrDefault()?.description.GetValue(language);
                 detail.AuthorTip = ltsactivity.descriptions.Where(x => x.type == "authorTip").FirstOrDefault()?.description.GetValue(language);
