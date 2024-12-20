@@ -61,26 +61,54 @@ namespace LTSAPI.Parser
 
             gastronomy.MaxSeatingCapacity = ltsgastronomy.maxSeatingCapacity;
 
+            //Categories, Dishrates, Facilities, CeremonyCodes all to Tags
+            if(gastronomy.TagIds == null)
+                gastronomy.TagIds = new List<string>();
+
             //Categories
-            foreach(var category in ltsgastronomy.categories)
+            foreach (var category in ltsgastronomy.categories)
             {
+                if (gastronomy.CategoryCodes == null)
+                    gastronomy.CategoryCodes = new List<CategoryCodesLinked>();
+
                 //to check categorycode has the shortname inside
+                gastronomy.CategoryCodes.Add(new CategoryCodesLinked() { Id = category.rid });
+                gastronomy.TagIds.Add(category.rid);
             }
-            //Dishcodes
+            //Dishrates
             foreach (var dishcode in ltsgastronomy.dishRates)
             {
+                if (gastronomy.DishRates == null)
+                    gastronomy.DishRates = new List<DishRatesLinked>();
+
                 //to check categorycode has the shortname inside
+                gastronomy.DishRates.Add(new DishRatesLinked() { Id = dishcode.dish.rid });
+                //gastronomy.DishRates.Add(new DishRatesV2() { Id = dishcode.dish.rid, MaxAmount = dishcode.maxAmount, MinAmount = dishcode.minAmount });
+                gastronomy.TagIds.Add(dishcode.dish.rid);
             }
-            //Categories
+            //Facilities
             foreach (var facility in ltsgastronomy.facilities)
             {
+                if (gastronomy.Facilities == null)
+                    gastronomy.Facilities = new List<FacilitiesLinked>();
+
                 //to check categorycode has the shortname inside
+                gastronomy.Facilities.Add(new FacilitiesLinked() { Id = facility.rid });
+                gastronomy.TagIds.Add(facility.rid);
             }
-            //Categories
+            //CeremonyCodes
             foreach (var ceremonycode in ltsgastronomy.ceremonySeatingCapacities)
             {
+                if (gastronomy.CapacityCeremony == null)
+                    gastronomy.CapacityCeremony = new List<CapacityCeremonyLinked>();
+
                 //to check categorycode has the shortname inside
+                gastronomy.CapacityCeremony.Add(new CapacityCeremonyLinked() { Id = ceremonycode.ceremony.rid });
+                //gastronomy.CategoryCodes.Add(new CapacityCeremonyV2() { Id = ceremonycode.ceremony.rid, MaxSeatingCapacity = ceremonycode.maxSeatingCapacity });
+                gastronomy.TagIds.Add(ceremonycode.ceremony.rid);
             }
+
+            
 
 
             //Contact Information
@@ -224,6 +252,9 @@ namespace LTSAPI.Parser
             //ltsmapping.Add("location_en", ltspoi.location["en"]);
 
             gastronomy.Mapping.TryAddOrUpdate("lts", ltsmapping);
+
+
+            //TODO add the IDM Tags
 
             return gastronomy;
         }
