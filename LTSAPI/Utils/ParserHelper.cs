@@ -43,12 +43,8 @@ namespace LTSAPI.Utils
 
         #endregion
 
-
         #region Accommodation
 
         #endregion
-
-
-
     }
 }

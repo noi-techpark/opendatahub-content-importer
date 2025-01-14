@@ -14,6 +14,7 @@ using System.Xml.Linq;
 using GenericHelper;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Newtonsoft.Json;
 
 namespace LTSAPI.Parser
 {
@@ -23,14 +24,20 @@ namespace LTSAPI.Parser
             JObject taglts, bool reduced
             )
         {
+            string dataid = "";
             try
             {
                 LTSTags ltstag = taglts.ToObject<LTSTags>();
 
+                dataid = ltstag.data.rid;
+
                 return ParseLTSTag(ltstag.data, reduced);
             }
             catch(Exception ex)
-            {           
+            {
+                //Generate Log Response on Error
+                Console.WriteLine(JsonConvert.SerializeObject(new { operation = "tag.parse", id = dataid, source = "lts", success = false, error = true, exception = ex.Message }));
+
                 return null;
             }          
         }
@@ -60,7 +67,7 @@ namespace LTSAPI.Parser
             tag.Shortname = tag.TagName.ContainsKey("en")
                 ? tag.TagName["en"]
                 : tag.TagName.FirstOrDefault().Value;
-            tag.Types = new List<string>() { "tags" + ltstag.entityType };
+            tag.Types = new List<string>() { "tags" + ltstag.entityType.ToLower() };
             
             tag.PublishDataWithTagOn = null;
             tag.Mapping = new Dictionary<string, IDictionary<string, string>>()

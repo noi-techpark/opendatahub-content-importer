@@ -993,6 +993,179 @@ namespace LTSAPI
 
     #endregion
 
+    #region Categories
+
+    public class LTSAccommodationCategoryData
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+
+        public IDictionary<string, string> name { get; set; }
+        public IDictionary<string, string> description { get; set; }
+
+        //public bool isActive { get; set; }
+        public string code { get; set; }
+        public int order { get; set; }
+    }
+
+    public class LTSAccommodationMealplanData
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+
+        public IDictionary<string, string> name { get; set; }
+        public IDictionary<string, string> description { get; set; }
+
+        //public bool isActive { get; set; }
+        public string code { get; set; }
+        public string additionalInfo { get; set; }
+        public int otaCode { get; set; }
+    }
+
+    public class LTSAccommodationRateplanData
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+
+        public IDictionary<string, string> name { get; set; }
+        public IDictionary<string, string> description { get; set; }
+
+        //public bool isActive { get; set; }
+        public string code { get; set; }
+        public string alpineBitsRatePlanId { get; set; }
+        public string chargeType { get; set; }
+        public bool areChildrenAllowed { get; set; }
+    }
+
+    public class LTSAccommodationTypeData
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+
+        public IDictionary<string, string> name { get; set; }
+        public IDictionary<string, string> description { get; set; }
+
+        //public bool isActive { get; set; }
+        public string code { get; set; }
+        public int order { get; set; }
+    }
+
+    public class LTSAccommodationAmenityData
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+
+        public IDictionary<string, string> name { get; set; }
+        public IDictionary<string, string> description { get; set; }
+
+        //public bool isActive { get; set; }
+        public string code { get; set; }
+        public string type { get; set; }
+    }
+
+    public class LTSEventCategoryData
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public IDictionary<string, string> description { get; set; }
+
+        //public bool isActive { get; set; }
+        public string code { get; set; }
+
+        public LTSClassification classification { get; set; }
+    }
+
+    public class LTSEventClassificationData
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public IDictionary<string, string> name { get; set; }
+
+        //public IDictionary<string, string> description { get; set; }
+        public string code { get; set; }
+    }
+
+    public class LTSEventTagData
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public IDictionary<string, string> description { get; set; }
+        public bool isActive { get; set; }
+        public string code { get; set; }
+    }
+
+    public class LTSGastronomyCeremonyCodeData
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public IDictionary<string, string> description { get; set; }
+
+        //public bool isActive { get; set; }
+        public string code { get; set; }
+    }
+
+    public class LTSGastronomyCategoryData
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public IDictionary<string, string> description { get; set; }
+
+        //public bool isActive { get; set; }
+        public string code { get; set; }
+    }
+
+    public class LTSGastronomyDishData
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public IDictionary<string, string> description { get; set; }
+
+        //public bool isActive { get; set; }
+        public string code { get; set; }
+    }
+
+    public class LTSGastronomyFacilityData
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public IDictionary<string, string> description { get; set; }
+
+        //public bool isActive { get; set; }
+        public string code { get; set; }
+        public string group { get; set; }
+    }
+
+    public class LTSGuestcardData
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public IDictionary<string, string> name { get; set; }
+        public bool isActive { get; set; }
+    }
+
+    public class LTSVenueCategoryData
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+
+        public bool? isHotel { get; set; }
+        public int? minimalHallNumber { get; set; }
+        public int? minimalSurfaceInSquareMeters { get; set; }
+
+        public IDictionary<string, string> name { get; set; }
+        public IDictionary<string, string> description { get; set; }
+
+        //public bool isActive { get; set; }
+        public string code { get; set; }
+    }
+
+    #endregion
 
 
 

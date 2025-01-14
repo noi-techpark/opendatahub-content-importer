@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using GenericHelper;
 using static System.Net.Mime.MediaTypeNames;
+using Newtonsoft.Json;
 
 namespace LTSAPI.Parser
 {
@@ -23,48 +24,20 @@ namespace LTSAPI.Parser
             IDictionary<string, XDocument> xmlfiles,
             IDictionary<string, JArray> jsonfiles)
         {
+            string accoid = "";
+
             try
             {
                 LTSAcco accoltsdetail = accomodationdetail.ToObject<LTSAcco>();
+
+                accoid = accoltsdetail.data.rid;
 
                 return ParseLTSAccommodation(accoltsdetail.data, reduced, xmlfiles, jsonfiles);
             }
             catch(Exception ex)
             {
-                //AccommodationLinked accommodationlinked = new AccommodationLinked();
-
-                ////Accommodation Type
-
-                ////Accommodation Category
-
-                ////Accommodation Detail
-
-                ////Address Groups
-
-                ////Amenities
-
-                ////GPS Info
-
-                ////Images
-
-                ////Galleries
-
-                ////District
-
-                ////TODO PARSE ACCOMMODATION
-                //var name = accomodationdetail["contacts"].Value<JArray>().FirstOrDefault()["address"]["name"].Value<JObject>();
-                //string namede = "";
-
-                //if (name != null)
-                //{
-                //    JToken token = name["de"];
-                //    if (token != null)
-                //    {
-                //        namede = token.Value<string>();
-                //    }
-                //}
-
-                //return accommodationlinked;
+                //Generate Log Response on Error
+                Console.WriteLine(JsonConvert.SerializeObject(new { operation = "accommodation.parse", id = accoid, source = "lts", success = false, error = true, exception = ex.Message }));
 
                 return null;
             }          
@@ -674,7 +647,8 @@ namespace LTSAPI.Parser
             return accommodationlinked;
         }
 
-        public static IEnumerable<AccommodationRoomV2> ParseLTSAccommodationRoom(LTSAccoData accommodation,
+        public static IEnumerable<AccommodationRoomV2> ParseLTSAccommodationRoom(
+            LTSAccoData accommodation,
             bool reduced,
             IDictionary<string, XDocument> xmlfiles,
             IDictionary<string, JArray> jsonfiles)
