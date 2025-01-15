@@ -18,36 +18,37 @@ using Newtonsoft.Json;
 
 namespace LTSAPI.Parser
 {
-    public class AccommodationCategoriesParser
+    public class AccommodationMealplanParser
     {
-        public static TagLinked ParseLTSAccommodationCategory(
-            JObject taglts, bool reduced
+        public static TagLinked ParseLTSAccommodationMealplan(
+            JObject ltsresult, bool reduced
             )
         {
             string dataid = "";
             try
             {
-                var ltstag = taglts.ToObject<LTSData<LTSAccommodationCategoryData>>();
-                dataid = ltstag.data.rid;
+                var ltsdata = ltsresult.ToObject<LTSData<LTSAccommodationMealplanData>>();
+                dataid = ltsdata.data.rid;
 
-                return ParseLTSAccommodationCategory(ltstag.data, reduced);
+                return ParseLTSAccommodationMealplan(ltsdata.data, reduced);
             }
             catch(Exception ex)
             {
                 //Generate Log Response on Error
-                Console.WriteLine(JsonConvert.SerializeObject(new { operation = "accommodation.category.parse", id = dataid, source = "lts", success = false, error = true, exception = ex.Message }));
+                Console.WriteLine(JsonConvert.SerializeObject(new { operation = "accommodation.mealplan.parse", id = dataid, source = "lts", success = false, error = true, exception = ex.Message }));
 
                 return null;
             }          
         }
 
-        public static TagLinked ParseLTSAccommodationCategory(
-            LTSAccommodationCategoryData data, 
+        public static TagLinked ParseLTSAccommodationMealplan(
+            LTSAccommodationMealplanData data, 
             bool reduced)
         {
             List<string> typelistlts = new List<string>();
 
             TagLinked objecttosave = new TagLinked();
+
 
             objecttosave.Id = data.rid;
             objecttosave.Active = true;
@@ -65,10 +66,10 @@ namespace LTSAPI.Parser
             objecttosave.Shortname = objecttosave.TagName.ContainsKey("en")
                 ? objecttosave.TagName["en"]
                 : objecttosave.TagName.FirstOrDefault().Value;
-            objecttosave.Types = new List<string>() { "accommodationcategory" };
+            objecttosave.Types = new List<string>() { "accommodationmealplans" };
 
-            if (!typelistlts.Contains("accommodationcategory"))
-                typelistlts.Add("accommodationcategory");
+            if (!typelistlts.Contains("accommodationmealplans"))
+                typelistlts.Add("accommodationmealplans");
 
             //objecttosave.IDMCategoryMapping = null;
             objecttosave.PublishDataWithTagOn = null;
@@ -80,7 +81,8 @@ namespace LTSAPI.Parser
                             {
                                 { "rid", data.rid },
                                 { "code", data.code },
-                                { "order", data.order.ToString() },
+                                { "additionalInfo", data.additionalInfo },
+                                { "otaCode", data.otaCode.ToString() },
                             }
                         },
                     };
