@@ -38,14 +38,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Parser\activity\" />
-    <Folder Include="Parser\gastronomy\" />
-    <Folder Include="Parser\event\" />
-    <Folder Include="Parser\webcam\" />
-    <Folder Include="Parser\venue\" />
-    <Folder Include="Parser\tag\" />
-    <Folder Include="Parser\poi\" />
-  </ItemGroup>
-
 </Project>
