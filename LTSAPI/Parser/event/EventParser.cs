@@ -152,6 +152,12 @@ namespace LTSAPI.Parser
                 detail.SafetyInfo = ltsevent.descriptions.Where(x => x.type == "safetyInstructions").FirstOrDefault()?.description.GetValue(language);
                 detail.EquipmentInfo = ltsevent.descriptions.Where(x => x.type == "equipment").FirstOrDefault()?.description.GetValue(language);
 
+                //To check how to include this descriptions
+                //serviceDescription
+                //whatToBring
+                //cancellationModality
+
+
                 eventv1.Detail.TryAddOrUpdate(language, detail);
             }
 
@@ -221,16 +227,35 @@ namespace LTSAPI.Parser
 
             eventv1.ImageGallery = imagegallerylist;
 
-            //TO ADD
             //publisherSettings
+            eventv1.EventPublisher = new List<EventPublisher>();
+            if (ltsevent.publisherSettings != null)
+            {
+                foreach (var publishersetting in ltsevent.publisherSettings)
+                {
+                    EventPublisher eventpublisher = new EventPublisher();
+                    eventpublisher.PublisherRID = publishersetting.publisher.rid;
+                    eventpublisher.Ranc = publishersetting.importanceRate;
+                    //eventpublisher.Publish = publishersetting.publicationStatus TO CHECK use this or convert it to the int value
+
+                    eventv1.EventPublisher.Add(eventpublisher);
+                }
+            }
+
+            //TO ADD
+
             //periods
-            //meetingPoint
-            //location
-            //variants
-            //registration
-            //shopConfiguration
-            //urlAlias
+
+
+            //meetingPoint   --> Dictionary with string fields
+            //location   --> Dictionary with string fields
+
+            //registration   --> Infos about registration Dictionary with string fields
+            //shopConfiguration   ---> bookingurl Dictionary, isActive field
+            //urlAlias      --> Dictionary with string fields
             //urls
+            //variants  --> array with object { name: Dictionary string, order int, price double, rid string, variantCategory.rid string}
+
 
 
             //Custom Fields
@@ -240,14 +265,10 @@ namespace LTSAPI.Parser
             ltsmapping.Add("organizer", ltsevent.organizer.rid);
             ltsmapping.Add("isRegistrationRequired", ltsevent.isRegistrationRequired.ToString());
             ltsmapping.Add("isTicketRequired", ltsevent.isTicketRequired.ToString());
-            ltsmapping.Add("organizer", ltsevent.organizer.rid);
-            ltsmapping.Add("organizer", ltsevent.organizer.rid);
-            ltsmapping.Add("organizer", ltsevent.organizer.rid);
-
 
             eventv1.Mapping.TryAddOrUpdate("lts", ltsmapping);
 
             return eventv1;
         }
-    }
+    } 
 }
