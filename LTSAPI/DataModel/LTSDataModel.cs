@@ -394,8 +394,8 @@ namespace LTSAPI
         public IDictionary<string, string>? description { get; set; }
         public IDictionary<string, string>? registrationWithin { get; set; }
         public double? minAmount { get; set; }
-        public string startDate { get; set; }
-        public string endDate { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
         public string startTime { get; set; }
         public string endTime { get; set; }
         public string entranceTime { get; set; }

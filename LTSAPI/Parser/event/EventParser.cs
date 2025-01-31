@@ -242,9 +242,81 @@ namespace LTSAPI.Parser
                 }
             }
 
-            //TO ADD
 
             //periods
+            eventv1.EventDate = new List<EventDate>();
+            if (ltsevent.periods != null)
+            {
+                foreach(var period in ltsevent.periods)
+                {
+                    EventDate eventdate = new EventDate();
+                    eventdate.Active = period.isActive;
+                    eventdate.Begin = TimeSpan.Parse(period.startTime);
+                    eventdate.From = period.startDate;
+                    eventdate.End = TimeSpan.Parse(period.endTime);
+                    eventdate.To = period.endDate;
+                    eventdate.Entrance = TimeSpan.Parse(period.entranceTime);
+                    eventdate.Cancelled = period.isCancelled.ToString(); //TO CHECK IF WE CAN CHANGE
+                    eventdate.Ticket = null;
+                    eventdate.MaxPersons = null;
+                    eventdate.MinPersons = null;
+                    eventdate.DayRID = null;
+                    eventdate.EventCalculatedDay = null;
+                    eventdate.EventDateAdditionalInfo = null;
+                    eventdate.EventDateAdditionalTime = null;
+                    eventdate.GpsEast = null;
+                    eventdate.GpsNorth = null;
+                    eventdate.InscriptionTill = null;
+                    eventdate.PriceFrom = null;
+                    eventdate.SingleDays = null;                    
+
+
+                    //   {
+                    //    "cancellationDescription": null,
+                    //    "days": [
+                    //      {
+                    //      "availability": null,
+                    //      "startDate": "2025-01-31",
+                    //      "rid": "4568E802AD3348B198ADC6DCC0E9D8A7",
+                    //      "startTime": "00:00:00"
+                    //      }
+                    //    ],
+                    //    "description": null,
+                    //    "endDate": "2025-01-31",
+                    //    "endTime": "23:59:00",
+                    //    "entranceTime": "00:00:00",
+                    //    "guide": null,
+                    //    "isActive": true,
+                    //    "isCancelled": false,
+                    //    "isEachDayOwnEvent": true,
+                    //    "maxParticipants": 200,
+                    //    "minParticipants": 1,
+                    //    "openingHours": [],
+                    //    "minAmount": null,
+                    //    "registrationWithin": null,
+                    //    "rid": "D3F60E0049B54504AB46D257528B004C",
+                    //    "startDate": "2025-01-31",
+                    //    "startTime": "00:00:00",
+                    //    "ticketSale": {
+                    //                "isActive": true,
+                    //        "onlineContingent": 100,
+                    //        "onlineSaleUntil": null
+                    //    },
+                    //    "variants": [
+                    //        {
+                    //                "rid": "08DF4164B2794A2B8BADACD1741B8C1B"
+                    //        }
+                    //    ]
+                    //}
+
+                }
+            }
+
+            //variants  --> array with object { name: Dictionary string, order int, price double, rid string, variantCategory.rid string}
+
+
+
+            //TO ADD
 
 
             //meetingPoint   --> Dictionary with string fields
@@ -254,7 +326,6 @@ namespace LTSAPI.Parser
             //shopConfiguration   ---> bookingurl Dictionary, isActive field
             //urlAlias      --> Dictionary with string fields
             //urls
-            //variants  --> array with object { name: Dictionary string, order int, price double, rid string, variantCategory.rid string}
 
 
 
