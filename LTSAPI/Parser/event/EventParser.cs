@@ -179,8 +179,6 @@ namespace LTSAPI.Parser
                 eventv1.ContactInfos.TryAddOrUpdate(language, contactinfo);
             }
 
-            //Opening Schedules
-
             //Position
             if (ltsevent.position != null && ltsevent.position.coordinates.Length == 2)
             {
@@ -227,6 +225,58 @@ namespace LTSAPI.Parser
 
             eventv1.ImageGallery = imagegallerylist;
 
+            //periods
+            eventv1.EventDate = new List<EventDate>();
+
+            if (ltsevent.periods != null)
+            {
+                foreach (var period in ltsevent.periods)
+                {
+                    EventDate eventdate = new EventDate();
+                    eventdate.Active = period.isActive;
+
+                    eventdate.From = Convert.ToDateTime(period.startDate);
+                    eventdate.Begin = TimeSpan.Parse(period.startTime);
+
+                    eventdate.To = Convert.ToDateTime(period.endDate);
+                    eventdate.End = TimeSpan.Parse(period.endTime);
+
+                    eventdate.Entrance = TimeSpan.Parse(period.entranceTime);
+
+                    eventdate.MaxPersons = period.maxParticipants;
+                    eventdate.MinPersons = period.minParticipants;
+                    eventdate.DayRID = period.rid;
+                    eventdate.PriceFrom = period.minAmount.ToString();
+
+                    eventdate.Cancelled = period.isCancelled.ToString();  //Change this to bool
+
+
+                    //Toassign
+                    eventdate.Ticket = null;
+                    eventdate.SingleDays = null;
+                    eventdate.GpsNorth = null;
+                    eventdate.GpsEast = null;
+                    eventdate.EventDateAdditionalInfo = null;
+                    eventdate.EventDateAdditionalTime = null;
+                    eventdate.EventCalculatedDay = null;                    
+                    eventdate.InscriptionTill = null;
+
+
+                    //isEachDayOwnEvent
+                    //cancellationDescription
+                    //days --> calculated day?
+                    //description
+                    //guide
+                    //openingHours
+                    //registrationWithin
+                    //ticketSale.isActive
+                    //ticketSale.onlineContingent
+                    //ticketSale.onlineSaleUntil
+                    //variants
+                }
+            }
+
+            //TO ADD
             //publisherSettings
             eventv1.EventPublisher = new List<EventPublisher>();
             if (ltsevent.publisherSettings != null)
