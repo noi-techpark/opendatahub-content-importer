@@ -359,12 +359,20 @@ namespace LTSAPI.Parser
             //shopConfiguration   ---> bookingurl Dictionary, isActive field
             //urls
 
-            EventBooking eventBooking = new EventBooking();
-            //eventBooking.BookingUrl = ltsevent.shopConfiguration.bookingUrl
+            if(ltsevent.urls != null)
+            {
+                foreach(var url in ltsevent.urls)
+                {
+                    
+                    //eventBooking.BookingUrl = ltsevent.shopConfiguration.bookingUrl
+                    //urlAlias      --> Dictionary with string fields
 
+                }
+            }
 
-            //urlAlias      --> Dictionary with string fields
+         
 
+            
 
 
 
