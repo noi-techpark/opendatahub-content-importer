@@ -353,6 +353,11 @@ namespace LTSAPI
         public bool isActive { get; set; }
         public bool isRegistrationRequired { get; set; }
         public bool isTicketRequired { get; set; }
+        //swagger doc shows this fiels
+        public bool? isIncludedInSuedtirolGuestPass { get; set; }
+
+        public string? eventLanguage { get; set; }
+
         public DateTime lastUpdate { get; set; }
         public IDictionary<string, string>? location { get; set; }
         public IDictionary<string, string>? meetingPoint { get; set; }
@@ -366,6 +371,8 @@ namespace LTSAPI
         public LTSEventTag[] tags { get; set; }
         public IDictionary<string, string>? urlAlias { get; set; }
         public LTSUrl[] urls { get; set; }
+
+        public LTSVariant[] variants { get; set; }
     }
 
     public class LTSClassification
@@ -400,26 +407,58 @@ namespace LTSAPI
         public string endTime { get; set; }
         public string entranceTime { get; set; }
         public bool isActive { get; set; }
-        public bool isEachDayOwnEvent { get; set; }
-        public bool isCancelled { get; set; }
+        public bool isEachDayOwnEvent { get; set; }   //"Defines if there exist one sellable Event for each day of the period"
+        public bool isCancelled { get; set; }       //"Defines if the period is cancelled"
         public int minParticipants { get; set; }
         public int maxParticipants { get; set; }
-        public object[] openingHours { get; set; }
+        public LTSPeriodOpeningTime[]? openingHours { get; set; }
         public LTSTicketsale ticketSale { get; set; }
-        public LTSVariant[] variants { get; set; }
+        public LTSPeriodVariant[] variants { get; set; }
         public LTSDay[] days { get; set; }
     }
 
     public class LTSTicketsale
     {
-        public bool isActive { get; set; }
-        public object onlineSaleUntil { get; set; }
-        public int onlineContingent { get; set; }
+        public bool isActive { get; set; } //"Defines if the ticket sale is active for the period"
+        public int onlineSaleUntil { get; set; } //"Number of minutes before the Event before which ticket sale is allowed"
+        public int onlineContingent { get; set; } //"Maximum number of tickets sellable online"
     }
 
     public class LTSVariant
     {
+        public IDictionary<string, string>? name { get; set; }
+        public int order { get; set; }
+        public double? price { get; set; }
         public string rid { get; set; }
+        public LTSVariantCategory[] variantCategory { get; set; }
+    }
+
+    public class LTSVariantCategory
+    {
+        public string rid { get; set; }
+    }
+
+    public class LTSPeriodVariant
+    {
+        public string rid { get; set; }
+    }
+
+    public class LTSPeriodOpeningTime
+    {
+        public string startTime1 { get; set; }
+        public string startTime2 { get; set; }
+        public string endTime1 { get; set; }
+        public string endTime2 { get; set; }
+        public string entranceTime1 { get; set; }
+        public string entranceTime2 { get; set; }
+        
+        public bool isMondayOpen { get; set; }
+        public bool isSaturdayOpen { get; set; }
+        public bool isSundayOpen { get; set; }
+        public bool isThursdayOpen { get; set; }
+        public bool isTuesdayOpen { get; set; }
+        public bool isWednesdayOpen { get; set; }
+        public bool isFridayOpen { get; set; }
     }
 
     public class LTSDay
@@ -435,12 +474,21 @@ namespace LTSAPI
         public int calculatedAvailability { get; set; }
         public bool isLowAvailability { get; set; }
         public bool isSoldOut { get; set; }
+
+        public LTSVariantAvailability[]? variants { get; set; }
+    }
+
+    public class LTSVariantAvailability
+    {
+        public string rid { get; set; }
+        public int calculatedAvailability { get; set; }
+        public bool isLowAvailability { get; set; }
     }
 
     public class LTSPublishersetting
     {
         public int importanceRate { get; set; }
-        public string publicationStatus { get; set; }
+        public string publicationStatus { get; set; }  //suggestedForPublication,approved,rejected
         public LTSPublisher publisher { get; set; }
     }
 
@@ -456,7 +504,7 @@ namespace LTSAPI
 
     public class LTSUrl
     {
-        public string type { get; set; }
+        public string type { get; set; } //"pdf1","url1","video1","facebook","twitter","pdf2","pdf3","url2","url3","video2","video3","instagram","tikTok"
         public IDictionary<string, string>? url { get; set; }
     }
 

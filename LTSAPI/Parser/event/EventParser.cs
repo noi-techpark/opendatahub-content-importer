@@ -14,6 +14,7 @@ using System.Xml.Linq;
 using GenericHelper;
 using LTSAPI.Utils;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Logging;
 
 namespace LTSAPI.Parser
 {
@@ -151,15 +152,25 @@ namespace LTSAPI.Parser
                 detail.AuthorTip = ltsevent.descriptions.Where(x => x.type == "authorTip").FirstOrDefault()?.description.GetValue(language);
                 detail.SafetyInfo = ltsevent.descriptions.Where(x => x.type == "safetyInstructions").FirstOrDefault()?.description.GetValue(language);
                 detail.EquipmentInfo = ltsevent.descriptions.Where(x => x.type == "equipment").FirstOrDefault()?.description.GetValue(language);
+                
+                eventv1.Detail.TryAddOrUpdate(language, detail);
 
+                //EventDescAdditional eventdescadditional = new EventDescAdditional();
+                //eventdescadditional.
+
+
+                //eventv1.EventDescAdditional.TryAddOrUpdate(language, eventdescadditional);
                 //To check how to include this descriptions
                 //serviceDescription
                 //whatToBring
                 //cancellationModality
 
 
-                eventv1.Detail.TryAddOrUpdate(language, detail);
             }
+
+
+
+
 
             //Contact Information
             foreach (var language in eventv1.HasLanguage)
@@ -246,27 +257,47 @@ namespace LTSAPI.Parser
                     eventdate.MaxPersons = period.maxParticipants;
                     eventdate.MinPersons = period.minParticipants;
                     eventdate.DayRID = period.rid;
-                    eventdate.PriceFrom = period.minAmount.ToString();
+                    eventdate.PriceFrom = period.minAmount.ToString(); //TO CHECK Convert to double
 
                     eventdate.Cancelled = period.isCancelled.ToString();  //Change this to bool
+                    
+                    //days
+                    foreach(var day in period.days)
+                    {
+                        if (eventdate.EventCalculatedDay == null)
+                            eventdate.EventCalculatedDay = new EventDateCalculatedDay();   //Wrong this should be a Array
 
+                        EventDateCalculatedDay eventcalculatedday = new EventDateCalculatedDay();
+                        eventcalculatedday.Day = Convert.ToDateTime(day.startDate);
+                        eventcalculatedday.Begin = TimeSpan.Parse(day.startTime);
+                        eventcalculatedday.CDayRID = day.rid;
+                        
+                        //day.availability
 
+                    }
+
+                    eventdate.SingleDays = period.isEachDayOwnEvent; //TO CHECK
+
+                    //eventdate.InscriptionTill = period.registrationWithin; // TO check
+                    
                     //Toassign
-                    eventdate.Ticket = null;
-                    eventdate.SingleDays = null;
+                    eventdate.Ticket = null;                    
                     eventdate.GpsNorth = null;
                     eventdate.GpsEast = null;
                     eventdate.EventDateAdditionalInfo = null;
                     eventdate.EventDateAdditionalTime = null;
-                    eventdate.EventCalculatedDay = null;                    
-                    eventdate.InscriptionTill = null;
+                    
+
+
+                    //description
+                    //guide
+                    //cancellationDescription
 
 
                     //isEachDayOwnEvent
-                    //cancellationDescription
+
                     //days --> calculated day?
-                    //description
-                    //guide
+
                     //openingHours
                     //registrationWithin
                     //ticketSale.isActive
@@ -275,8 +306,7 @@ namespace LTSAPI.Parser
                     //variants
                 }
             }
-
-            //TO ADD
+                     
             //publisherSettings
             eventv1.EventPublisher = new List<EventPublisher>();
             if (ltsevent.publisherSettings != null)
@@ -292,90 +322,49 @@ namespace LTSAPI.Parser
                 }
             }
 
-
-            //periods
-            eventv1.EventDate = new List<EventDate>();
-            if (ltsevent.periods != null)
-            {
-                foreach(var period in ltsevent.periods)
-                {
-                    EventDate eventdate = new EventDate();
-                    eventdate.Active = period.isActive;
-                    eventdate.Begin = TimeSpan.Parse(period.startTime);
-                    eventdate.From = period.startDate;
-                    eventdate.End = TimeSpan.Parse(period.endTime);
-                    eventdate.To = period.endDate;
-                    eventdate.Entrance = TimeSpan.Parse(period.entranceTime);
-                    eventdate.Cancelled = period.isCancelled.ToString(); //TO CHECK IF WE CAN CHANGE
-                    eventdate.Ticket = null;
-                    eventdate.MaxPersons = null;
-                    eventdate.MinPersons = null;
-                    eventdate.DayRID = null;
-                    eventdate.EventCalculatedDay = null;
-                    eventdate.EventDateAdditionalInfo = null;
-                    eventdate.EventDateAdditionalTime = null;
-                    eventdate.GpsEast = null;
-                    eventdate.GpsNorth = null;
-                    eventdate.InscriptionTill = null;
-                    eventdate.PriceFrom = null;
-                    eventdate.SingleDays = null;                    
-
-
-                    //   {
-                    //    "cancellationDescription": null,
-                    //    "days": [
-                    //      {
-                    //      "availability": null,
-                    //      "startDate": "2025-01-31",
-                    //      "rid": "4568E802AD3348B198ADC6DCC0E9D8A7",
-                    //      "startTime": "00:00:00"
-                    //      }
-                    //    ],
-                    //    "description": null,
-                    //    "endDate": "2025-01-31",
-                    //    "endTime": "23:59:00",
-                    //    "entranceTime": "00:00:00",
-                    //    "guide": null,
-                    //    "isActive": true,
-                    //    "isCancelled": false,
-                    //    "isEachDayOwnEvent": true,
-                    //    "maxParticipants": 200,
-                    //    "minParticipants": 1,
-                    //    "openingHours": [],
-                    //    "minAmount": null,
-                    //    "registrationWithin": null,
-                    //    "rid": "D3F60E0049B54504AB46D257528B004C",
-                    //    "startDate": "2025-01-31",
-                    //    "startTime": "00:00:00",
-                    //    "ticketSale": {
-                    //                "isActive": true,
-                    //        "onlineContingent": 100,
-                    //        "onlineSaleUntil": null
-                    //    },
-                    //    "variants": [
-                    //        {
-                    //                "rid": "08DF4164B2794A2B8BADACD1741B8C1B"
-                    //        }
-                    //    ]
-                    //}
-
-                }
-            }
-
-            //variants  --> array with object { name: Dictionary string, order int, price double, rid string, variantCategory.rid string}
-
-
-
-            //TO ADD
+            eventv1.SignOn = ltsevent.isRegistrationRequired.ToString(); //TO CHECK
+            eventv1.OrgRID = ltsevent.organizer.rid;  //Renameto OrganizationId
+            eventv1.Ticket = ltsevent.isTicketRequired.ToString(); // TO CHECK
 
 
             //meetingPoint   --> Dictionary with string fields
             //location   --> Dictionary with string fields
-
             //registration   --> Infos about registration Dictionary with string fields
+            foreach(var language in eventv1.HasLanguage)
+            {
+                EventAdditionalInfos eventAdditionalInfos = new EventAdditionalInfos();
+                eventAdditionalInfos.Language = language;
+                eventAdditionalInfos.Mplace = ltsevent.meetingPoint != null && ltsevent.meetingPoint.ContainsKey(language) ? ltsevent.meetingPoint[language] : null;
+                eventAdditionalInfos.Location = ltsevent.location != null && ltsevent.location.ContainsKey(language) ? ltsevent.location[language] : null;
+                eventAdditionalInfos.Reg = ltsevent.registration != null && ltsevent.registration.ContainsKey(language) ? ltsevent.registration[language] : null;
+
+                //Maybe rename Mplace, Reg and add Here also cancellationModality, serviceDescription, whatToBring
+
+                eventv1.EventAdditionalInfos.TryAddOrUpdate("language", eventAdditionalInfos);
+            }
+
+
+
+            //variants  --> array with object { name: Dictionary string, order int, price double, rid string, variantCategory.rid string}
+            if (ltsevent.variants != null)
+            {
+                foreach (var variant in ltsevent.variants)
+                {
+                    //Include EventPrice?
+                }
+            }
+
+            
+
             //shopConfiguration   ---> bookingurl Dictionary, isActive field
-            //urlAlias      --> Dictionary with string fields
             //urls
+
+            EventBooking eventBooking = new EventBooking();
+            //eventBooking.BookingUrl = ltsevent.shopConfiguration.bookingUrl
+
+
+            //urlAlias      --> Dictionary with string fields
+
 
 
 
@@ -393,3 +382,12 @@ namespace LTSAPI.Parser
         }
     } 
 }
+
+
+//TO ADD
+//events/variantcategories
+//events/categories
+//events/tags
+//events/classifications
+//events/dates  ???
+//events/organizers
