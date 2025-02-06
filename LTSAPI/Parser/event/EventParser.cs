@@ -330,6 +330,7 @@ namespace LTSAPI.Parser
             //meetingPoint   --> Dictionary with string fields
             //location   --> Dictionary with string fields
             //registration   --> Infos about registration Dictionary with string fields
+
             foreach(var language in eventv1.HasLanguage)
             {
                 EventAdditionalInfos eventAdditionalInfos = new EventAdditionalInfos();
