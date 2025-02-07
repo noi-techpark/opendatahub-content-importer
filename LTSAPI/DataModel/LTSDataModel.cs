@@ -1,9 +1,11 @@
-﻿using System;
+﻿using DataModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LTSAPI
 {
@@ -27,10 +29,15 @@ namespace LTSAPI
     public class LTSAccoContact
     {
         public LTSAddress address { get; set; }
+        //Email address of the contact
         public string email { get; set; }
+        //Fax number of the contact
         public string fax { get; set; }
+        //Phone number of the contact
         public string phone { get; set; }
+        //Type of the contact (see enums list for possible values in the schema definition) ("main","invoicing","private")
         public string type { get; set; }
+        //URL of the contact website
         public string website { get; set; }
     }
 
@@ -64,51 +71,74 @@ namespace LTSAPI
 
     public class LTSAddress
     {
+        //Localised name of the city of the contact address
         public Dictionary<string, string>? city { get; set; }
         public Dictionary<string, string>? complement { get; set; }
+        //Country code of the contact address. The API utilizes the international standards for Country codes as specified in ISO 3166-1 alpha-2
         public string country { get; set; }
+        //Localised name of the Accommodation in the contact address
         public Dictionary<string, string>? name { get; set; }
+        //Localised name of the owner of the Accommodation in the contact address
         public Dictionary<string, string>? name2 { get; set; }
+        //Postal code of the contact address
         public string postalCode { get; set; }
+        //Localised name of the street of the contact address
         public Dictionary<string, string>? street { get; set; }
     }
 
 
     public class LTSImage
     {
+        //End date of image season (in mm-dd format)
         public DateTime? applicableEndDate { get; set; }
+        //Start date of image season (in mm-dd format)
         public DateTime? applicableStartDate { get; set; }
-
+        //Copyright holder of the image of the gallery
         public string copyright { get; set; }
+        //Height of the image of the gallery in pixel
         public int heightPixel { get; set; }
+        //Defines if the image of the gallery is active
         public bool isActive { get; set; }
+        //License of the image of the gallery (see enums list for possible values in the schema definition) ("lts","cc0")
         public string license { get; set; }
+        //Sorting number of the image of the gallery
         public int? order { get; set; }
+        //Unique identifier of the image of the gallery
         public string rid { get; set; }
+        //URL of the image of the gallery
         public string url { get; set; }
+        //Width of the image of the gallery in pixel
         public int widthPixel { get; set; }
-
+        //Localised name of the image
         public Dictionary<string, string>? name { get; set; }
         public bool? isMainImage { get; set; }
     }
 
     public class LTSPosition
     {
+        //Altitude of the position in metres
         public int? altitude { get; set; }
+        //represents the geographical coordinates of a position. The first value in this pair corresponds to the longitude, expressed in decimal degrees, while the second value represents the latitude, also in decimal degrees.
         public float[] coordinates { get; set; }
+        //Type of the position (see enums list for possible values in the schema definition) (point)
         public string type { get; set; }
     }
 
     public class LTSCategory
     {
+        //Unique identifier of the category
         public string rid { get; set; }
     }
 
     public class LTSAreamap
     {
+        //X coordinate of the Accommodation on the local area map
         public string coordinateX { get; set; }
+        //Y coordinate of the Accommodation on the local area map
         public string coordinateY { get; set; }
+        //Number of the Accommodation on the local area map
         public string number { get; set; }
+        //Color of the route to the Accommodation
         public string routeColor { get; set; }
     }
 
@@ -132,40 +162,66 @@ namespace LTSAPI
     {
         public LTSRateplan[] ratePlans { get; set; }
         public LTSType type { get; set; }
+        //Unique identifier of the Accommodation (A0RID)
         public string rid { get; set; }
+        //List of unique identifier of the marketing group(s)
+        public LTSMarketinggroup[] marketingGroups { get; set; }
+        //Unique identifier of the address group
         public LTSAddressgroup[] addressGroups { get; set; }
+        //Unique identifier of the amenity
         public LTSAmenity[] amenities { get; set; }
         public LTSAreamap areaMap { get; set; }
+        //Unique identifier of the category
         public LTSCategory category { get; set; }
         public LTSAccoContact[] contacts { get; set; }
+        //Localised description of the Accommodation related to the type. Type of the description (see enums list for possible values in the schema definition) (longDescription,shortDescription)
         public LTSDescription[] descriptions { get; set; }
+        //Unique identifier of the district
         public LTSDistrict district { get; set; }
         public LTSGallery[] galeries { get; set; }
+        //Defines if the Accommodation has apartments
         public bool hasApartments { get; set; }
+        //Defines if the Accommodation has dorms
         public bool hasDorms { get; set; }
+        //Defines if the Accommodation has pitches
         public bool hasPitches { get; set; }
+        //Defines if the Accommodation has rooms
         public bool hasRooms { get; set; }
+        //Unique identification number of the Accommodation in the HGV platform
         public string hgvId { get; set; }
+        //Unique identification number of the Accommodation (A0R_ID)
         public int id { get; set; }
         public LTSImage[] images { get; set; }
+        //"Defines if the Accommodation is an accommodation
         public bool isAccommodation { get; set; }
+        //Defines if the Accommodation is active
         public bool isActive { get; set; }
+        //Defines if the Accommodation is bookable
         public bool isBookable { get; set; }
+        //Defines if the Accommodation is a camping
         public bool isCamping { get; set; }
+        //Defines if the Accommodation is member of IDM
         public bool isSuedtirolInfoActive { get; set; }
+        //Defines if the Accommodation is member of an tourism organization
         public bool isTourismOrganizationMember { get; set; }
+        //CIN Code of Accommodation
         public string? cinCode { get; set; }
+        //Date and time of last change
         public DateTime lastUpdate { get; set; }
+        //Date and time of last change of the prices
         public DateTime lastUpdatePrices { get; set; }
+        //Date and time of last availability change
         public DateTime lastUpdateAvailability { get; set; }
         public LTSMealplan[] mealPlans { get; set; }
         public LTSOverview overview { get; set; }
         public LTSPosition position { get; set; }
+        //Representation mode of the Accommodation (see enums list for possible values in the schema definition) ("full","minimal","none")
         public string representationMode { get; set; }
         public LTSReview[] reviews { get; set; }
         public LTSRoomgroup[] roomGroups { get; set; }
         public LTSSeason[] seasons { get; set; }
         public LTSTourismorganization tourismOrganization { get; set; }
+        //Rating of the Accommodation on TrustYou platform
         public int trustyouScore { get; set; }
         public LTSSuedtirolguestpass suedtirolGuestPass { get; set; }
         public LTSAccessibility accessibility { get; set; }
@@ -173,162 +229,244 @@ namespace LTSAPI
 
     public class LTSType
     {
+        //Unique identifier of the Accommodation establishment type
+        public string rid { get; set; }
+    }
+
+    public class LTSMarketinggroup
+    {
+        //List of unique identifier of the marketing group(s)
         public string rid { get; set; }
     }
 
     public class LTSOverview
     {
         public LTSCamping camping { get; set; }
+        //End time of luggage service
         public string luggageServiceEndTime { get; set; }
+        //Start time of luggage service
         public string luggageServiceStartTime { get; set; }
         public LTSParkingspaces parkingSpaces { get; set; }
-
+        //Check-in allowed from time
         public string checkInStartTime { get; set; }
+        //Check-in allowed to time
         public string checkInEndTime { get; set; }
+        //Check-out allowed from time
         public string checkOutStartTime { get; set; }
+        //Check-out allowed to time
         public string checkOutEndTime { get; set; }
+        //Reception closing time
         public string receptionEndTime { get; set; }
+        //Reception opening time
         public string receptionStartTime { get; set; }
+        //End time for room service
         public string roomServiceEndTime { get; set; }
+        //Start time for room service
         public string roomServiceStartTime { get; set; }
     }
 
     public class LTSCamping
     {
+        //Maximum occupancy of the campsite
         public int capacityPersons { get; set; }
+        //Number of dishwashing spaces on the campsite
         public int dishwashingSpaces { get; set; }
+        //Number of washrooms on the campsite
         public int laundrySpaces { get; set; }
+        //Number of pitches on the campsite
         public int pitches { get; set; }
+        //Number of showers on the campsite
         public int showers { get; set; }
+        //Number of toilets on the campsite
         public int toilets { get; set; }
     }
 
     public class LTSParkingspaces
     {
+        //Number of garage parking spaces
         public int garage { get; set; }
+        //Number of outdoor parking spaces
         public int outdoor { get; set; }
     }
 
     public class LTSTourismorganization
     {
+        //Unique identifier of the tourism organization
         public string rid { get; set; }
     }
 
     public class LTSSuedtirolguestpass
     {
+        //is accommodation active for GuestPass
         public bool isActive { get; set; }
         public LTSCardtype[] cardTypes { get; set; }
     }
 
     public class LTSCardtype
     {
+        //Guest Pass type assigned to accommodation. Only one is allowed
         public string rid { get; set; }
     }
 
     public class LTSAccessibility
     {
+        //URL of the website providing information about the accommodation's accessibility
         public Dictionary<string, string>? website { get; set; }
+        //Localised description of the accommodation's accessibility
         public Dictionary<string, string>? description { get; set; }
     }
 
     public class LTSRateplan
     {
+        //Type of the price of the ratePlan ("perPersonPerNight","perRoomPerNight","undefined")
         public string chargeType { get; set; }
+        //AlpineBits RatePlanId
+        public string alpineBitsRatePlanId { get; set; }
+        //OTA code of the ratePlan
         public string code { get; set; }
+        //Localised description of the ratePlan related to the type
+        //Type of the description of the ratePlan (see enums list for possible values in the schema definition) longDescription,plainTextLongDescription
         public LTSDescription[] descriptions { get; set; }
-
+        //Defines if the rate is a special offer or comes from pricelist
         public bool iusSpecialOffer { get; set; }
+        //Date and time of last ratePlan change
         public DateTime lastUpdate { get; set; }
+        //Localised name of the ratePlan
         public Dictionary<string, string>? name { get; set; }
+        //Unique identifier of the ratePlan
         public string rid { get; set; }
+        //Level of visibility of the ratePlan ("notActive","visible","visibleAndBookable","undefined")
         public string? visibility { get; set; }
     }
 
     public class LTSAddressgroup
     {
+        //Unique identifier of the address group
         public string rid { get; set; }
     }
 
     public class LTSAmenity
     {
+        //Unique identifier of the amenity
+        //Unique identifier of the amenity of the room group
         public string rid { get; set; }
     }
 
     public class LTSGallery
     {
         public LTSImage[] images { get; set; }
+        //Defines if the gallery is active
         public bool isActive { get; set; }
+        //Sorting number of the gallery
         public int order { get; set; }
+        //Unique identifier of the gallery
         public string rid { get; set; }
     }
 
     public class LTSMealplan
     {
+        //Unique identifier of the meal plan
         public string rid { get; set; }
     }
 
     public class LTSReview
     {
+        //Unique identification number of the review platform
         public string id { get; set; }
+        //"Defines if reviews are active
         public bool isActive { get; set; }
+        //Rating of the Accommodation
         public float rating { get; set; }
+        //Number of reviews for the Accommodation
         public int? reviewsQuantity { get; set; }
+        //Defines the status of reviews (see enums list for possible values in the schema definition) ("notRated","underValued","rated")
         public string status { get; set; }
+        //Defines the type of review platform (see enums list for possible values in the schema definition) ("independent","trustyou")
         public string type { get; set; }
     }
 
     public class LTSRoomgroup
     {
         public LTSAmenity[] amenities { get; set; }
+        //Number of bathrooms of the room group
         public int baths { get; set; }
+        //Classification of the room group (see enums list for possible values in the schema definition) ("room","apartment","mobileHome","holidayHome","bungalow","pitch","tent","dorm","pitchOrTent")
         public string classification { get; set; }
+        //Code of the room group
         public string code { get; set; }
+        //Localised description of the room group related to the type. Type of the description (see enums list for possible values in the schema definition) ("shortDescription","longDescription")
         public LTSDescription[] descriptions { get; set; }
+        //Number of dining rooms
         public int diningRooms { get; set; }
         public LTSImage[] images { get; set; }
+        //Defines if the room group is active
         public bool isActive { get; set; }
+        //Date and time of last change
         public DateTime lastUpdate { get; set; }
+        //Number of living rooms
         public int livingRooms { get; set; }
+        //Min Amount (price from) per person per day for this roomgroup based on standard prices
         public float minAmountPerPersonPerDay { get; set; }
+        //Min Amount (price from) per unit per day for this roomgroup based on standard prices
         public float minAmountPerUnitPerDay { get; set; }
+        //Localised name of the room group
         public Dictionary<string, string>? name { get; set; }
         public LTSOccupancy occupancy { get; set; }
+        //Unique identifier of the room group
         public string rid { get; set; }
+        //Number of rooms
         public int roomQuantity { get; set; }
         public LTSRoom[] rooms { get; set; }
+        //Number of sleeping rooms
         public int sleepingRooms { get; set; }
+        //Size in square metres
         public float squareMeters { get; set; }
+        //Number of toilets
         public int toilets { get; set; }
+        //Type of the room group (see enums list for possible values in the schema definition) ("apartment","pitches","restingPlaces","room","undefined")
         public string type { get; set; }
     }
 
     public class LTSOccupancy
     {
+        //Maximum room occupancy
         public int max { get; set; }
+        //Minimum room occupancy
         public int min { get; set; }
+        //Minimum adult occupancy of the room
         public int minAdults { get; set; }
+        //Standard room occupancy
         public int standard { get; set; }
     }
 
     public class LTSRoom
     {
         public LTSAvailability availability { get; set; }
+        //String code of the room
         public string code { get; set; }
+        //Date and time of last change
         public DateTime lastUpdate { get; set; }
+        //Unique identifier of the room
         public string rid { get; set; }
     }
 
     public class LTSAvailability
     {
+        //Defined if the room is blocked
         public bool isBlocked { get; set; }
+        //Date and time of last change of the availability
         public DateTime lastUpdate { get; set; }
+        //Availability status of the room of every day
         public string status { get; set; }
+        //"Date and time Date and time of the first availability status character
         public string statusStartDate { get; set; }
     }
 
     public class LTSSeason
     {
+        //End date of the season
         public string endDate { get; set; }
+        //Start date of the season
         public string startDate { get; set; }
     }
 
