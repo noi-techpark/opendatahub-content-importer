@@ -107,8 +107,6 @@ namespace LTSAPI.Parser
                     eventv1.HasLanguage.Add(name.Key);
             }
 
-            //Classification
-            eventv1.ClassificationRID = ltsevent.classification.rid;
             
             //Topics
             foreach (var category in ltsevent.categories)
@@ -257,9 +255,9 @@ namespace LTSAPI.Parser
                     eventdate.MaxPersons = period.maxParticipants;
                     eventdate.MinPersons = period.minParticipants;
                     eventdate.DayRID = period.rid;
-                    eventdate.PriceFrom = period.minAmount.ToString(); //TO CHECK Convert to double
+                    eventdate.PriceFrom = period.minAmount;
 
-                    eventdate.Cancelled = period.isCancelled.ToString();  //Change this to bool
+                    eventdate.Cancelled = period.isCancelled;
                     
                     //days
                     foreach(var day in period.days)
@@ -278,28 +276,58 @@ namespace LTSAPI.Parser
 
                     eventdate.SingleDays = period.isEachDayOwnEvent; //TO CHECK
 
-                    //eventdate.InscriptionTill = period.registrationWithin; // TO check
-                    
-                    //Toassign
-                    eventdate.Ticket = null;                    
-                    eventdate.GpsNorth = null;
-                    eventdate.GpsEast = null;
-                    eventdate.EventDateAdditionalInfo = null;
-                    eventdate.EventDateAdditionalTime = null;
-                    
 
+                    //EventDateAdditionalInfo
+                    eventdate.EventDateAdditionalInfo = new Dictionary<string, EventDateAdditionalInfo>();
 
-                    //description
-                    //guide
-                    //cancellationDescription
+                    //RegistrationWithhin
+                    if (period.registrationWithin != null)
+                    {
+                        foreach(var registrationwithhinelement in period.registrationWithin)
+                        {
+                            if (!eventdate.EventDateAdditionalInfo.ContainsKey(registrationwithhinelement.Key))
+                                eventdate.EventDateAdditionalInfo.TryAdd(registrationwithhinelement.Key, new EventDateAdditionalInfo() { Language = registrationwithhinelement.Key });
 
+                            eventdate.EventDateAdditionalInfo[registrationwithhinelement.Key].RegistrationWithin = registrationwithhinelement.Value;
+                        }
+                    }
+                    //Description
+                    if (period.description != null)
+                    {
+                        foreach (var descriptionelement in period.description)
+                        {
+                            if (!eventdate.EventDateAdditionalInfo.ContainsKey(descriptionelement.Key))
+                                eventdate.EventDateAdditionalInfo.TryAdd(descriptionelement.Key, new EventDateAdditionalInfo() { Language = descriptionelement.Key });
 
-                    //isEachDayOwnEvent
+                            eventdate.EventDateAdditionalInfo[descriptionelement.Key].Description = descriptionelement.Value;
+                        }
+                    }
+                    //Guide
+                    if (period.guide != null)
+                    {
+                        foreach (var guidelement in period.guide)
+                        {
+                            if (!eventdate.EventDateAdditionalInfo.ContainsKey(guidelement.Key))
+                                eventdate.EventDateAdditionalInfo.TryAdd(guidelement.Key, new EventDateAdditionalInfo() { Language = guidelement.Key });
+
+                            eventdate.EventDateAdditionalInfo[guidelement.Key].Guide = guidelement.Value;
+                        }
+                    }
+                    //CancellationDescription
+                    if (period.cancellationDescription != null)
+                    {
+                        foreach (var cancellationdescelement in period.cancellationDescription)
+                        {
+                            if (!eventdate.EventDateAdditionalInfo.ContainsKey(cancellationdescelement.Key))
+                                eventdate.EventDateAdditionalInfo.TryAdd(cancellationdescelement.Key, new EventDateAdditionalInfo() { Language = cancellationdescelement.Key });
+
+                            eventdate.EventDateAdditionalInfo[cancellationdescelement.Key].CancellationDescription = cancellationdescelement.Value;
+                        }
+                    }
 
                     //days --> calculated day?
 
                     //openingHours
-                    //registrationWithin
                     //ticketSale.isActive
                     //ticketSale.onlineContingent
                     //ticketSale.onlineSaleUntil
@@ -322,9 +350,14 @@ namespace LTSAPI.Parser
                 }
             }
 
-            eventv1.SignOn = ltsevent.isRegistrationRequired.ToString(); //TO CHECK
-            eventv1.OrgRID = ltsevent.organizer.rid;  //Renameto OrganizationId
-            eventv1.Ticket = ltsevent.isTicketRequired.ToString(); // TO CHECK
+            eventv1.EventProperty = new DataModel.EventProperty();
+
+            //Classification
+            eventv1.EventProperty.EventClassificationId = ltsevent.classification.rid;
+            eventv1.EventProperty.RegistrationRequired = ltsevent.isRegistrationRequired;
+            eventv1.EventProperty.EventOrganizerId = ltsevent.organizer.rid;
+            eventv1.EventProperty.TicketRequired = ltsevent.isTicketRequired;
+            eventv1.EventProperty.IncludedInSuedtirolGuestPass = ltsevent.isIncludedInSuedtirolGuestPass;
 
 
             //meetingPoint   --> Dictionary with string fields
@@ -335,9 +368,9 @@ namespace LTSAPI.Parser
             {
                 EventAdditionalInfos eventAdditionalInfos = new EventAdditionalInfos();
                 eventAdditionalInfos.Language = language;
-                eventAdditionalInfos.Mplace = ltsevent.meetingPoint != null && ltsevent.meetingPoint.ContainsKey(language) ? ltsevent.meetingPoint[language] : null;
+                eventAdditionalInfos.MeetingPoint = ltsevent.meetingPoint != null && ltsevent.meetingPoint.ContainsKey(language) ? ltsevent.meetingPoint[language] : null;
                 eventAdditionalInfos.Location = ltsevent.location != null && ltsevent.location.ContainsKey(language) ? ltsevent.location[language] : null;
-                eventAdditionalInfos.Reg = ltsevent.registration != null && ltsevent.registration.ContainsKey(language) ? ltsevent.registration[language] : null;
+                eventAdditionalInfos.Registration = ltsevent.registration != null && ltsevent.registration.ContainsKey(language) ? ltsevent.registration[language] : null;
 
                 //Maybe rename Mplace, Reg and add Here also cancellationModality, serviceDescription, whatToBring
 
