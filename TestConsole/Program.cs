@@ -22,6 +22,10 @@ Settings settings = new Settings(config);
 
 LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
 
+var ltsevent = await ltsapi.EventDetailRequest("1ecf77c43dc0477a924f399990429a67", null);
+var parsedevent = EventParser.ParseLTSEventV1(ltsevent.FirstOrDefault().Value<JObject>(), false);
+
+
 var ltspoi = await ltsapi.PoiDetailRequest("3741EF2230FC909CA46A925D3BBA3B45", null);
 var parsedpoi = PointofInterestParser.ParseLTSPointofInterest(ltspoi.FirstOrDefault().Value<JObject>(), false);
 
