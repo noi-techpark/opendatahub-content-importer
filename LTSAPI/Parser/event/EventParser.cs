@@ -460,15 +460,9 @@ namespace LTSAPI.Parser
                     eventvariant.Order = variant.order;
                     eventvariant.Name = variant.name;
 
-                    if (eventvariant.VariantCategory != null)
+                    if (variant.variantCategory != null)
                     {
-                        foreach (var variantcategory in variant.variantCategory)
-                        {
-                            if (eventvariant.VariantCategory == null)
-                                eventvariant.VariantCategory = new List<string>();
-
-                            eventvariant.VariantCategory.Add(variantcategory.rid);
-                        }
+                        eventvariant.VariantCategoryId = variant.variantCategory.rid;
                     }
 
                     eventv1.EventVariants.Add(eventvariant);

@@ -607,7 +607,7 @@ namespace LTSAPI
         public double? price { get; set; }
         //Unique identifier of the variant of the Event
         public string rid { get; set; }
-        public LTSVariantCategory[]? variantCategory { get; set; }
+        public LTSVariantCategory? variantCategory { get; set; }
     }
 
     public class LTSVariantCategory
