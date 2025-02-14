@@ -43,15 +43,15 @@ namespace LTSAPI
 
     public class LTSEventContact
     {
-        public LTSAddress address { get; set; }
+        public LTSAddress? address { get; set; }
         public IDictionary<string, string>? email { get; set; }
-        public string phone { get; set; }
+        public string? phone { get; set; }
         public IDictionary<string, string>? website { get; set; }
     }
 
     public class LTSActivityPoiContact
     {
-        public LTSAddress address { get; set; }
+        public LTSAddress? address { get; set; }
         public string? email { get; set; }
         public string phone { get; set; }
         public string? website { get; set; }
@@ -484,47 +484,47 @@ namespace LTSAPI
         //Unique identifier of the Event
         public string rid { get; set; }
         //Array Unique identifier of the category of the Event
-        public LTSCategory[] categories { get; set; }
-        public LTSClassification classification { get; set; }
-        public LTSEventContact contact { get; set; }
+        public LTSCategory[]? categories { get; set; }
+        public LTSClassification? classification { get; set; }
+        public LTSEventContact? contact { get; set; }
         //Date and time of creation
-        public DateTime createdAt { get; set; }
+        public DateTime? createdAt { get; set; }
         //Localised description of the Event related to the type
-        public LTSDescription[] descriptions { get; set; }
+        public LTSDescription[]? descriptions { get; set; }
         //Unique identifier of the district array
-        public LTSDistrict[] districts { get; set; }
-        public LTSImage[] images { get; set; }
+        public LTSDistrict[]? districts { get; set; }
+        public LTSImage[]? images { get; set; }
         //Defines if the Event is active
-        public bool isActive { get; set; }
+        public bool? isActive { get; set; }
         //Defines if the registration is required for participation
-        public bool isRegistrationRequired { get; set; }
+        public bool? isRegistrationRequired { get; set; }
         //Defines if a ticket is required for participation
-        public bool isTicketRequired { get; set; }
+        public bool? isTicketRequired { get; set; }
         //Defines if the Event is included in Suedtirol Guest Pass
         public bool? isIncludedInSuedtirolGuestPass { get; set; }
 
         public string? eventLanguage { get; set; }
         //Date and time of last change
-        public DateTime lastUpdate { get; set; }
+        public DateTime? lastUpdate { get; set; }
         //Localised name of the location of the Event
         public IDictionary<string, string>? location { get; set; }
         //Localised name of the meeting point of the Event
         public IDictionary<string, string>? meetingPoint { get; set; }
         //Localised name of the Event
         public IDictionary<string, string>? name { get; set; }
-        public LTSOrganizer organizer { get; set; }
-        public LTSPeriod[] periods { get; set; }
-        public LTSPosition position { get; set; }
-        public LTSPublishersetting[] publisherSettings { get; set; }
+        public LTSOrganizer? organizer { get; set; }
+        public LTSPeriod[]? periods { get; set; }
+        public LTSPosition? position { get; set; }
+        public LTSPublishersetting[]? publisherSettings { get; set; }
         //Localised description of the registration to the Event
         public IDictionary<string, string>? registration { get; set; }
-        public LTSShopconfiguration shopConfiguration { get; set; }
-        public LTSEventTag[] tags { get; set; }
+        public LTSShopconfiguration? shopConfiguration { get; set; }
+        public LTSEventTag[]? tags { get; set; }
         //Localised URL alias of the Event website
         public IDictionary<string, string>? urlAlias { get; set; }
-        public LTSUrl[] urls { get; set; }
+        public LTSUrl[]? urls { get; set; }
 
-        public LTSVariant[] variants { get; set; }
+        public LTSVariant[]? variants { get; set; }
     }
 
     public class LTSClassification
@@ -544,7 +544,7 @@ namespace LTSAPI
         //Localised URL of the booking website
         public IDictionary<string, string>? bookingUrl { get; set; }
         //Defines if the shop configuration is active
-        public bool isActive { get; set; }
+        public bool? isActive { get; set; }
     }
 
     public class LTSPeriod
@@ -566,35 +566,35 @@ namespace LTSAPI
         //End date of the period
         public DateTime endDate { get; set; }
         //Start time of the period
-        public string startTime { get; set; }
+        public string? startTime { get; set; }
         //End time of the period
-        public string endTime { get; set; }
+        public string? endTime { get; set; }
         //Entrance time to the Event in the period
-        public string entranceTime { get; set; }
+        public string? entranceTime { get; set; }
         //Defines if the period is active
-        public bool isActive { get; set; }
+        public bool? isActive { get; set; }
         //Defines if there exist one sellable Event for each day of the period
-        public bool isEachDayOwnEvent { get; set; }
+        public bool? isEachDayOwnEvent { get; set; }
         //"Defines if the period is cancelled
-        public bool isCancelled { get; set; }
+        public bool? isCancelled { get; set; }
         //Minimum number of participants allowed for the period
-        public int minParticipants { get; set; }
+        public int? minParticipants { get; set; }
         //Maximum number of participants allowed for the period
-        public int maxParticipants { get; set; }
+        public int? maxParticipants { get; set; }
         public LTSPeriodOpeningTime[]? openingHours { get; set; }
-        public LTSTicketsale ticketSale { get; set; }
-        public LTSPeriodVariant[] variants { get; set; }
-        public LTSDay[] days { get; set; }
+        public LTSTicketsale? ticketSale { get; set; }
+        public LTSPeriodVariant[]? variants { get; set; }
+        public LTSDay[]? days { get; set; }
     }
 
     public class LTSTicketsale
     {
         //Defines if the ticket sale is active for the period
-        public bool isActive { get; set; }
+        public bool? isActive { get; set; }
         //Number of minutes before the Event before which ticket sale is allowed
-        public int onlineSaleUntil { get; set; }
+        public int? onlineSaleUntil { get; set; }
         //Maximum number of tickets sellable online
-        public int onlineContingent { get; set; } 
+        public int? onlineContingent { get; set; } 
     }
 
     public class LTSVariant
@@ -602,12 +602,12 @@ namespace LTSAPI
         //Localised name of the variant of the Event
         public IDictionary<string, string>? name { get; set; }
         //Sorting number of the variant
-        public int order { get; set; }
+        public int? order { get; set; }
         //Price of the variant in euros
         public double? price { get; set; }
         //Unique identifier of the variant of the Event
         public string rid { get; set; }
-        public LTSVariantCategory[] variantCategory { get; set; }
+        public LTSVariantCategory[]? variantCategory { get; set; }
     }
 
     public class LTSVariantCategory
@@ -625,31 +625,31 @@ namespace LTSAPI
     public class LTSPeriodOpeningTime
     {
         //Starting time of the first daily opening
-        public string startTime1 { get; set; }
+        public string? startTime1 { get; set; }
         //Starting time of the second daily opening
-        public string startTime2 { get; set; }
+        public string? startTime2 { get; set; }
         //End time of the first daily opening
-        public string endTime1 { get; set; }
+        public string? endTime1 { get; set; }
         //End time of the second daily opening
-        public string endTime2 { get; set; }
+        public string? endTime2 { get; set; }
         //Entrance time of the first daily opening
-        public string entranceTime1 { get; set; }
+        public string? entranceTime1 { get; set; }
         //Entrance time of the second daily opening
-        public string entranceTime2 { get; set; }
+        public string? entranceTime2 { get; set; }
         //Defines if the Event is open on Mondays
-        public bool isMondayOpen { get; set; }
+        public bool? isMondayOpen { get; set; }
         //Defines if the Event is open on Saturdays
-        public bool isSaturdayOpen { get; set; }
+        public bool? isSaturdayOpen { get; set; }
         //Defines if the Event is open on Sundays
-        public bool isSundayOpen { get; set; }
+        public bool? isSundayOpen { get; set; }
         //Defines if the Event is open on Thursdays
-        public bool isThursdayOpen { get; set; }
+        public bool? isThursdayOpen { get; set; }
         //Defines if the Event is open on Tuesdays
-        public bool isTuesdayOpen { get; set; }
+        public bool? isTuesdayOpen { get; set; }
         //Defines if the Event is open on Wednesdays
-        public bool isWednesdayOpen { get; set; }
+        public bool? isWednesdayOpen { get; set; }
         //Defines if the Event is open on Fridays
-        public bool isFridayOpen { get; set; }
+        public bool? isFridayOpen { get; set; }
     }
 
     public class LTSDay
@@ -657,20 +657,20 @@ namespace LTSAPI
         //Unique identifier of the day of the period
         public string rid { get; set; }
         //Starting date of the day
-        public string startDate { get; set; }
+        public string? startDate { get; set; }
         //Starting time of the day
-        public string startTime { get; set; }
-        public LTSEventAvailability availability { get; set; }
+        public string? startTime { get; set; }
+        public LTSEventAvailability? availability { get; set; }
     }
 
     public class LTSEventAvailability
     {
         //The ticket availability of the relative day
-        public int calculatedAvailability { get; set; }
+        public int? calculatedAvailability { get; set; }
         //Defines if the availability is low for the relative day
-        public bool isLowAvailability { get; set; }
+        public bool? isLowAvailability { get; set; }
         //Defines if all tickets for the relative day are sold out
-        public bool isSoldOut { get; set; }
+        public bool? isSoldOut { get; set; }
 
         public LTSVariantAvailability[]? variants { get; set; }
     }
@@ -680,18 +680,18 @@ namespace LTSAPI
         //Unique identifier of the variant of the Event
         public string rid { get; set; }
         //The variant availability of the relative day
-        public int calculatedAvailability { get; set; }
+        public int? calculatedAvailability { get; set; }
         //Defines if the availability is low for the relative day
-        public bool isLowAvailability { get; set; }
+        public bool? isLowAvailability { get; set; }
     }
 
     public class LTSPublishersetting
     {
         //Ranking of the publisher
-        public int importanceRate { get; set; }
+        public int? importanceRate { get; set; }
         //Status of the Event publication by the publisher (see enums list for possible values in the schema definition) suggestedForPublication,approved,rejected
-        public string publicationStatus { get; set; }  //suggestedForPublication,approved,rejected
-        public LTSPublisher publisher { get; set; }
+        public string? publicationStatus { get; set; }  //suggestedForPublication,approved,rejected
+        public LTSPublisher? publisher { get; set; }
     }
 
     public class LTSPublisher
@@ -709,7 +709,7 @@ namespace LTSAPI
     public class LTSUrl
     {
         //Type of url (see enums list for possible values in the schema definition) "pdf1","url1","video1","facebook","twitter","pdf2","pdf3","url2","url3","video2","video3","instagram","tikTok"
-        public string type { get; set; }
+        public string? type { get; set; }
         //Localised URL of the Event related to the type
         public IDictionary<string, string>? url { get; set; }
     }

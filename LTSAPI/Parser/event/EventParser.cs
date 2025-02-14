@@ -95,7 +95,7 @@ namespace LTSAPI.Parser
             eventv1.LastChange = ltsevent.lastUpdate;
             eventv1.FirstImport = ltsevent.createdAt;
 
-            eventv1.Active = ltsevent.isActive;
+            eventv1.Active = ltsevent.isActive != null ? ltsevent.isActive.Value : false;
 
             if (eventv1.TagIds == null)
                 eventv1.TagIds = new List<string>();
