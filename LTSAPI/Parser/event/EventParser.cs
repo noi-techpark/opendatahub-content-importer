@@ -99,6 +99,8 @@ namespace LTSAPI.Parser
 
             if (eventv1.TagIds == null)
                 eventv1.TagIds = new List<string>();
+            if(eventv1.HasLanguage == null)
+                eventv1.HasLanguage = new List<string>();
 
             //Let's find out for which languages there is a name
             foreach (var name in ltsevent.name)
@@ -106,7 +108,6 @@ namespace LTSAPI.Parser
                 if (!String.IsNullOrEmpty(name.Value))
                     eventv1.HasLanguage.Add(name.Key);
             }
-
             
             //Topics
             foreach (var category in ltsevent.categories)
@@ -123,6 +124,10 @@ namespace LTSAPI.Parser
             {
                 eventv1.TagIds.Add(tag.rid);
             }
+
+            //Classification
+            if (!String.IsNullOrEmpty(ltsevent.classification.rid))
+                eventv1.TagIds.Add(ltsevent.classification.rid);
 
             //Districts
             foreach(var dist in ltsevent.districts)
@@ -153,11 +158,12 @@ namespace LTSAPI.Parser
                 
                 eventv1.Detail.TryAddOrUpdate(language, detail);
 
-                //EventDescAdditional eventdescadditional = new EventDescAdditional();
-                //eventdescadditional.
+                EventAdditionalInfos eventadditionalinfos = new EventAdditionalInfos();
+                eventadditionalinfos.Language = language;
+                //eventadditionalinfos.
 
 
-                //eventv1.EventDescAdditional.TryAddOrUpdate(language, eventdescadditional);
+                eventv1.EventAdditionalInfos.TryAddOrUpdate(language, eventadditionalinfos);
                 //To check how to include this descriptions
                 //serviceDescription
                 //whatToBring
@@ -165,10 +171,6 @@ namespace LTSAPI.Parser
 
 
             }
-
-
-
-
 
             //Contact Information
             foreach (var language in eventv1.HasLanguage)
@@ -262,20 +264,42 @@ namespace LTSAPI.Parser
                     //days
                     foreach(var day in period.days)
                     {
-                        if (eventdate.EventCalculatedDay == null)
-                            eventdate.EventCalculatedDay = new EventDateCalculatedDay();   //Wrong this should be a Array
+                        if (eventdate.EventCalculatedDays == null)
+                            eventdate.EventCalculatedDays = new List<EventDateCalculatedDay>();
 
                         EventDateCalculatedDay eventcalculatedday = new EventDateCalculatedDay();
                         eventcalculatedday.Day = Convert.ToDateTime(day.startDate);
                         eventcalculatedday.Begin = TimeSpan.Parse(day.startTime);
                         eventcalculatedday.CDayRID = day.rid;
-                        
-                        //day.availability
 
+                        if(day.availability != null)
+                        {
+                            eventcalculatedday.AvailabilityCalculatedValue = day.availability.calculatedAvailability;
+                            eventcalculatedday.AvailabilityLow = day.availability.isLowAvailability;
+                            eventcalculatedday.SoldOut = day.availability.isSoldOut;
+
+                            if(day.availability.variants != null)
+                            {
+                                foreach(var variant in day.availability.variants)
+                                {
+                                    if(eventcalculatedday.EventDateCalculatedDayVariant == null)
+                                        eventcalculatedday.EventDateCalculatedDayVariant = new List<EventDateCalculatedDayVariant>();
+
+                                    EventDateCalculatedDayVariant eventcvariant = new EventDateCalculatedDayVariant();
+                                    eventcvariant.VariantRID = variant.rid;
+                                    eventcvariant.AvailabilityCalculatedValue = variant.calculatedAvailability;
+                                    eventcvariant.AvailabilityLow = variant.isLowAvailability;
+
+                                    eventcalculatedday.EventDateCalculatedDayVariant.Add(eventcvariant);
+                                }
+                            }
+                        }
+
+                        
+                        eventdate.EventCalculatedDays.Add(eventcalculatedday);
                     }
 
                     eventdate.SingleDays = period.isEachDayOwnEvent; //TO CHECK
-
 
                     //EventDateAdditionalInfo
                     eventdate.EventDateAdditionalInfo = new Dictionary<string, EventDateAdditionalInfo>();
@@ -325,13 +349,53 @@ namespace LTSAPI.Parser
                         }
                     }
 
-                    //days --> calculated day?
+                    //TicketSale
+                    if(period.ticketSale != null)
+                    {
+                        eventdate.EventDateTicketInfo = new EventDateTicketInfo();
+                        eventdate.EventDateTicketInfo.Active = period.ticketSale.isActive;
+                        eventdate.EventDateTicketInfo.OnlineContingent = period.ticketSale.onlineContingent;
+                        eventdate.EventDateTicketInfo.OnlineSaleUntil = period.ticketSale.onlineSaleUntil;
+                    }
 
                     //openingHours
-                    //ticketSale.isActive
-                    //ticketSale.onlineContingent
-                    //ticketSale.onlineSaleUntil
+                    if (period.openingHours != null)
+                    {
+                        foreach(var openinghours in period.openingHours)                        
+                        {
+                            if (eventdate.EventDateOpeningInfo == null)
+                                eventdate.EventDateOpeningInfo = new List<EventDateOpeningHour>();
+
+                            EventDateOpeningHour eventdateopeninghour = new EventDateOpeningHour();
+                            eventdateopeninghour.Entrance1 = TimeSpan.Parse(openinghours.entranceTime1);
+                            eventdateopeninghour.Entrance2 = TimeSpan.Parse(openinghours.entranceTime2);
+                            eventdateopeninghour.Begin1 = TimeSpan.Parse(openinghours.startTime1);
+                            eventdateopeninghour.Begin2 = TimeSpan.Parse(openinghours.startTime2);
+                            eventdateopeninghour.End1 = TimeSpan.Parse(openinghours.endTime1);
+                            eventdateopeninghour.End2 = TimeSpan.Parse(openinghours.endTime2);
+                            eventdateopeninghour.MondayOpen = openinghours.isMondayOpen;
+                            eventdateopeninghour.TuesdayOpen = openinghours.isTuesdayOpen;
+                            eventdateopeninghour.WednesdayOpen = openinghours.isWednesdayOpen;
+                            eventdateopeninghour.ThursdayOpen = openinghours.isThursdayOpen;
+                            eventdateopeninghour.FridayOpen = openinghours.isFridayOpen;
+                            eventdateopeninghour.SaturdayOpen = openinghours.isSaturdayOpen;
+                            eventdateopeninghour.SundayOpen = openinghours.isSundayOpen;
+
+                            eventdate.EventDateOpeningInfo.Add(eventdateopeninghour);
+                        }
+                    }
+
                     //variants
+                    if (period.variants != null)
+                    {
+                        foreach (var variant in period.variants)
+                        {
+                            if (eventdate.EventVariantIDs == null)
+                                eventdate.EventVariantIDs = new List<string>();
+
+                            eventdate.EventVariantIDs.Add(variant.rid);
+                        }
+                    }
                 }
             }
                      
@@ -363,18 +427,19 @@ namespace LTSAPI.Parser
             //meetingPoint   --> Dictionary with string fields
             //location   --> Dictionary with string fields
             //registration   --> Infos about registration Dictionary with string fields
-
             foreach(var language in eventv1.HasLanguage)
             {
                 EventAdditionalInfos eventAdditionalInfos = new EventAdditionalInfos();
+
+                if (eventv1.EventAdditionalInfos != null && eventv1.EventAdditionalInfos.ContainsKey(language))
+                    eventAdditionalInfos = eventv1.EventAdditionalInfos[language];
+
                 eventAdditionalInfos.Language = language;
                 eventAdditionalInfos.MeetingPoint = ltsevent.meetingPoint != null && ltsevent.meetingPoint.ContainsKey(language) ? ltsevent.meetingPoint[language] : null;
                 eventAdditionalInfos.Location = ltsevent.location != null && ltsevent.location.ContainsKey(language) ? ltsevent.location[language] : null;
                 eventAdditionalInfos.Registration = ltsevent.registration != null && ltsevent.registration.ContainsKey(language) ? ltsevent.registration[language] : null;
 
-                //Maybe rename Mplace, Reg and add Here also cancellationModality, serviceDescription, whatToBring
-
-                eventv1.EventAdditionalInfos.TryAddOrUpdate("language", eventAdditionalInfos);
+                eventv1.EventAdditionalInfos.TryAddOrUpdate(language, eventAdditionalInfos);
             }
 
 
@@ -382,33 +447,82 @@ namespace LTSAPI.Parser
             //variants  --> array with object { name: Dictionary string, order int, price double, rid string, variantCategory.rid string}
             if (ltsevent.variants != null)
             {
+                //Include EventPrice?
+
                 foreach (var variant in ltsevent.variants)
                 {
-                    //Include EventPrice?
+                    if(eventv1.EventVariants == null)
+                        eventv1.EventVariants = new List<EventVariant>();
+
+                    EventVariant eventvariant = new EventVariant();
+                    eventvariant.Price = variant.price;
+                    eventvariant.VariantId = variant.rid;
+                    eventvariant.Order = variant.order;
+                    eventvariant.Name = variant.name;
+
+                    if (eventvariant.VariantCategory != null)
+                    {
+                        foreach (var variantcategory in variant.variantCategory)
+                        {
+                            if (eventvariant.VariantCategory == null)
+                                eventvariant.VariantCategory = new List<string>();
+
+                            eventvariant.VariantCategory.Add(variantcategory.rid);
+                        }
+                    }
+
+                    eventv1.EventVariants.Add(eventvariant);
                 }
             }
 
             
+            eventv1.EventUrls = new List<EventUrls>();
 
             //shopConfiguration   ---> bookingurl Dictionary, isActive field
-            //urls
+            if (ltsevent.shopConfiguration != null && ltsevent.shopConfiguration.bookingUrl != null)
+            {                
+                    EventUrls eventurl = new EventUrls();
+                    eventurl.Url = ltsevent.shopConfiguration.bookingUrl;
+                    eventurl.Type = "bookingUrl";
+                    eventurl.Active = ltsevent.shopConfiguration.isActive;
 
-            if(ltsevent.urls != null)
+                    eventv1.EventUrls.Add(eventurl);
+
+                //Compatibility
+                //eventBooking.BookingUrl = ltsevent.shopConfiguration.bookingUrl
+                eventv1.EventBooking = new EventBooking();
+                eventv1.EventBooking.BookingUrl = new Dictionary<string, EventBookingDetail>();
+                foreach(var bookingurl in ltsevent.shopConfiguration.bookingUrl)
+                {
+                    eventv1.EventBooking.BookingUrl.TryAddOrUpdate(bookingurl.Key, new EventBookingDetail() { Url = bookingurl.Value });
+                }
+            }
+
+
+            //urlAlias      --> Dictionary with string fields
+            if (ltsevent.urlAlias != null)
+            {
+                EventUrls eventurl = new EventUrls();
+                eventurl.Url = ltsevent.urlAlias;
+                eventurl.Type = "urlAlias";
+                eventurl.Active = true;
+
+                eventv1.EventUrls.Add(eventurl);
+            }
+
+            //urls
+            if (ltsevent.urls != null)
             {
                 foreach(var url in ltsevent.urls)
                 {
-                    
-                    //eventBooking.BookingUrl = ltsevent.shopConfiguration.bookingUrl
-                    //urlAlias      --> Dictionary with string fields
+                    EventUrls eventurl = new EventUrls();
+                    eventurl.Url = url.url;
+                    eventurl.Type = url.type;
+                    eventurl.Active = true;
 
+                    eventv1.EventUrls.Add(eventurl);
                 }
             }
-
-         
-
-            
-
-
 
             //Custom Fields
             //Mapping
