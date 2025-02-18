@@ -279,10 +279,12 @@ namespace LTSAPI.Parser
                     eventdate.DayRID = period.rid;
                     eventdate.PriceFrom = period.minAmount;
 
-                    eventdate.Cancelled = period.isCancelled;
-                    
+                    eventdate.IsCancelled = period.isCancelled;
+
+                    eventdate.Cancelled = eventdate.IsCancelled == true ? "1" : "0";
+
                     //days
-                    foreach(var day in period.days)
+                    foreach (var day in period.days)
                     {
                         if (eventdate.EventCalculatedDays == null)
                             eventdate.EventCalculatedDays = new List<EventDateCalculatedDay>();
