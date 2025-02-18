@@ -14,6 +14,7 @@ using System.Xml.Linq;
 using GenericHelper;
 using static System.Net.Mime.MediaTypeNames;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 
 namespace LTSAPI.Parser
 {
@@ -28,11 +29,18 @@ namespace LTSAPI.Parser
 
             try
             {
+                accoid = accomodationdetail != null ? accomodationdetail["data"]["rid"].ToString() : "";
+
                 LTSAcco accoltsdetail = accomodationdetail.ToObject<LTSAcco>();
 
-                accoid = accoltsdetail.data.rid;
+                if (accoltsdetail != null && accoltsdetail.data != null)
+                    return ParseLTSAccommodation(accoltsdetail.data, reduced, xmlfiles, jsonfiles);
+                else
+                {
+                    Console.WriteLine(JsonConvert.SerializeObject(new { operation = "accommodation.parse", id = accoid, source = "lts", success = false, error = true, exception = "Data could not be retrieved from the Source" }));
 
-                return ParseLTSAccommodation(accoltsdetail.data, reduced, xmlfiles, jsonfiles);
+                    return null;
+                }                
             }
             catch(Exception ex)
             {

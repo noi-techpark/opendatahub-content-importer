@@ -10,6 +10,9 @@ namespace LTSAPI.Utils
     {
         public static TV GetValue<TK, TV>(this IDictionary<TK, TV> dict, TK key, TV defaultValue = default(TV))
         {
+            if (dict == null)
+                return defaultValue;
+
             TV value;
             return dict.TryGetValue(key, out value) ? value : defaultValue;
         }
