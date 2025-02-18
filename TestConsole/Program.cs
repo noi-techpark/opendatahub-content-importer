@@ -20,7 +20,7 @@ Settings settings = new Settings(config);
 
 //var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
 
-LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+LtsApi ltsapi = new LtsApi(settings.LtsCredentialsOpen);
 
 var ltsevent = await ltsapi.EventDetailRequest("96230545e31048d7aa67dbdd35d97f33", null);
 var parsedevent = EventParser.ParseLTSEventV1(ltsevent.FirstOrDefault().Value<JObject>(), false);

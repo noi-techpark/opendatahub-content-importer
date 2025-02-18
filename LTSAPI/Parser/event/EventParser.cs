@@ -125,34 +125,43 @@ namespace LTSAPI.Parser
                 if (!String.IsNullOrEmpty(name.Value))
                     eventv1.HasLanguage.Add(name.Key);
             }
-            
-            //Topics
-            foreach (var category in ltsevent.categories)
-            {
-                if(eventv1.TopicRIDs == null)
-                    eventv1.TopicRIDs = new List<string>();
 
-                eventv1.TopicRIDs.Add(category.rid);
-                eventv1.TagIds.Add(category.rid);
+            //Topics
+            if (ltsevent.categories != null)
+            {
+                foreach (var category in ltsevent.categories)
+                {
+                    if (eventv1.TopicRIDs == null)
+                        eventv1.TopicRIDs = new List<string>();
+
+                    eventv1.TopicRIDs.Add(category.rid);
+                    eventv1.TagIds.Add(category.rid);
+                }
             }
 
             //Tags
-            foreach (var tag in ltsevent.tags)
+            if (ltsevent.tags != null)
             {
-                eventv1.TagIds.Add(tag.rid);
+                foreach (var tag in ltsevent.tags)
+                {
+                    eventv1.TagIds.Add(tag.rid);
+                }
             }
 
             //Classification
-            if (!String.IsNullOrEmpty(ltsevent.classification.rid))
+            if (ltsevent.classification != null && !String.IsNullOrEmpty(ltsevent.classification.rid))
                 eventv1.TagIds.Add(ltsevent.classification.rid);
 
             //Districts
-            foreach(var dist in ltsevent.districts)
+            if (ltsevent.districts != null)
             {
-                if(eventv1.DistrictIds == null)
-                    eventv1.DistrictIds = new List<string>();
+                foreach (var dist in ltsevent.districts)
+                {
+                    if (eventv1.DistrictIds == null)
+                        eventv1.DistrictIds = new List<string>();
 
-                eventv1.DistrictIds.Add(dist.rid);
+                    eventv1.DistrictIds.Add(dist.rid);
+                }
             }
 
             //At the first District for LocationInfo
@@ -165,17 +174,20 @@ namespace LTSAPI.Parser
 
                 detail.Language = language;
                 detail.Title = ltsevent.name[language];
-                detail.BaseText = ltsevent.descriptions.Where(x => x.type == "longDescription").FirstOrDefault()?.description.GetValue(language);
-                detail.IntroText = ltsevent.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description.GetValue(language);
-                detail.ParkingInfo = ltsevent.descriptions.Where(x => x.type == "howToPark").FirstOrDefault()?.description.GetValue(language);
-                detail.GetThereText = ltsevent.descriptions.Where(x => x.type == "howToArrive").FirstOrDefault()?.description.GetValue(language);
-                
-                detail.AdditionalText = ltsevent.descriptions.Where(x => x.type == "routeDescription").FirstOrDefault()?.description.GetValue(language);
-                detail.PublicTransportationInfo = ltsevent.descriptions.Where(x => x.type == "publicTransport").FirstOrDefault()?.description.GetValue(language);
-                detail.AuthorTip = ltsevent.descriptions.Where(x => x.type == "authorTip").FirstOrDefault()?.description.GetValue(language);
-                detail.SafetyInfo = ltsevent.descriptions.Where(x => x.type == "safetyInstructions").FirstOrDefault()?.description.GetValue(language);
-                detail.EquipmentInfo = ltsevent.descriptions.Where(x => x.type == "equipment").FirstOrDefault()?.description.GetValue(language);
-                
+
+                if (ltsevent.descriptions != null)
+                {
+                    detail.BaseText = ltsevent.descriptions.Where(x => x.type == "longDescription").FirstOrDefault()?.description.GetValue(language);
+                    detail.IntroText = ltsevent.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description.GetValue(language);
+                    detail.ParkingInfo = ltsevent.descriptions.Where(x => x.type == "howToPark").FirstOrDefault()?.description.GetValue(language);
+                    detail.GetThereText = ltsevent.descriptions.Where(x => x.type == "howToArrive").FirstOrDefault()?.description.GetValue(language);
+
+                    detail.AdditionalText = ltsevent.descriptions.Where(x => x.type == "routeDescription").FirstOrDefault()?.description.GetValue(language);
+                    detail.PublicTransportationInfo = ltsevent.descriptions.Where(x => x.type == "publicTransport").FirstOrDefault()?.description.GetValue(language);
+                    detail.AuthorTip = ltsevent.descriptions.Where(x => x.type == "authorTip").FirstOrDefault()?.description.GetValue(language);
+                    detail.SafetyInfo = ltsevent.descriptions.Where(x => x.type == "safetyInstructions").FirstOrDefault()?.description.GetValue(language);
+                    detail.EquipmentInfo = ltsevent.descriptions.Where(x => x.type == "equipment").FirstOrDefault()?.description.GetValue(language);
+                }
                 eventv1.Detail.TryAddOrUpdate(language, detail);
 
                 EventAdditionalInfos eventadditionalinfos = new EventAdditionalInfos();
@@ -198,15 +210,20 @@ namespace LTSAPI.Parser
                 ContactInfos contactinfo = new ContactInfos();
 
                 contactinfo.Language = language;
-                contactinfo.CompanyName = ltsevent.contact.address.name.GetValue(language);
-                contactinfo.Address = ltsevent.contact.address.street.GetValue(language);
-                contactinfo.City = ltsevent.contact.address.city.GetValue(language);
-                contactinfo.CountryCode = ltsevent.contact.address.country;
-                contactinfo.ZipCode = ltsevent.contact.address.postalCode;
-                contactinfo.Email = ltsevent.contact.email.GetValue(language);
-                contactinfo.Phonenumber = ltsevent.contact.phone;
-                contactinfo.Url = ltsevent.contact.website.GetValue(language);
-
+                if (ltsevent.contact != null)
+                {
+                    if (ltsevent.contact.address != null)
+                    {
+                        contactinfo.CompanyName = ltsevent.contact.address.name.GetValue(language);
+                        contactinfo.Address = ltsevent.contact.address.street.GetValue(language);
+                        contactinfo.City = ltsevent.contact.address.city.GetValue(language);
+                        contactinfo.CountryCode = ltsevent.contact.address.country;
+                        contactinfo.ZipCode = ltsevent.contact.address.postalCode;
+                    }
+                    contactinfo.Email = ltsevent.contact.email.GetValue(language);
+                    contactinfo.Phonenumber = ltsevent.contact.phone;
+                    contactinfo.Url = ltsevent.contact.website.GetValue(language);
+                }
                 eventv1.ContactInfos.TryAddOrUpdate(language, contactinfo);
             }
 
@@ -267,12 +284,12 @@ namespace LTSAPI.Parser
                     eventdate.Active = period.isActive;
 
                     eventdate.From = Convert.ToDateTime(period.startDate);
-                    eventdate.Begin = TimeSpan.Parse(period.startTime);
+                    eventdate.Begin = period.startTime != null ? TimeSpan.Parse(period.startTime) : null;
 
                     eventdate.To = Convert.ToDateTime(period.endDate);
-                    eventdate.End = TimeSpan.Parse(period.endTime);
+                    eventdate.End = period.endTime != null ? TimeSpan.Parse(period.endTime) : null;
 
-                    eventdate.Entrance = TimeSpan.Parse(period.entranceTime);
+                    eventdate.Entrance = period.entranceTime != null ? TimeSpan.Parse(period.entranceTime) : null; 
 
                     eventdate.MaxPersons = period.maxParticipants;
                     eventdate.MinPersons = period.minParticipants;
@@ -418,6 +435,8 @@ namespace LTSAPI.Parser
                             eventdate.EventVariantIDs.Add(variant.rid);
                         }
                     }
+
+                    eventv1.EventDate.Add(eventdate);
                 }
             }
                      
@@ -439,9 +458,9 @@ namespace LTSAPI.Parser
             eventv1.EventProperty = new DataModel.EventProperty();
 
             //Classification
-            eventv1.EventProperty.EventClassificationId = ltsevent.classification.rid;
+            eventv1.EventProperty.EventClassificationId = ltsevent.classification != null ? ltsevent.classification.rid : "";
             eventv1.EventProperty.RegistrationRequired = ltsevent.isRegistrationRequired;
-            eventv1.EventProperty.EventOrganizerId = ltsevent.organizer.rid;
+            eventv1.EventProperty.EventOrganizerId = ltsevent.organizer != null ? ltsevent.organizer.rid : "";
             eventv1.EventProperty.TicketRequired = ltsevent.isTicketRequired;
             eventv1.EventProperty.IncludedInSuedtirolGuestPass = ltsevent.isIncludedInSuedtirolGuestPass;
 
@@ -544,8 +563,11 @@ namespace LTSAPI.Parser
             //Mapping
             var ltsmapping = new Dictionary<string, string>();
             ltsmapping.Add("rid", ltsevent.rid);
-            ltsmapping.Add("organizer_rid", ltsevent.organizer.rid);
-            ltsmapping.Add("classification_rid", ltsevent.classification.rid);
+            if(ltsevent.organizer != null)
+                ltsmapping.Add("organizer_rid", ltsevent.organizer.rid);
+
+            if (ltsevent.classification != null)
+                ltsmapping.Add("classification_rid", ltsevent.classification.rid);
 
             eventv1.Mapping.TryAddOrUpdate("lts", ltsmapping);
 
