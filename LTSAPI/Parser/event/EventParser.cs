@@ -103,6 +103,9 @@ namespace LTSAPI.Parser
             EventLinked eventv1 = new EventLinked();
 
             eventv1.Id = ltsevent.rid;
+            //if(reduced)
+            //    eventv1.Id = eventv1.Id + "_REDUCED";
+
             eventv1._Meta = new Metadata() { Id = eventv1.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "event", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
             eventv1.Source = "lts";
 
@@ -151,6 +154,9 @@ namespace LTSAPI.Parser
 
                 eventv1.DistrictIds.Add(dist.rid);
             }
+
+            //At the first District for LocationInfo
+            eventv1.DistrictId = eventv1.DistrictIds != null && eventv1.DistrictIds.Count > 0 ? eventv1.DistrictIds.FirstOrDefault() : null;
 
             //Detail Information
             foreach (var language in eventv1.HasLanguage)
