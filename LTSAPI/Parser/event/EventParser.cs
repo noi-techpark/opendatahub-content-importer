@@ -15,18 +15,19 @@ using GenericHelper;
 using LTSAPI.Utils;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace LTSAPI.Parser
 {
     public class EventParser
     {
         public static (List<EventV2>, VenueV2) ParseLTSEvent(
-            JObject activitylts, bool reduced
+            JObject eventlts, bool reduced
             )
         {
             try
             {
-                LTSEvent eventltsdetail = activitylts.ToObject<LTSEvent>();
+                LTSEvent eventltsdetail = eventlts.ToObject<LTSEvent>();
 
                 return ParseLTSEvent(eventltsdetail.data, reduced);
             }
@@ -37,16 +38,16 @@ namespace LTSAPI.Parser
         }
 
         public static (List<EventV2>, VenueV2) ParseLTSEvent(
-            LTSEventData activity, 
+            LTSEventData eventlts, 
             bool reduced)
         {
             EventV2 eventv2 = new EventV2();
 
-            eventv2.Id = activity.rid;
+            eventv2.Id = eventlts.rid;
             eventv2._Meta = new Metadata() { Id = eventv2.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "event", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
             eventv2.Source = "lts";
 
-            eventv2.LastChange = activity.lastUpdate;
+            eventv2.LastChange = eventlts.lastUpdate;
             
             //Detail Information
 
@@ -67,17 +68,30 @@ namespace LTSAPI.Parser
         }
 
         public static EventLinked ParseLTSEventV1(
-           JObject activitylts, bool reduced
+           JObject eventlts, bool reduced
            )
         {
+            string eventid = "";
+
             try
             {
-                LTSEvent eventltsdetail = activitylts.ToObject<LTSEvent>();
+                eventid = eventlts != null ? eventlts["data"]["rid"].ToString() : "";
 
-                return ParseLTSEventV1(eventltsdetail.data, reduced);
+                LTSEvent eventltsdetail = eventlts.ToObject<LTSEvent>();
+
+                if (eventltsdetail != null && eventltsdetail.data != null)
+                    return ParseLTSEventV1(eventltsdetail.data, reduced);                
+                else
+                {
+                    Console.WriteLine(JsonConvert.SerializeObject(new { operation = "event.parse", id = eventid, source = "lts", success = false, error = true, exception = "Data could not be retrieved from the Source" }));
+
+                    return null;
+                }
             }
             catch (Exception ex)
             {
+                Console.WriteLine(JsonConvert.SerializeObject(new { operation = "event.parse", id = eventid, source = "lts", success = false, error = true, exception = ex.Message }));
+
                 return null;
             }
         }
