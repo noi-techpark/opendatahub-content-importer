@@ -536,9 +536,8 @@ namespace LTSAPI.Parser
             //Mapping
             var ltsmapping = new Dictionary<string, string>();
             ltsmapping.Add("rid", ltsevent.rid);
-            ltsmapping.Add("organizer", ltsevent.organizer.rid);
-            ltsmapping.Add("isRegistrationRequired", ltsevent.isRegistrationRequired.ToString());
-            ltsmapping.Add("isTicketRequired", ltsevent.isTicketRequired.ToString());
+            ltsmapping.Add("organizer_rid", ltsevent.organizer.rid);
+            ltsmapping.Add("classification_rid", ltsevent.classification.rid);
 
             eventv1.Mapping.TryAddOrUpdate("lts", ltsmapping);
 
