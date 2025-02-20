@@ -49,6 +49,15 @@ namespace LTSAPI
         public IDictionary<string, string>? website { get; set; }
     }
 
+    public class LTSEventOrganizerContact
+    {
+        public LTSAddress? address { get; set; }
+        public string? email { get; set; }
+        public string phone { get; set; }
+        public string? website { get; set; }
+        public string? fax { get; set; }
+    }
+
     public class LTSActivityPoiContact
     {
         public LTSAddress? address { get; set; }
@@ -594,7 +603,7 @@ namespace LTSAPI
         //Number of minutes before the Event before which ticket sale is allowed
         public int? onlineSaleUntil { get; set; }
         //Maximum number of tickets sellable online
-        public int? onlineContingent { get; set; } 
+        public int? onlineContingent { get; set; }
     }
 
     public class LTSVariant
@@ -712,6 +721,40 @@ namespace LTSAPI
         public string? type { get; set; }
         //Localised URL of the Event related to the type
         public IDictionary<string, string>? url { get; set; }
+    }
+    
+    public class LTSEventOrganizer : LTSData<LTSEventOrganizerData>
+    {
+        public new LTSEventOrganizerData data { get; set; }
+    }
+
+    public class LTSEventOrganizerData
+    {
+        //Unique identifier of the Organizer
+        public string rid { get; set; }
+        //Date and time of last change
+        public DateTime? lastUpdate { get; set; }
+        //Defines if the Organizer is active
+        public bool? isActive { get; set; }
+        public LTSEventOrganizerContact? contact { get; set; }
+        public IDictionary<string, string>? name { get; set; }
+    }
+
+
+    public class LTSVariantCategoryData
+    {
+        //Unique identifier of the category of the variant
+        public string rid { get; set; }
+        //Sorting number of the VariantCategory
+        public int? order { get; set; }
+        //Date and time of last change
+        public DateTime? lastUpdate { get; set; }
+        //Defines if the VariantCategory is active
+        public bool isActive { get; set; }
+        //Localised name of the VariantCategory
+        public IDictionary<string, string>? name { get; set; }
+        //Localised description of the VariantCategory
+        public IDictionary<string, string>? description { get; set; }
     }
 
     #endregion
