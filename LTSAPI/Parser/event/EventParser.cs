@@ -571,6 +571,9 @@ namespace LTSAPI.Parser
 
             eventv1.Mapping.TryAddOrUpdate("lts", ltsmapping);
 
+            //Check if success for parsing should be logged
+            //Console.WriteLine(JsonConvert.SerializeObject(new { operation = "event.parse", id = ltsevent.rid, source = "lts", success = true, error = false));
+
             return eventv1;
         }
     } 

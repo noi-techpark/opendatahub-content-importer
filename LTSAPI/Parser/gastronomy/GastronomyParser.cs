@@ -14,23 +14,30 @@ using System.Xml.Linq;
 using GenericHelper;
 using static System.Net.Mime.MediaTypeNames;
 using LTSAPI.Utils;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace LTSAPI.Parser
 {
     public class GastronomyParser
     {
         public static ODHActivityPoiLinked ParseLTSGastronomy(
-            JObject activitylts, bool reduced
+            JObject ltsdata, bool reduced
             )
         {
+            string dataid = "";
             try
             {
-                LTSGastronomy gastroltsdetail = activitylts.ToObject<LTSGastronomy>();
+                LTSGastronomy gastroltsdetail = ltsdata.ToObject<LTSGastronomy>();
+
+                dataid = gastroltsdetail.data.rid;
 
                 return ParseLTSGastronomy(gastroltsdetail.data, reduced);
             }
             catch(Exception ex)
-            {           
+            {
+                Console.WriteLine(JsonConvert.SerializeObject(new { operation = "gastronomy.parse", id = dataid, source = "lts", success = false, error = true, exception = ex.Message }));
+
                 return null;
             }          
         }
