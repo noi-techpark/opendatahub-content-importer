@@ -522,6 +522,16 @@ namespace LTSAPI
             return await LTSRequestMethod("venues/categories/" + id, _parameters, false);
         }
 
+        public async Task<List<JObject>> VenueHallFeatureRequest(IDictionary<string, string>? _parameters, bool _getallpages)
+        {
+            return await LTSRequestMethod("venues/halls/features", _parameters, _getallpages);
+        }
+
+        public async Task<List<JObject>> VenueHallFeatureDetailRequest(string id, IDictionary<string, string>? _parameters)
+        {
+            return await LTSRequestMethod("venues/halls/features/" + id, _parameters, false);
+        }
+
         #endregion
 
         #region Webcam

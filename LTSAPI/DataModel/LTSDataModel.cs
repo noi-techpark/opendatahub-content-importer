@@ -1178,7 +1178,7 @@ namespace LTSAPI
         public int maxCapacity { get; set; }
         public string type { get; set; }
     }
-
+   
     #endregion
 
     #region Webcams
@@ -1460,6 +1460,16 @@ namespace LTSAPI
 
         //public bool isActive { get; set; }
         public string code { get; set; }
+    }
+
+    public class LTSVenueHallFeatureData
+    {
+        public string rid { get; set; }
+        public DateTime lastUpdate { get; set; }
+
+        public string code { get; set; }
+
+        public IDictionary<string, string> name { get; set; }        
     }
 
     #endregion
