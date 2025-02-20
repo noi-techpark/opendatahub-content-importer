@@ -27,7 +27,7 @@ namespace LTSAPI.Parser
             string dataid = "";
             try
             {
-                var ltsdata = ltsresult.ToObject<LTSData<LTSEventTagData>>();
+                var ltsdata = ltsresult.ToObject<LTSData<LTSEventClassificationData>>();
                 dataid = ltsdata.data.rid;
 
                 return ParseLTSEventClassification(ltsdata.data, reduced);

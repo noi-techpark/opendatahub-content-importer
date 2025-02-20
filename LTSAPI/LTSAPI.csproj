@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>opendatahub-ltsapi-importer</PackageId>
     <Title>Open Data Hub LTS Api Helper Library</Title>
-    <Version>2.1.5</Version>
+    <Version>2.2.0</Version>
     <Authors>r.thoeni</Authors>
     <Company>NOI AG</Company>
     <Product>$(AssemblyName)</Product>
