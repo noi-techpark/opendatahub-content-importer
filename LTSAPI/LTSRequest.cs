@@ -149,17 +149,22 @@ namespace LTSAPI
             {
                 var error = await response.Content.ReadAsStringAsync();
 
-                JObject.FromObject(new { error = true, message = "LTS Api error ", exception = error });
-
-                return new List<JObject>() { JObject.FromObject(new { error = true, message = "404 LTS Api error ", exception = error }) };
+                //LTS Api Object not Found
+                return new List<JObject>() { JObject.FromObject(new { error = true, message = "404", exception = error }) };
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 var error = await response.Content.ReadAsStringAsync();
 
-                JObject.FromObject(new { error = true, message = "LTS Api error ", exception = error });
+                //LTS Api Internal Error
+                return new List<JObject>() { JObject.FromObject(new { error = true, message = "500", exception = error }) };
+            }
+            else if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                var error = await response.Content.ReadAsStringAsync();
 
-                return new List<JObject>() { JObject.FromObject(new { error = true, message = "500 LTS Api error ", exception = error }) };
+                //LTS Api Object not accessible
+                return new List<JObject>() { JObject.FromObject(new { error = true, message = "403", exception = error }) };
             }
             else
             {
