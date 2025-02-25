@@ -150,26 +150,26 @@ namespace LTSAPI
                 var error = await response.Content.ReadAsStringAsync();
 
                 //LTS Api Object not Found
-                return new List<JObject>() { JObject.FromObject(new { error = true, message = "LTS Api Object not Found", exception = error, status = 404 }) };
+                return new List<JObject>() { JObject.FromObject(new { success = false, error = true, message = "LTS Api Object not Found", exception = error, status = 404 }) };
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 var error = await response.Content.ReadAsStringAsync();
 
                 //LTS Api Internal Error
-                return new List<JObject>() { JObject.FromObject(new { error = true, message = "LTS Api Internal Error", exception = error, status = 500 }) };
+                return new List<JObject>() { JObject.FromObject(new { success = false, error = true, message = "LTS Api Internal Error", exception = error, status = 500 }) };
             }
             else if (response.StatusCode == HttpStatusCode.Forbidden)
             {
                 var error = await response.Content.ReadAsStringAsync();
 
                 //LTS Api Object not accessible
-                return new List<JObject>() { JObject.FromObject(new { error = true, message = "LTS Api Object not accessible", exception = error, status = 403 }) };
+                return new List<JObject>() { JObject.FromObject(new { success = false, error = true, message = "LTS Api Object not accessible", exception = error, status = 403 }) };
             }
             else
             {
                 var error = await response.Content.ReadAsStringAsync();
-                return new List<JObject>() { JObject.FromObject(new { error = true, message = "Generic LTS Api error ", exception = error, status = 400 }) };
+                return new List<JObject>() { JObject.FromObject(new { success = false, error = true, message = "Generic LTS Api error ", exception = error, status = 400 }) };
             }
         }
 
