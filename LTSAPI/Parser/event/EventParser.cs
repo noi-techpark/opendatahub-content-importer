@@ -266,6 +266,7 @@ namespace LTSAPI.Parser
                     imagepoi.ValidFrom = image.applicableStartDate;
                     imagepoi.ValidTo = image.applicableEndDate;
                     imagepoi.ListPosition = image.order;
+                    imagepoi.ImageSource = "lts";
 
                     imagegallerylist.Add(imagepoi);
                 }
@@ -595,6 +596,9 @@ namespace LTSAPI.Parser
                 ltsmapping.Add("classification_rid", ltsevent.classification.rid);
 
             eventv1.Mapping.TryAddOrUpdate("lts", ltsmapping);
+
+
+            eventv1.Shortname = eventv1.Detail.FirstOrDefault().Value.Title;
 
             //Check if success for parsing should be logged
             //Console.WriteLine(JsonConvert.SerializeObject(new { operation = "event.parse", id = ltsevent.rid, source = "lts", success = true, error = false));
