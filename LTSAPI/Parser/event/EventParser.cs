@@ -449,7 +449,7 @@ namespace LTSAPI.Parser
                     EventPublisher eventpublisher = new EventPublisher();
                     eventpublisher.PublisherRID = publishersetting.publisher.rid;
                     eventpublisher.Ranc = publishersetting.importanceRate;
-                    //eventpublisher.Publish = publishersetting.publicationStatus TO CHECK use this or convert it to the int value
+                    eventpublisher.Publish = ParsePublisherStatus(publishersetting.publicationStatus);
 
                     eventv1.EventPublisher.Add(eventpublisher);
                 }
@@ -600,6 +600,17 @@ namespace LTSAPI.Parser
             //Console.WriteLine(JsonConvert.SerializeObject(new { operation = "event.parse", id = ltsevent.rid, source = "lts", success = true, error = false));
 
             return eventv1;
+        }
+
+        private static int ParsePublisherStatus(string status)
+        {            
+            switch (status)
+            {
+                case "suggestedForPublication": return 1;
+                case "approved": return 2;
+                case "rejected": return 3;                
+                default: return 0;   
+            }
         }
     } 
 }
