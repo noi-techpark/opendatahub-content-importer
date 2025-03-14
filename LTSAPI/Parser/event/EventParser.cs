@@ -137,7 +137,7 @@ namespace LTSAPI.Parser
                     eventv1.TopicRIDs.Add(category.rid);
                     eventv1.TagIds.Add(category.rid);
                 }
-            }
+            }            
 
             //Tags
             if (ltsevent.tags != null)
@@ -499,7 +499,13 @@ namespace LTSAPI.Parser
                     eventvariant.Price = variant.price;
                     eventvariant.VariantId = variant.rid;
                     eventvariant.Order = variant.order;
-                    eventvariant.Name = variant.name;
+
+                    eventvariant.Name = new Dictionary<string, string>();
+                    foreach(var variantname in variant.name)
+                    {
+                        if(variantname.Value != null)
+                            eventvariant.Name.TryAddOrUpdate(variantname.Key, variantname.Value);
+                    }                        
 
                     if (variant.variantCategory != null)
                     {
@@ -515,21 +521,32 @@ namespace LTSAPI.Parser
 
             //shopConfiguration   ---> bookingurl Dictionary, isActive field
             if (ltsevent.shopConfiguration != null && ltsevent.shopConfiguration.bookingUrl != null)
-            {                
-                    EventUrls eventurl = new EventUrls();
-                    eventurl.Url = ltsevent.shopConfiguration.bookingUrl;
-                    eventurl.Type = "bookingUrl";
-                    eventurl.Active = ltsevent.shopConfiguration.isActive;
+            {
+                EventUrls eventurl = new EventUrls();
 
-                    eventv1.EventUrls.Add(eventurl);
+                eventurl.Url = new Dictionary<string, string>();
+                foreach (var url in ltsevent.shopConfiguration.bookingUrl)
+                {
+                    //Maybe align also with Haslanguage
+                    if (url.Value != null)
+                        eventurl.Url.TryAddOrUpdate(url.Key, url.Value);
+                }
+
+
+                eventurl.Type = "bookingUrl";
+                eventurl.Active = ltsevent.shopConfiguration.isActive;
+
+                eventv1.EventUrls.Add(eventurl);
 
                 //Compatibility
                 //eventBooking.BookingUrl = ltsevent.shopConfiguration.bookingUrl
                 eventv1.EventBooking = new EventBooking();
                 eventv1.EventBooking.BookingUrl = new Dictionary<string, EventBookingDetail>();
-                foreach(var bookingurl in ltsevent.shopConfiguration.bookingUrl)
+                foreach (var bookingurl in ltsevent.shopConfiguration.bookingUrl)
                 {
-                    eventv1.EventBooking.BookingUrl.TryAddOrUpdate(bookingurl.Key, new EventBookingDetail() { Url = bookingurl.Value });
+                    //Maybe align also with Haslanguage
+                    if (bookingurl.Value != null)
+                        eventv1.EventBooking.BookingUrl.TryAddOrUpdate(bookingurl.Key, new EventBookingDetail() { Url = bookingurl.Value });
                 }
             }
 
@@ -538,7 +555,15 @@ namespace LTSAPI.Parser
             if (ltsevent.urlAlias != null)
             {
                 EventUrls eventurl = new EventUrls();
-                eventurl.Url = ltsevent.urlAlias;
+
+                eventurl.Url = new Dictionary<string, string>();
+                foreach (var url in ltsevent.urlAlias)
+                {
+                    //Maybe align also with Haslanguage
+                    if(url.Value != null)
+                        eventurl.Url.TryAddOrUpdate(url.Key, url.Value);
+                }
+                
                 eventurl.Type = "urlAlias";
                 eventurl.Active = true;
 
