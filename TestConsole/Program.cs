@@ -20,10 +20,17 @@ Settings settings = new Settings(config);
 
 //var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
 
-LtsApi ltsapi = new LtsApi(settings.LtsCredentialsOpen);
+LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+var qs = new LTSQueryStrings()
+{
+    page_size = 1,
+    fields = "cinCode,amenities,suedtirolGuestPass,roomGroups",
+};
+var dict = ltsapi.GetLTSQSDictionary(qs);
+var ltsacco = await ltsapi.AccommodationDetailRequest("06F7A0918A0F11D2B477006097AD12DB", dict);
 
-var ltsevent = await ltsapi.EventDetailRequest("96230545e31048d7aa67dbdd35d97f33", null);
-var parsedevent = EventParser.ParseLTSEventV1(ltsevent.FirstOrDefault().Value<JObject>(), false);
+//var ltsevent = await ltsapi.EventDetailRequest("96230545e31048d7aa67dbdd35d97f33", null);
+//var parsedevent = EventParser.ParseLTSEventV1(ltsevent.FirstOrDefault().Value<JObject>(), false);
 
 
 int x = 0;
