@@ -156,7 +156,7 @@ namespace LTSAPI.Parser
                 OperationSchedule operationschedule = new OperationSchedule();
                 operationschedule.Start = Convert.ToDateTime(operationschedulelts.startDate);
                 operationschedule.Stop = Convert.ToDateTime(operationschedulelts.endDate);
-                operationschedule.Type = operationschedulelts.;
+                operationschedule.Type = "1";
                 //operationschedule.OperationscheduleName = operationschedulelts.name;
                 //"isOpen": true
 

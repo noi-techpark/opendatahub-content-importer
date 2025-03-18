@@ -505,6 +505,10 @@ namespace LTSAPI
         public LTSImage[]? images { get; set; }
         //Defines if the Event is active
         public bool? isActive { get; set; }
+
+        public bool? isBookable { get; set; }
+
+
         //Defines if the registration is required for participation
         public bool? isRegistrationRequired { get; set; }
         //Defines if a ticket is required for participation
@@ -512,6 +516,7 @@ namespace LTSAPI
         //Defines if the Event is included in Suedtirol Guest Pass
         public bool? isIncludedInSuedtirolGuestPass { get; set; }
 
+    
         public string? eventLanguage { get; set; }
         //Date and time of last change
         public DateTime? lastUpdate { get; set; }
