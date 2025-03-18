@@ -189,4 +189,60 @@ namespace LTSAPI.Parser
         }
 
     }
+
+    public class AccommodationSearchUtilities
+    {
+        public static List<LTSAvailabilitySearchRequestRoomoption> RoomstringtoAvailabilitySearchRequestRoomoption(string roominfo)
+        {
+            if (!String.IsNullOrEmpty(roominfo) && roominfo != "null")
+            {
+                //roominfo aufteilen Form 1Z-1P-18 oder 1Z-2P-18.18,1Z-1P-18
+                List<LTSAvailabilitySearchRequestRoomoption> myroominfo = new List<LTSAvailabilitySearchRequestRoomoption>();
+
+                var zimmerinfos = roominfo.Split('|');
+                int roomseq = 1;
+
+                foreach (var zimmerinfo in zimmerinfos)
+                {
+                    List<int> mypersons = new List<int>();
+
+                    var myspittetzimmerinfo = zimmerinfo.Split('-');
+
+                    var mypersoninfo = myspittetzimmerinfo[1].Split(',');
+                    foreach (string s in mypersoninfo)
+                    {
+                        if(int.TryParse(s, out int sint))
+                            mypersons.Add(sint);
+                    }
+
+                    var myroom = new LTSAvailabilitySearchRequestRoomoption();
+                    myroom.id = roomseq;
+                    myroom.guests = mypersons.Count;
+                    
+                    myroom.guestAges = mypersons;
+
+                    //var myroom = new Tuple<string, string, List<string>>(roomseq.ToString(), myspittetzimmerinfo[0].Substring(0), mypersons);
+
+                    myroominfo.Add(myroom);
+                    roomseq++;
+                }
+
+                return myroominfo;
+            }
+            else
+            {
+                List<LTSAvailabilitySearchRequestRoomoption> myroominfostd = new List<LTSAvailabilitySearchRequestRoomoption>();
+                myroominfostd.Add(
+                    new LTSAvailabilitySearchRequestRoomoption()
+                    {
+                        id = 1,                        
+                        guests = 2,
+                        guestAges = new List<int>() { 18, 18 },
+                    }
+                );
+
+                return myroominfostd;
+            }
+        }
+    }
 }

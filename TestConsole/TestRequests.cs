@@ -1,6 +1,7 @@
 ﻿using DataImportHelper;
 using GenericHelper;
 using LTSAPI;
+using LTSAPI.Parser;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -50,6 +51,8 @@ namespace TestConsole
             var ltsavailablilitysearch = await ltsapi.AccommodationAvailabilitySearchRequest(null, body);
 
             var parsedavailabilitysearch = ltsavailablilitysearch[0].ToObject<LTSAvailabilitySearchResult>();
+
+            var mssresult = AccommodationSearchResultParser.ParseLTSAccommodation(ltsavailablilitysearch.FirstOrDefault(), 1);
 
             //var testlts = await ltsapi.AccommodationDetailRequest("2657B7CBCb85380B253D2fBE28AF100E", null);
 
