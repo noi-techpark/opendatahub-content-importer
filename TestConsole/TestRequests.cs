@@ -37,10 +37,10 @@ namespace TestConsole
 
             LTSAvailabilitySearchRequestBody body = new LTSAvailabilitySearchRequestBody()
             {
-                accommodationRids = new List<string>() { "FF050E6BE1F245FAD5E61495E17522D2" },
+                //accommodationRids = new List<string>() { "FF050E6BE1F245FAD5E61495E17522D2" },
                 //marketingGroupRids = new List<string>() { "" },
-                startDate = "2025-02-03",
-                endDate = "2025-02-10",
+                startDate = "2025-11-07",
+                endDate = "2025-11-10",
                 paging = new LTSAvailabilitySearchRequestPaging() { pageNumber = 1, pageSize = 10000 },
                 cacheLifeTimeInSeconds = 300,
                 onlySuedtirolInfoActive = true,

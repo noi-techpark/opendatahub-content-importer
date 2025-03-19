@@ -88,27 +88,27 @@ namespace LTSAPI.Parser
                                     //myroomdetail.Roomtype = roomdetail.Genre != null ? Convert.ToInt32(roomdetail.Genre) : 0;  //roomdetail.Genre;
                                                                                                                                //myroomdetail.Roomtype = 0;
 
-                                    if (roomdetailoffer.allInclusiveAmount != 0)
+                                    if (roomdetailoffer.allInclusiveAmount != null && roomdetailoffer.allInclusiveAmount != 0)
                                     {
                                         var mycheapestofferai = new CheapestOffer() { RoomId = roomdetail.roomGroup.rid, Price = roomdetailoffer.allInclusiveAmount ?? 0, RoomSeq = (int)roomdetailoffer.roomOptionId, RoomFree = roomdetail.availableRooms };
                                         CheapestOffer_ai.Add(mycheapestofferai);
                                     }
-                                    if (roomdetailoffer.bedAndBreakfastAmount != 0)
+                                    if (roomdetailoffer.bedAndBreakfastAmount != null && roomdetailoffer.bedAndBreakfastAmount != 0)
                                     {
                                         var mycheapestofferbb = new CheapestOffer() { RoomId = roomdetail.roomGroup.rid, Price = roomdetailoffer.bedAndBreakfastAmount ?? 0, RoomSeq = (int)roomdetailoffer.roomOptionId, RoomFree = roomdetail.availableRooms };
                                         CheapestOffer_bb.Add(mycheapestofferbb);
                                     }
-                                    if (roomdetailoffer.halfBoardAmount != 0)
+                                    if (roomdetailoffer.halfBoardAmount != null && roomdetailoffer.halfBoardAmount != 0)
                                     {
                                         var mycheapestofferhb = new CheapestOffer() { RoomId = roomdetail.roomGroup.rid, Price = roomdetailoffer.halfBoardAmount ?? 0, RoomSeq = (int)roomdetailoffer.roomOptionId, RoomFree = roomdetail.availableRooms };
                                         CheapestOffer_hb.Add(mycheapestofferhb);
                                     }
-                                    if (roomdetailoffer.fullBoardAmount != 0)
+                                    if (roomdetailoffer.fullBoardAmount != null && roomdetailoffer.fullBoardAmount != 0)
                                     {
                                         var mycheapestofferfb = new CheapestOffer() { RoomId = roomdetail.roomGroup.rid, Price = roomdetailoffer.fullBoardAmount ?? 0, RoomSeq = (int)roomdetailoffer.roomOptionId, RoomFree = roomdetail.availableRooms };
                                         CheapestOffer_fb.Add(mycheapestofferfb);
                                     }
-                                    if (roomdetailoffer.roomOnlyAmount != 0)
+                                    if (roomdetailoffer.roomOnlyAmount != null && roomdetailoffer.roomOnlyAmount != 0)
                                     {
                                         var mycheapestofferws = new CheapestOffer() { RoomId = roomdetail.roomGroup.rid, Price = roomdetailoffer.roomOnlyAmount ?? 0, RoomSeq = (int)roomdetailoffer.roomOptionId, RoomFree = roomdetail.availableRooms };
                                         CheapestOffer_ws.Add(mycheapestofferws);
@@ -173,6 +173,10 @@ namespace LTSAPI.Parser
                             //Add only if there is a valid Offer (enough Roomfree etc..)
                             if (lcsresponseshort.CheapestOfferDetail != null && lcsresponseshort.CheapestOfferDetail.Count > 0)
                                 result.MssResponseShort.Add(lcsresponseshort);
+                            else
+                            {
+
+                            }
                         }
                     }
 
