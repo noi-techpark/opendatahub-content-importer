@@ -119,12 +119,8 @@ namespace LTSAPI.Parser
             if(eventv1.HasLanguage == null)
                 eventv1.HasLanguage = new List<string>();
 
-            //Let's find out for which languages there is a name
-            foreach (var name in ltsevent.name)
-            {
-                if (!String.IsNullOrEmpty(name.Value))
-                    eventv1.HasLanguage.Add(name.Key);
-            }
+            //Let's use the lts eventLanguage object
+            eventv1.HasLanguage = ltsevent.eventLanguages;
 
             //Topics
             if (ltsevent.categories != null)

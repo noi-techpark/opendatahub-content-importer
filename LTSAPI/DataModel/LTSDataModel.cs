@@ -517,7 +517,7 @@ namespace LTSAPI
         public bool? isIncludedInSuedtirolGuestPass { get; set; }
 
     
-        public string? eventLanguage { get; set; }
+        public List<string>? eventLanguages { get; set; }
         //Date and time of last change
         public DateTime? lastUpdate { get; set; }
         //Localised name of the location of the Event
@@ -588,6 +588,9 @@ namespace LTSAPI
         //Defines if the period is active
         public bool? isActive { get; set; }
         //Defines if there exist one sellable Event for each day of the period
+
+        public bool? isBookable { get; set; }
+        //Defines if there exist one sellable Event for each day of the period
         public bool? isEachDayOwnEvent { get; set; }
         //"Defines if the period is cancelled
         public bool? isCancelled { get; set; }
@@ -621,8 +624,29 @@ namespace LTSAPI
         public double? price { get; set; }
         //Unique identifier of the variant of the Event
         public string rid { get; set; }
+        //Unique identifier of the category of the variant
         public LTSVariantCategory? variantCategory { get; set; }
-    }
+
+        //Type of implemented ticket validation (see enums list for possible values in the schema definition) ("none","single","multiple","inOutSingle","inOutMultiple")
+        public string? ticketValidationType { get; set; }
+        //Maximum number of possible validations
+        public int? maxValidationQuantity { get; set; }
+
+        //Validity type of the ticket ("appointment","period","days","fixed")
+        public string? ticketValidity { get; set; }
+        //Number of validity days
+        public int? ticketValidityDays { get; set; }
+        //Defines if the variant category is standard
+        public bool? isStandard { get; set; }
+        //Unique identifier of the tax rate of the Event
+        public GenericLTSRidResult? taxRate { get; set; }
+        //Defines if the tickets are ignored for availability calculation
+        public bool? isIgnoredInAvailability { get; set; }
+        //Defines if children tickets are hidden
+        public bool? isGhostTicket { get; set; }
+        //Unique identifier of the combined sale of the variant
+        public List<GenericLTSRidResult>? combinedSales { get; set; }
+}
 
     public class LTSVariantCategory
     {
@@ -706,6 +730,8 @@ namespace LTSAPI
         //Status of the Event publication by the publisher (see enums list for possible values in the schema definition) suggestedForPublication,approved,rejected
         public string? publicationStatus { get; set; }  //suggestedForPublication,approved,rejected
         public LTSPublisher? publisher { get; set; }
+
+        public bool hasWritingPermission { get; set; }
     }
 
     public class LTSPublisher
