@@ -186,16 +186,13 @@ namespace LTSAPI.Parser
                 }
                 eventv1.Detail.TryAddOrUpdate(language, detail);
 
-                EventAdditionalInfos eventadditionalinfos = new EventAdditionalInfos();
-                eventadditionalinfos.Language = language;
+                //EventAdditionalInfos eventadditionalinfos = new EventAdditionalInfos();
+                //eventadditionalinfos.Language = language;
                 //eventadditionalinfos.
 
 
-                eventv1.EventAdditionalInfos.TryAddOrUpdate(language, eventadditionalinfos);
-                //To check how to include this descriptions
-                //serviceDescription
-                //whatToBring
-                //cancellationModality
+                //eventv1.EventAdditionalInfos.TryAddOrUpdate(language, eventadditionalinfos);
+
 
 
             }
@@ -476,6 +473,16 @@ namespace LTSAPI.Parser
                 eventAdditionalInfos.MeetingPoint = ltsevent.meetingPoint != null && ltsevent.meetingPoint.ContainsKey(language) ? ltsevent.meetingPoint[language] : null;
                 eventAdditionalInfos.Location = ltsevent.location != null && ltsevent.location.ContainsKey(language) ? ltsevent.location[language] : null;
                 eventAdditionalInfos.Registration = ltsevent.registration != null && ltsevent.registration.ContainsKey(language) ? ltsevent.registration[language] : null;
+
+                //To check how to include this descriptions
+                //serviceDescription
+                //whatToBring
+                //cancellationModality
+
+                eventAdditionalInfos.ServiceDescription = ltsevent.descriptions != null && ltsevent.descriptions.Where(x => x.type == "serviceDescription").Count() > 0 ? ltsevent.descriptions.Where(x => x.type == "serviceDescription").FirstOrDefault()?.description.GetValue(language) : null;
+                eventAdditionalInfos.WhatToBring = ltsevent.descriptions != null && ltsevent.descriptions.Where(x => x.type == "whatToBring").Count() > 0 ? ltsevent.descriptions.Where(x => x.type == "whatToBring").FirstOrDefault()?.description.GetValue(language) : null;
+                eventAdditionalInfos.CancellationModality = ltsevent.descriptions != null && ltsevent.descriptions.Where(x => x.type == "cancellationModality").Count() > 0 ? ltsevent.descriptions.Where(x => x.type == "cancellationModality").FirstOrDefault()?.description.GetValue(language) : null;
+
 
                 eventv1.EventAdditionalInfos.TryAddOrUpdate(language, eventAdditionalInfos);
             }
