@@ -559,6 +559,9 @@ namespace LTSAPI
         public IDictionary<string, string>? bookingUrl { get; set; }
         //Defines if the shop configuration is active
         public bool? isActive { get; set; }
+
+        public DateTime? bookableStartDate { get; set; }
+        public DateTime? bookableEndDate { get; set; }
     }
 
     public class LTSPeriod
@@ -628,14 +631,14 @@ namespace LTSAPI
         public LTSVariantCategory? variantCategory { get; set; }
 
         //Type of implemented ticket validation (see enums list for possible values in the schema definition) ("none","single","multiple","inOutSingle","inOutMultiple")
-        public string? ticketValidationType { get; set; }
+        //public string? ticketValidationType { get; set; }
         //Maximum number of possible validations
-        public int? maxValidationQuantity { get; set; }
+        //public int? maxValidationQuantity { get; set; }
 
         //Validity type of the ticket ("appointment","period","days","fixed")
-        public string? ticketValidity { get; set; }
+        //public string? ticketValidity { get; set; }
         //Number of validity days
-        public int? ticketValidityDays { get; set; }
+        //public int? ticketValidityDays { get; set; }
         //Defines if the variant category is standard
         public bool? isStandard { get; set; }
         //Unique identifier of the tax rate of the Event
@@ -643,7 +646,7 @@ namespace LTSAPI
         //Defines if the tickets are ignored for availability calculation
         public bool? isIgnoredInAvailability { get; set; }
         //Defines if children tickets are hidden
-        public bool? isGhostTicket { get; set; }
+        //public bool? isGhostTicket { get; set; }
         //Unique identifier of the combined sale of the variant
         public List<GenericLTSRidResult>? combinedSales { get; set; }
 }
@@ -731,7 +734,7 @@ namespace LTSAPI
         public string? publicationStatus { get; set; }  //suggestedForPublication,approved,rejected
         public LTSPublisher? publisher { get; set; }
 
-        public bool hasWritingPermission { get; set; }
+        //public bool hasWritingPermission { get; set; }
     }
 
     public class LTSPublisher
