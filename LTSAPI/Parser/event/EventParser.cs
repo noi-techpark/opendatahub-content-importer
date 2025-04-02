@@ -521,11 +521,14 @@ namespace LTSAPI.Parser
                     eventvariant.Order = variant.order;
 
                     eventvariant.Name = new Dictionary<string, string>();
-                    foreach(var variantname in variant.name)
+                    if (variant.name != null)
                     {
-                        if(variantname.Value != null)
-                            eventvariant.Name.TryAddOrUpdate(variantname.Key, variantname.Value);
-                    }                        
+                        foreach (var variantname in variant.name)
+                        {
+                            if (variantname.Value != null)
+                                eventvariant.Name.TryAddOrUpdate(variantname.Key, variantname.Value);
+                        }
+                    }
 
                     if (variant.variantCategory != null)
                     {

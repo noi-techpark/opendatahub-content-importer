@@ -30,10 +30,10 @@ LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
 //var dict = ltsapi.GetLTSQSDictionary(qs);
 //var ltsacco = await ltsapi.AccommodationDetailRequest("06F7A0918A0F11D2B477006097AD12DB", dict);
 
-//var ltsevent = await ltsapi.EventDetailRequest("96230545e31048d7aa67dbdd35d97f33", null);
-//var parsedevent = EventParser.ParseLTSEventV1(ltsevent.FirstOrDefault().Value<JObject>(), false);
+var ltsevent = await ltsapi.EventDetailRequest("5052643845F5411897EA336F885163E9", null);
+var parsedevent = EventParser.ParseLTSEventV1(ltsevent.FirstOrDefault().Value<JObject>(), false);
 
-await TestRequests.TestAvailabilitySearch(settings);
+//await TestRequests.TestAvailabilitySearch(settings);
 
 
 int x = 0;
