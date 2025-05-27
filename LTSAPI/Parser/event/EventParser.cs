@@ -552,7 +552,7 @@ namespace LTSAPI.Parser
 
             //shopConfiguration   ---> bookingurl Dictionary, isActive field
             if (ltsevent.shopConfiguration != null && ltsevent.shopConfiguration.bookingUrl != null)
-            {
+            {                
                 EventUrls eventurl = new EventUrls();
 
                 eventurl.Url = new Dictionary<string, string>();

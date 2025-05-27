@@ -55,12 +55,16 @@ namespace LTSAPI.Parser
             gastronomy.LastChange = ltsgastronomy.lastUpdate;
             gastronomy.Active = ltsgastronomy.isActive;
 
+            gastronomy.HasLanguage = new List<string>();
+
             //Let's find out for which languages there is a name
             foreach (var desc in ltsgastronomy.description)
             {
                 if (!String.IsNullOrEmpty(desc.Value))
                     gastronomy.HasLanguage.Add(desc.Key);
             }
+
+            gastronomy.LocationInfo = new LocationInfoLinked();
 
             //Tourism Organization, District
             gastronomy.TourismorganizationId = ltsgastronomy.tourismOrganization != null ? ltsgastronomy.tourismOrganization.rid : null;
@@ -262,6 +266,13 @@ namespace LTSAPI.Parser
 
 
             //TODO add the IDM Tags
+            gastronomy.SmgTags = new List<string>();
+            gastronomy.SmgTags.Add("gastronomy");
+
+            gastronomy.SyncSourceInterface = "gastronomicdata";
+            gastronomy.SyncUpdateMode = "full";
+
+
 
             return gastronomy;
         }

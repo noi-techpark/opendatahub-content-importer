@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using LTSAPI.Parser;
 using System.Text.Json.Nodes;
 using TestConsole;
+using Microsoft.AspNetCore.Http.Timeouts;
 
 Console.WriteLine("Test!");
 var builder = new ConfigurationBuilder()
@@ -30,13 +31,14 @@ LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
 //var dict = ltsapi.GetLTSQSDictionary(qs);
 //var ltsacco = await ltsapi.AccommodationDetailRequest("06F7A0918A0F11D2B477006097AD12DB", dict);
 
-var ltsevent = await ltsapi.EventDetailRequest("5052643845F5411897EA336F885163E9", null);
-var parsedevent = EventParser.ParseLTSEventV1(ltsevent.FirstOrDefault().Value<JObject>(), false);
+//var ltsevent = await ltsapi.EventDetailRequest("FA440216CBFD4DAD99389D584FC83B81", null);
+//var parsedevent = EventParser.ParseLTSEventV1(ltsevent.FirstOrDefault().Value<JObject>(), false);
 
 //await TestRequests.TestAvailabilitySearch(settings);
 
 
-int x = 0;
+//var ltsevent = await ltsapi.EventDetailRequest("FA440216CBFD4DAD99389D584FC83B81", null);
+//var parsedevent = EventParser.ParseLTSEventV1(ltsevent.FirstOrDefault().Value<JObject>(), false);
 
 //var ltspoi = await ltsapi.PoiDetailRequest("3741EF2230FC909CA46A925D3BBA3B45", null);
 //var parsedpoi = PointofInterestParser.ParseLTSPointofInterest(ltspoi.FirstOrDefault().Value<JObject>(), false);
@@ -123,3 +125,7 @@ int x = 0;
 //Console.WriteLine("elapsed time: " + watch.ElapsedMilliseconds);
 
 //Console.ReadLine();
+
+await TestRequests.RetrieveAndParseGastronomy(settings);
+
+Console.ReadLine();
