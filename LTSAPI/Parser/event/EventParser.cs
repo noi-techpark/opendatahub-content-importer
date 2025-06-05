@@ -296,6 +296,12 @@ namespace LTSAPI.Parser
                     eventdate.To = Convert.ToDateTime(period.endDate);
                     eventdate.End = period.endTime != null ? TimeSpan.Parse(period.endTime) : null;
 
+                    //Hack for DateRange Event Filter, Begin & End are often the same so the DateRange Filter filters them out
+                    if (eventdate.End == TimeSpan.Parse("00:00:00"))
+                    {
+                        eventdate.End = TimeSpan.Parse("23:59:59");
+                    }
+
                     eventdate.Entrance = period.entranceTime != null ? TimeSpan.Parse(period.entranceTime) : null; 
 
                     eventdate.MaxPersons = period.maxParticipants;
