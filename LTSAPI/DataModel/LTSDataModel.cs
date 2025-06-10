@@ -861,6 +861,7 @@ namespace LTSAPI
         public int id { get; set; }
         public DateTime lastUpdate { get; set; }
         public bool isActive { get; set; }
+        //Representation mode of the Gastronomy (full, none)
         public string representationMode { get; set; }
         public LTSDistrict district { get; set; }
         public LTSTourismorganization tourismOrganization { get; set; }
