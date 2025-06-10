@@ -769,6 +769,10 @@ namespace LTSAPI
                     {
                         valuetoadd = String.Format("{0:yyyy-MM-ddThh:mm:ss.fff}", (DateTime)propvalue);
                     }
+                    else if (prop.PropertyType == typeof(bool?))
+                    {
+                        valuetoadd = (bool)propvalue ? "1" : "0";
+                    }
                     else
                     {
                         if (!String.IsNullOrEmpty(propvalue.ToString()))
