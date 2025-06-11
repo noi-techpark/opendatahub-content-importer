@@ -43,8 +43,9 @@ namespace LTSAPI.Parser
         }
 
         public static ODHActivityPoiLinked ParseLTSGastronomy(
-            LTSGastronomyData ltsgastronomy, 
-            bool reduced)
+            LTSGastronomyData ltsgastronomy,
+            bool reduced,
+            bool additionalcontactsync = false)
         {
             ODHActivityPoiLinked gastronomy = new ODHActivityPoiLinked();
 
@@ -73,7 +74,7 @@ namespace LTSAPI.Parser
             gastronomy.MaxSeatingCapacity = ltsgastronomy.maxSeatingCapacity;
 
             //Categories, Dishrates, Facilities, CeremonyCodes all to Tags
-            if(gastronomy.TagIds == null)
+            if (gastronomy.TagIds == null)
                 gastronomy.TagIds = new List<string>();
 
             //Categories
@@ -130,7 +131,7 @@ namespace LTSAPI.Parser
                     gastronomy.TagIds.Add(ceremonycode.ceremony.rid);
                 }
             }
-            
+
             //Contact Information
             //array here why?
             foreach (var language in gastronomy.HasLanguage)
@@ -164,6 +165,59 @@ namespace LTSAPI.Parser
                 }
 
                 gastronomy.ContactInfos.TryAddOrUpdate(language, contactinfo);
+            }
+
+            //Add AdditionalContact
+            if (additionalcontactsync)
+            {
+                if (ltsgastronomy.contacts.Where(x => x.type != "restaurant").Count() > 0)
+                {
+                    gastronomy.AdditionalContact = new Dictionary<string, List<AdditionalContact>>();
+
+
+                    foreach (var language in gastronomy.HasLanguage)
+                    {
+                        List<AdditionalContact> additionalcontactlist = new List<AdditionalContact>();
+
+                        foreach (var ltsgastronomycontact in ltsgastronomy.contacts.Where(x => x.type != null && x.type != "restaurant"))
+                        {
+                            //Import only if one of the props is not null
+                            if (
+                                (ltsgastronomycontact.address.name != null && ltsgastronomycontact.address.name[language] != null) ||
+                                (ltsgastronomycontact.address.street != null && ltsgastronomycontact.address.street[language] != null) ||
+                                (ltsgastronomycontact.address.city != null && ltsgastronomycontact.address.city[language] != null) ||
+                                ltsgastronomycontact.address.country != null ||
+                                ltsgastronomycontact.postalCode != null ||
+                                ltsgastronomycontact.email != null ||
+                                ltsgastronomycontact.website != null
+                                )
+                            {
+                                AdditionalContact additionalcontact = new AdditionalContact();
+
+                                additionalcontact.Type = ltsgastronomycontact.type;
+
+                                ContactInfos contactinfoadditional = new ContactInfos();
+
+                                contactinfoadditional.Language = language;
+
+                                contactinfoadditional.CompanyName = ltsgastronomycontact.address.name != null ? ltsgastronomycontact.address.name.GetValue(language) : null;
+                                contactinfoadditional.Address = ltsgastronomycontact.address.street != null ? ltsgastronomycontact.address.street.GetValue(language) : null;
+                                contactinfoadditional.City = ltsgastronomycontact.address.city != null ? ltsgastronomycontact.address.city.GetValue(language) : null;
+                                contactinfoadditional.CountryCode = ltsgastronomycontact.address.country != null ? ltsgastronomycontact.address.country : null;
+                                contactinfoadditional.ZipCode = ltsgastronomycontact.postalCode != null ? ltsgastronomycontact.address.postalCode : null;
+                                contactinfoadditional.Email = ltsgastronomycontact.email != null ? ltsgastronomycontact.email : null;
+                                contactinfoadditional.Phonenumber = ltsgastronomycontact.phone != null ? ltsgastronomycontact.phone : null;
+                                contactinfoadditional.Url = ltsgastronomycontact.website != null ? ltsgastronomycontact.website : null;
+
+                                additionalcontact.ContactInfos = contactinfoadditional;
+                                additionalcontactlist.Add(additionalcontact);
+                            }
+                        }
+
+                        if(additionalcontactlist.Count > 0)
+                            gastronomy.AdditionalContact.TryAddOrUpdate(language, additionalcontactlist);
+                    }
+                }
             }
 
             //Detail Information
@@ -290,6 +344,13 @@ namespace LTSAPI.Parser
                 ltsmapping.Add("district", ltsgastronomy.district.rid);
             if (ltsgastronomy.tourismOrganization != null && !String.IsNullOrEmpty(ltsgastronomy.tourismOrganization.rid))
                 ltsmapping.Add("tourismOrganization", ltsgastronomy.tourismOrganization.rid);
+
+            if (ltsgastronomy.maxSeatingCapacity > 0)
+                ltsmapping.Add("maxSeatingCapacity", ltsgastronomy.maxSeatingCapacity.ToString());
+
+            //Adding also as PoiProperty ?
+
+
 
             //Adding the Location to the Contactinfo
             //ltsmapping.Add("location_de", ltspoi.location["de"]);
