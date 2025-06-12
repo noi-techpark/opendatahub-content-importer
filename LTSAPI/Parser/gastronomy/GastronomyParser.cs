@@ -22,7 +22,8 @@ namespace LTSAPI.Parser
     public class GastronomyParser
     {
         public static ODHActivityPoiLinked ParseLTSGastronomy(
-            JObject ltsdata, bool reduced
+            JObject ltsdata, bool reduced,
+            IDictionary<string, JArray>? jsonfiles
             )
         {
             string dataid = "";
@@ -32,7 +33,7 @@ namespace LTSAPI.Parser
 
                 dataid = gastroltsdetail.data.rid;
 
-                return ParseLTSGastronomy(gastroltsdetail.data, reduced);
+                return ParseLTSGastronomy(gastroltsdetail.data, reduced, jsonfiles);
             }
             catch(Exception ex)
             {
@@ -45,6 +46,7 @@ namespace LTSAPI.Parser
         public static ODHActivityPoiLinked ParseLTSGastronomy(
             LTSGastronomyData ltsgastronomy,
             bool reduced,
+            IDictionary<string, JArray>? jsonfiles,
             bool additionalcontactsync = false)
         {
             ODHActivityPoiLinked gastronomy = new ODHActivityPoiLinked();
@@ -82,11 +84,16 @@ namespace LTSAPI.Parser
             {
                 foreach (var category in ltsgastronomy.categories)
                 {
+                    var categorycode = jsonfiles != null && jsonfiles["CategoryCodes"] != null ? jsonfiles["CategoryCodes"].Where(x => x["Id"].Value<string>() == category.rid).FirstOrDefault() : null;
+
                     if (gastronomy.CategoryCodes == null)
                         gastronomy.CategoryCodes = new List<CategoryCodesLinked>();
 
                     //to check categorycode has the shortname inside
-                    gastronomy.CategoryCodes.Add(new CategoryCodesLinked() { Id = category.rid });
+                    gastronomy.CategoryCodes.Add(new CategoryCodesLinked() { 
+                        Id = category.rid, 
+                        Shortname = categorycode != null && categorycode["TagName"] != null ? categorycode["TagName"]["de"].Value<string>() : "" 
+                    });
                     gastronomy.TagIds.Add(category.rid);
                 }
             }
@@ -95,11 +102,18 @@ namespace LTSAPI.Parser
             {
                 foreach (var dishcode in ltsgastronomy.dishRates)
                 {
+                    var dishrate = jsonfiles != null && jsonfiles["DishRates"] != null ? jsonfiles["DishRates"].Where(x => x["Id"].Value<string>() == dishcode.dish.rid).FirstOrDefault() : null;
+
                     if (gastronomy.DishRates == null)
                         gastronomy.DishRates = new List<DishRatesLinked>();
 
                     //to check categorycode has the shortname inside
-                    gastronomy.DishRates.Add(new DishRatesLinked() { Id = dishcode.dish.rid });
+                    gastronomy.DishRates.Add(new DishRatesLinked() { 
+                        Id = dishcode.dish.rid, 
+                        MaxAmount = dishcode.maxAmount, 
+                        MinAmount = dishcode.minAmount, CurrencyCode = "EUR",
+                        Shortname = dishrate != null && dishrate["TagName"] != null ? dishrate["TagName"]["de"].Value<string>() : ""
+                    });
                     //gastronomy.DishRates.Add(new DishRatesV2() { Id = dishcode.dish.rid, MaxAmount = dishcode.maxAmount, MinAmount = dishcode.minAmount });
                     gastronomy.TagIds.Add(dishcode.dish.rid);
                 }
@@ -109,11 +123,16 @@ namespace LTSAPI.Parser
             {
                 foreach (var facility in ltsgastronomy.facilities)
                 {
+                    var facilitycode = jsonfiles != null && jsonfiles["Facilities"] != null ? jsonfiles["Facilities"].Where(x => x["Id"].Value<string>() == facility.rid).FirstOrDefault() : null;
+
                     if (gastronomy.Facilities == null)
                         gastronomy.Facilities = new List<FacilitiesLinked>();
 
                     //to check categorycode has the shortname inside
-                    gastronomy.Facilities.Add(new FacilitiesLinked() { Id = facility.rid });
+                    gastronomy.Facilities.Add(new FacilitiesLinked() { 
+                        Id = facility.rid,
+                        Shortname = facilitycode != null && facilitycode["TagName"] != null ? facilitycode["TagName"]["de"].Value<string>() : ""
+                    });
                     gastronomy.TagIds.Add(facility.rid);
                 }
             }
@@ -122,11 +141,17 @@ namespace LTSAPI.Parser
             {
                 foreach (var ceremonycode in ltsgastronomy.ceremonySeatingCapacities)
                 {
+                    var capacityceremony = jsonfiles != null && jsonfiles["CapacityCeremonies"] != null ? jsonfiles["CapacityCeremonies"].Where(x => x["Id"].Value<string>() == ceremonycode.ceremony.rid).FirstOrDefault() : null;
+
                     if (gastronomy.CapacityCeremony == null)
                         gastronomy.CapacityCeremony = new List<CapacityCeremonyLinked>();
 
                     //to check categorycode has the shortname inside
-                    gastronomy.CapacityCeremony.Add(new CapacityCeremonyLinked() { Id = ceremonycode.ceremony.rid });
+                    gastronomy.CapacityCeremony.Add(new CapacityCeremonyLinked() { 
+                        Id = ceremonycode.ceremony.rid, 
+                        MaxSeatingCapacity = ceremonycode.maxSeatingCapacity,
+                        Shortname = capacityceremony != null && capacityceremony["TagName"] != null ? capacityceremony["TagName"]["de"].Value<string>() : ""
+                    });
                     //gastronomy.CategoryCodes.Add(new CapacityCeremonyV2() { Id = ceremonycode.ceremony.rid, MaxSeatingCapacity = ceremonycode.maxSeatingCapacity });
                     gastronomy.TagIds.Add(ceremonycode.ceremony.rid);
                 }

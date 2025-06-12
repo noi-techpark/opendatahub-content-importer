@@ -90,11 +90,11 @@ namespace TestConsole
         {
             LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
             var ltsgastro = await ltsapi.GastronomyDetailRequest("9896159359D3CA450BBF0676D879CD9D", null);
-            var parsedgastro = GastronomyParser.ParseLTSGastronomy(ltsgastro.FirstOrDefault().Value<JObject>(), false);
+            var parsedgastro = GastronomyParser.ParseLTSGastronomy(ltsgastro.FirstOrDefault().Value<JObject>(), false, null);
 
             LtsApi ltsapi2 = new LtsApi(settings.LtsCredentialsOpen);
             var ltsgastro2 = await ltsapi2.GastronomyDetailRequest("9896159359D3CA450BBF0676D879CD9D", null);
-            var parsedgastro2 = GastronomyParser.ParseLTSGastronomy(ltsgastro2.FirstOrDefault().Value<JObject>(), false);
+            var parsedgastro2 = GastronomyParser.ParseLTSGastronomy(ltsgastro2.FirstOrDefault().Value<JObject>(), false, null);
         }
 
 
