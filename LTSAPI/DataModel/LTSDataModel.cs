@@ -916,8 +916,11 @@ namespace LTSAPI
 
     public class LTSOpeningtime
     {
+        //The opening time of the Gastronomy in the specified days for the specified type
         public string startTime { get; set; }
+        //The closing time of the Gastronomy on the specified days for the specified type
         public string endTime { get; set; }
+        //Type of opening times of the Gastronomy ("general","meals","pizza","snacks")
         public string type { get; set; }
     }
 

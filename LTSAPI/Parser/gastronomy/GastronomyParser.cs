@@ -35,12 +35,12 @@ namespace LTSAPI.Parser
 
                 return ParseLTSGastronomy(gastroltsdetail.data, reduced, jsonfiles);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(JsonConvert.SerializeObject(new { operation = "gastronomy.parse", id = dataid, source = "lts", success = false, error = true, exception = ex.Message }));
 
                 return null;
-            }          
+            }
         }
 
         public static ODHActivityPoiLinked ParseLTSGastronomy(
@@ -94,9 +94,9 @@ namespace LTSAPI.Parser
                         gastronomy.CategoryCodes = new List<CategoryCodesLinked>();
 
                     //to check categorycode has the shortname inside
-                    gastronomy.CategoryCodes.Add(new CategoryCodesLinked() { 
-                        Id = category.rid, 
-                        Shortname = categorycode != null && categorycode["TagName"] != null ? categorycode["TagName"]["de"].Value<string>() : "" 
+                    gastronomy.CategoryCodes.Add(new CategoryCodesLinked() {
+                        Id = category.rid,
+                        Shortname = categorycode != null && categorycode["TagName"] != null ? categorycode["TagName"]["de"].Value<string>() : ""
                     });
                     gastronomy.TagIds.Add(category.rid);
 
@@ -115,9 +115,9 @@ namespace LTSAPI.Parser
                         gastronomy.DishRates = new List<DishRatesLinked>();
 
                     //to check categorycode has the shortname inside
-                    gastronomy.DishRates.Add(new DishRatesLinked() { 
-                        Id = dishcode.dish.rid, 
-                        MaxAmount = dishcode.maxAmount, 
+                    gastronomy.DishRates.Add(new DishRatesLinked() {
+                        Id = dishcode.dish.rid,
+                        MaxAmount = dishcode.maxAmount,
                         MinAmount = dishcode.minAmount, CurrencyCode = "EUR",
                         Shortname = dishrate != null && dishrate["TagName"] != null ? dishrate["TagName"]["de"].Value<string>() : ""
                     });
@@ -139,7 +139,7 @@ namespace LTSAPI.Parser
                         gastronomy.Facilities = new List<FacilitiesLinked>();
 
                     //to check categorycode has the shortname inside
-                    gastronomy.Facilities.Add(new FacilitiesLinked() { 
+                    gastronomy.Facilities.Add(new FacilitiesLinked() {
                         Id = facility.rid,
                         Shortname = facilitycode != null && facilitycode["TagName"] != null ? facilitycode["TagName"]["de"].Value<string>() : ""
                     });
@@ -160,8 +160,8 @@ namespace LTSAPI.Parser
                         gastronomy.CapacityCeremony = new List<CapacityCeremonyLinked>();
 
                     //to check categorycode has the shortname inside
-                    gastronomy.CapacityCeremony.Add(new CapacityCeremonyLinked() { 
-                        Id = ceremonycode.ceremony.rid, 
+                    gastronomy.CapacityCeremony.Add(new CapacityCeremonyLinked() {
+                        Id = ceremonycode.ceremony.rid,
                         MaxSeatingCapacity = ceremonycode.maxSeatingCapacity,
                         Shortname = capacityceremony != null && capacityceremony["TagName"] != null ? capacityceremony["TagName"]["de"].Value<string>() : ""
                     });
@@ -255,7 +255,7 @@ namespace LTSAPI.Parser
                             }
                         }
 
-                        if(additionalcontactlist.Count > 0)
+                        if (additionalcontactlist.Count > 0)
                             gastronomy.AdditionalContact.TryAddOrUpdate(language, additionalcontactlist);
                     }
                 }
@@ -268,7 +268,7 @@ namespace LTSAPI.Parser
 
                 detail.Language = language;
 
-                if(ltsgastronomy.contacts.Where(x => x.type == "restaurant").Count() > 0)
+                if (ltsgastronomy.contacts.Where(x => x.type == "restaurant").Count() > 0)
                     detail.Title = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().address.name.GetValue(language);
                 //on opendata no type is passed
                 else
@@ -276,7 +276,7 @@ namespace LTSAPI.Parser
 
                 if (ltsgastronomy.description != null)
                     detail.BaseText = ltsgastronomy.description.GetValue(language);
-            
+
                 gastronomy.Detail.TryAddOrUpdate(language, detail);
             }
 
@@ -284,6 +284,7 @@ namespace LTSAPI.Parser
             if (ltsgastronomy.openingSchedules != null)
             {
                 List<OperationSchedule> operationschedulelist = new List<OperationSchedule>();
+
                 foreach (var operationschedulelts in ltsgastronomy.openingSchedules)
                 {
                     OperationSchedule operationschedule = new OperationSchedule();
@@ -296,11 +297,38 @@ namespace LTSAPI.Parser
                     if (operationschedulelts.openingTimes != null)
                     {
                         operationschedule.OperationScheduleTime = new List<OperationScheduleTime>();
-                        foreach (var openingtimelts in operationschedulelts.openingTimes)
+
+                        //If there are openingtimes given
+                        if (operationschedulelts.openingTimes.Count() > 0)
+                        {
+                            foreach (var openingtimelts in operationschedulelts.openingTimes)
+                            {
+                                OperationScheduleTime openingtime = new OperationScheduleTime();
+                                openingtime.Start = TimeSpan.Parse(openingtimelts.startTime);
+                                openingtime.End = TimeSpan.Parse(openingtimelts.endTime);
+                                openingtime.Monday = operationschedulelts.isMondayOpen;
+                                openingtime.Tuesday = operationschedulelts.isTuesdayOpen;
+                                openingtime.Wednesday = operationschedulelts.isWednesdayOpen;
+                                openingtime.Thursday = operationschedulelts.isThursdayOpen;
+                                openingtime.Friday = operationschedulelts.isFridayOpen;
+                                openingtime.Saturday = operationschedulelts.isSaturdayOpen;
+                                openingtime.Sunday = operationschedulelts.isSundayOpen;
+
+                                //TODO PARSE type
+                                openingtime.Timecode = ParseOperationScheduleType(openingtimelts.type);
+                                if (operationschedulelts.isOpen)
+                                    openingtime.State = 2;
+                                else
+                                    openingtime.State = 1;
+
+                                operationschedule.OperationScheduleTime.Add(openingtime);
+                            }
+                        }
+                        else
                         {
                             OperationScheduleTime openingtime = new OperationScheduleTime();
-                            openingtime.Start = TimeSpan.Parse(openingtimelts.startTime);
-                            openingtime.End = TimeSpan.Parse(openingtimelts.endTime);
+                            openingtime.Start = TimeSpan.Parse("00:00:00");
+                            openingtime.End = TimeSpan.Parse("23:59:59");
                             openingtime.Monday = operationschedulelts.isMondayOpen;
                             openingtime.Tuesday = operationschedulelts.isTuesdayOpen;
                             openingtime.Wednesday = operationschedulelts.isWednesdayOpen;
@@ -310,16 +338,21 @@ namespace LTSAPI.Parser
                             openingtime.Sunday = operationschedulelts.isSundayOpen;
 
                             //TODO PARSE type
-                            //openingtime.State = 2;
-                            //openingtime.Timecode = 1;
+                            openingtime.Timecode = 1;
+                            if (operationschedulelts.isOpen)
+                                openingtime.State = 2;
+                            else
+                                openingtime.State = 1;
 
                             operationschedule.OperationScheduleTime.Add(openingtime);
                         }
                     }
-                }
+                    operationschedulelist.Add(operationschedule);
+                }                
+
                 gastronomy.OperationSchedule = operationschedulelist;
             }
-            
+
             //Images
             //Images (Main Images with ValidFrom)
             List<ImageGallery> imagegallerylist = new List<ImageGallery>();
@@ -378,9 +411,9 @@ namespace LTSAPI.Parser
             ltsmapping.Add("rid", ltsgastronomy.rid);
             ltsmapping.Add("id", ltsgastronomy.id.ToString());
 
-            if(ltsgastronomy.representationMode != null)
+            if (ltsgastronomy.representationMode != null)
                 ltsmapping.Add("representationMode", ltsgastronomy.representationMode);
-          
+
             if (ltsgastronomy.district != null && !String.IsNullOrEmpty(ltsgastronomy.district.rid))
                 ltsmapping.Add("district", ltsgastronomy.district.rid);
             if (ltsgastronomy.tourismOrganization != null && !String.IsNullOrEmpty(ltsgastronomy.tourismOrganization.rid))
@@ -410,6 +443,23 @@ namespace LTSAPI.Parser
 
             return gastronomy;
         }
-    }
 
+        private static int ParseOperationScheduleType(string openingtimestype)
+        {
+            switch (openingtimestype)
+            {
+                case "general":
+                    return 1;
+                case "meals":
+                    return 2;
+                case "pizza":
+                    return 3;
+                case "snacks":
+                    return 4;
+                default:
+                    return 1;
+
+            }
+        }
+    }
 }
