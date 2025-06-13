@@ -79,6 +79,10 @@ namespace LTSAPI.Parser
             if (gastronomy.TagIds == null)
                 gastronomy.TagIds = new List<string>();
 
+            //Prefill also Tags with the TagEntry
+            if (gastronomy.Tags == null)
+                gastronomy.Tags = new List<Tags>();
+
             //Categories
             if (ltsgastronomy.categories != null)
             {
@@ -95,6 +99,9 @@ namespace LTSAPI.Parser
                         Shortname = categorycode != null && categorycode["TagName"] != null ? categorycode["TagName"]["de"].Value<string>() : "" 
                     });
                     gastronomy.TagIds.Add(category.rid);
+
+                    //Add Tags
+                    gastronomy.Tags.Add(new Tags() { Id = category.rid });
                 }
             }
             //Dishrates
@@ -116,6 +123,9 @@ namespace LTSAPI.Parser
                     });
                     //gastronomy.DishRates.Add(new DishRatesV2() { Id = dishcode.dish.rid, MaxAmount = dishcode.maxAmount, MinAmount = dishcode.minAmount });
                     gastronomy.TagIds.Add(dishcode.dish.rid);
+
+                    //Add Tags
+                    gastronomy.Tags.Add(new Tags() { Id = dishcode.dish.rid, TagEntry = new Dictionary<string, string>() { { "MaxAmount", dishcode.maxAmount.ToString() }, { "MinAmount", dishcode.minAmount.ToString() }, { "CurrencyCode", "EUR" } } });
                 }
             }
             //Facilities
@@ -134,6 +144,9 @@ namespace LTSAPI.Parser
                         Shortname = facilitycode != null && facilitycode["TagName"] != null ? facilitycode["TagName"]["de"].Value<string>() : ""
                     });
                     gastronomy.TagIds.Add(facility.rid);
+
+                    //Add Tags
+                    gastronomy.Tags.Add(new Tags() { Id = facility.rid });
                 }
             }
             //CeremonyCodes
@@ -154,6 +167,9 @@ namespace LTSAPI.Parser
                     });
                     //gastronomy.CategoryCodes.Add(new CapacityCeremonyV2() { Id = ceremonycode.ceremony.rid, MaxSeatingCapacity = ceremonycode.maxSeatingCapacity });
                     gastronomy.TagIds.Add(ceremonycode.ceremony.rid);
+
+                    //Add Tags
+                    gastronomy.Tags.Add(new Tags() { Id = ceremonycode.ceremony.rid, TagEntry = new Dictionary<string, string>() { { "MaxSeatingCapacity", ceremonycode.maxSeatingCapacity.ToString() } } });
                 }
             }
 
