@@ -126,10 +126,13 @@ namespace LTSAPI.Parser
             //Hack if the eventLanguages field is not provided use the name field
             if(eventv1.HasLanguage.Count == 0)
             {
-                foreach(var kvp in ltsevent.name)
+                if (ltsevent.name != null)
                 {
-                    if (!String.IsNullOrEmpty(kvp.Value))
-                        eventv1.HasLanguage.Add(kvp.Key);
+                    foreach (var kvp in ltsevent.name)
+                    {
+                        if (!String.IsNullOrEmpty(kvp.Value))
+                            eventv1.HasLanguage.Add(kvp.Key);
+                    }
                 }
             }
 
@@ -217,15 +220,15 @@ namespace LTSAPI.Parser
                 {
                     if (ltsevent.contact.address != null)
                     {
-                        contactinfo.CompanyName = ltsevent.contact.address.name.GetValue(language);
-                        contactinfo.Address = ltsevent.contact.address.street.GetValue(language);
-                        contactinfo.City = ltsevent.contact.address.city.GetValue(language);
-                        contactinfo.CountryCode = ltsevent.contact.address.country;
-                        contactinfo.ZipCode = ltsevent.contact.address.postalCode;
+                        contactinfo.CompanyName = ltsevent.contact != null && ltsevent.contact.address != null && ltsevent.contact.address.name != null ? ltsevent.contact.address.name.GetValue(language) : null;
+                        contactinfo.Address = ltsevent.contact != null && ltsevent.contact.address != null && ltsevent.contact.address.street != null ? ltsevent.contact.address.street.GetValue(language) : null;
+                        contactinfo.City = ltsevent.contact != null && ltsevent.contact.address != null && ltsevent.contact.address.city != null ? ltsevent.contact.address.city.GetValue(language) : null;
+                        contactinfo.CountryCode = ltsevent.contact != null && ltsevent.contact.address != null && ltsevent.contact.address.country != null ? ltsevent.contact.address.country : null;
+                        contactinfo.ZipCode = ltsevent.contact != null && ltsevent.contact.address != null && ltsevent.contact.address.postalCode != null ? ltsevent.contact.address.postalCode : null;
                     }
-                    contactinfo.Email = ltsevent.contact.email.GetValue(language);
-                    contactinfo.Phonenumber = ltsevent.contact.phone;
-                    contactinfo.Url = ltsevent.contact.website.GetValue(language);
+                    contactinfo.Email = ltsevent.contact != null && ltsevent.contact.email != null ? ltsevent.contact.email.GetValue(language) : null;
+                    contactinfo.Phonenumber = ltsevent.contact != null && ltsevent.contact.phone != null ? ltsevent.contact.phone : null;
+                    contactinfo.Url = ltsevent.contact != null && ltsevent.contact.website != null ? ltsevent.contact.website.GetValue(language) : null;
                 }
                 eventv1.ContactInfos.TryAddOrUpdate(language, contactinfo);
             }
@@ -314,44 +317,46 @@ namespace LTSAPI.Parser
                     eventdate.Cancelled = eventdate.IsCancelled == true ? "1" : "0";
 
                     //days
-                    foreach (var day in period.days)
+                    if (period.days != null)
                     {
-                        if (eventdate.EventCalculatedDays == null)
-                            eventdate.EventCalculatedDays = new List<EventDateCalculatedDay>();
-
-                        EventDateCalculatedDay eventcalculatedday = new EventDateCalculatedDay();
-                        eventcalculatedday.Day = Convert.ToDateTime(day.startDate);
-                        eventcalculatedday.Begin = TimeSpan.Parse(day.startTime);
-                        eventcalculatedday.CDayRID = day.rid;
-                        eventcalculatedday.CalculatedDayId = day.rid;
-                        
-                        if (day.availability != null)
+                        foreach (var day in period.days)
                         {
-                            eventcalculatedday.AvailabilityCalculatedValue = day.availability.calculatedAvailability;
-                            eventcalculatedday.AvailabilityLow = day.availability.isLowAvailability;
-                            eventcalculatedday.SoldOut = day.availability.isSoldOut;
+                            if (eventdate.EventCalculatedDays == null)
+                                eventdate.EventCalculatedDays = new List<EventDateCalculatedDay>();
 
-                            if(day.availability.variants != null)
+                            EventDateCalculatedDay eventcalculatedday = new EventDateCalculatedDay();
+                            eventcalculatedday.Day = Convert.ToDateTime(day.startDate);
+                            eventcalculatedday.Begin = TimeSpan.Parse(day.startTime);
+                            eventcalculatedday.CDayRID = day.rid;
+                            eventcalculatedday.CalculatedDayId = day.rid;
+
+                            if (day.availability != null)
                             {
-                                foreach(var variant in day.availability.variants)
+                                eventcalculatedday.AvailabilityCalculatedValue = day.availability.calculatedAvailability;
+                                eventcalculatedday.AvailabilityLow = day.availability.isLowAvailability;
+                                eventcalculatedday.SoldOut = day.availability.isSoldOut;
+
+                                if (day.availability.variants != null)
                                 {
-                                    if(eventcalculatedday.EventDateCalculatedDayVariant == null)
-                                        eventcalculatedday.EventDateCalculatedDayVariant = new List<EventDateCalculatedDayVariant>();
+                                    foreach (var variant in day.availability.variants)
+                                    {
+                                        if (eventcalculatedday.EventDateCalculatedDayVariant == null)
+                                            eventcalculatedday.EventDateCalculatedDayVariant = new List<EventDateCalculatedDayVariant>();
 
-                                    EventDateCalculatedDayVariant eventcvariant = new EventDateCalculatedDayVariant();
-                                    eventcvariant.VariantId = variant.rid;
-                                    eventcvariant.AvailabilityCalculatedValue = variant.calculatedAvailability;
-                                    eventcvariant.AvailabilityLow = variant.isLowAvailability;
+                                        EventDateCalculatedDayVariant eventcvariant = new EventDateCalculatedDayVariant();
+                                        eventcvariant.VariantId = variant.rid;
+                                        eventcvariant.AvailabilityCalculatedValue = variant.calculatedAvailability;
+                                        eventcvariant.AvailabilityLow = variant.isLowAvailability;
 
-                                    eventcalculatedday.EventDateCalculatedDayVariant.Add(eventcvariant);
+                                        eventcalculatedday.EventDateCalculatedDayVariant.Add(eventcvariant);
+                                    }
                                 }
                             }
+
+
+                            eventdate.EventCalculatedDays.Add(eventcalculatedday);
                         }
-
-                        
-                        eventdate.EventCalculatedDays.Add(eventcalculatedday);
                     }
-
                     eventdate.SingleDays = period.isEachDayOwnEvent; //TO CHECK
 
                     //EventDateAdditionalInfo
@@ -461,10 +466,10 @@ namespace LTSAPI.Parser
                 foreach (var publishersetting in ltsevent.publisherSettings)
                 {
                     EventPublisher eventpublisher = new EventPublisher();
-                    eventpublisher.PublisherRID = publishersetting.publisher.rid;
-                    eventpublisher.Ranc = publishersetting.importanceRate;
-                    eventpublisher.Publish = ParsePublisherStatus(publishersetting.publicationStatus);
-                    eventpublisher.PublicationStatus = publishersetting.publicationStatus;
+                    eventpublisher.PublisherRID = publishersetting != null && publishersetting.publisher != null ? publishersetting.publisher.rid : null;
+                    eventpublisher.Ranc = publishersetting != null ? publishersetting.importanceRate : null;
+                    eventpublisher.Publish = ParsePublisherStatus(publishersetting != null ? publishersetting.publicationStatus : null);
+                    eventpublisher.PublicationStatus = publishersetting != null ? publishersetting.publicationStatus : null;
 
                     eventv1.EventPublisher.Add(eventpublisher);
                 }
@@ -642,7 +647,7 @@ namespace LTSAPI.Parser
             return eventv1;
         }
 
-        private static int ParsePublisherStatus(string status)
+        private static int ParsePublisherStatus(string? status)
         {            
             switch (status)
             {
