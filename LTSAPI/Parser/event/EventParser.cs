@@ -181,7 +181,7 @@ namespace LTSAPI.Parser
                 Detail detail = new Detail();
 
                 detail.Language = language;
-                detail.Title = ltsevent.name[language];
+                detail.Title = ltsevent.name != null ? ltsevent.name[language] : null;
 
                 if (ltsevent.descriptions != null)
                 {
@@ -204,8 +204,6 @@ namespace LTSAPI.Parser
 
 
                 //eventv1.EventAdditionalInfos.TryAddOrUpdate(language, eventadditionalinfos);
-
-
 
             }
 

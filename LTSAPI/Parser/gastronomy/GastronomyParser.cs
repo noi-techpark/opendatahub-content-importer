@@ -53,7 +53,7 @@ namespace LTSAPI.Parser
 
             gastronomy.Id = ltsgastronomy.rid;
             gastronomy._Meta = new Metadata() { Id = gastronomy.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "odhactivitypoi", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
-            gastronomy.Source = "lts";
+            gastronomy.Source = "lts";            
 
             gastronomy.LastChange = ltsgastronomy.lastUpdate;
             gastronomy.Active = ltsgastronomy.isActive;
@@ -68,7 +68,7 @@ namespace LTSAPI.Parser
             }
 
             gastronomy.LocationInfo = new LocationInfoLinked();
-
+            
             //Tourism Organization, District
             gastronomy.TourismorganizationId = ltsgastronomy.tourismOrganization != null ? ltsgastronomy.tourismOrganization.rid : null;
             gastronomy.LocationInfo.DistrictInfo = ltsgastronomy.district != null && !String.IsNullOrEmpty(ltsgastronomy.district.rid) ? new DistrictInfoLinked() { Id = ltsgastronomy.district.rid } : null;

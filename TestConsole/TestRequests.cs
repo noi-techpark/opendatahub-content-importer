@@ -70,7 +70,7 @@ namespace TestConsole
         public static async Task RetrieveAndParseEvent(Settings settings)
         {
             LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
-            var ltsevent = await ltsapi.EventDetailRequest("FA440216CBFD4DAD99389D584FC83B81", null);
+            var ltsevent = await ltsapi.EventDetailRequest("3DF8D707E8F042919AB18E8F1ABBC552", null);
             var parsedevent = EventParser.ParseLTSEventV1(ltsevent.FirstOrDefault().Value<JObject>(), false);
         }
 
