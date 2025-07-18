@@ -18,7 +18,7 @@ namespace LTSAPI.Parser
 {
     public class VenueParser
     {
-        public static VenueV2 ParseLTSVenue(
+        public static VenueV2 ParseLTSVenueV2(
             JObject webcamlts, bool reduced
             )
         {
@@ -26,7 +26,7 @@ namespace LTSAPI.Parser
             {
                 LTSVenue ltsvenue = webcamlts.ToObject<LTSVenue>();
 
-                return ParseLTSVenue(ltsvenue.data, reduced);
+                return ParseLTSVenueV2(ltsvenue.data, reduced);
             }
             catch(Exception ex)
             {           
@@ -34,11 +34,59 @@ namespace LTSAPI.Parser
             }          
         }
 
-        public static VenueV2 ParseLTSVenue(
+        public static VenueV2 ParseLTSVenueV2(
             LTSVenueData ltsvenue, 
             bool reduced)
         {
             VenueV2 venue = new VenueV2();
+
+            venue.Id = ltsvenue.rid;
+            venue._Meta = new Metadata() { Id = venue.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "odhactivitypoi", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
+            venue.Source = "lts";
+
+            venue.LastChange = ltsvenue.lastUpdate;
+
+            //Tourism Organization
+
+            //Detail Information
+
+            //Contact Information
+
+            //Opening Schedules
+
+            //Tags
+
+            //Images
+
+            //Videos
+
+            //Custom Fields
+
+
+            return venue;
+        }
+
+        public static VenueLinked ParseLTSVenueV1(
+            JObject webcamlts, bool reduced
+            )
+        {
+            try
+            {
+                LTSVenue ltsvenue = webcamlts.ToObject<LTSVenue>();
+
+                return ParseLTSVenueV1(ltsvenue.data, reduced);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public static VenueLinked ParseLTSVenueV1(
+            LTSVenueData ltsvenue,
+            bool reduced)
+        {
+            VenueLinked venue = new VenueLinked();
 
             venue.Id = ltsvenue.rid;
             venue._Meta = new Metadata() { Id = venue.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "odhactivitypoi", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
