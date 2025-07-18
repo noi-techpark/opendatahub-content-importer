@@ -315,9 +315,9 @@ namespace LTSAPI
             return await LTSRequestMethod("activities", _parameters, _getallpages);
         }
 
-        public async Task<List<JObject>> ActivityDetailRequest(string id, IDictionary<string, string>? _parameters, bool _getallpages)
+        public async Task<List<JObject>> ActivityDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("activities/" + id, _parameters, _getallpages);
+            return await LTSRequestMethod("activities/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> ActivityDeletedRequest(IDictionary<string, string>? _parameters, bool _getallpages)

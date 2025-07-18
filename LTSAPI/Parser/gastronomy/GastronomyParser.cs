@@ -377,6 +377,7 @@ namespace LTSAPI.Parser
                     imagepoi.ValidTo = image.applicableEndDate;
                     imagepoi.ListPosition = image.order;
 
+                    //could be added to ImageTag
                     //"isMainImage": true,
                     //"isCurrentMainImage": true,
 
