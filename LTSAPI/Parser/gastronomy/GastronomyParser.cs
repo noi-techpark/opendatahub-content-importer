@@ -452,7 +452,7 @@ namespace LTSAPI.Parser
             gastronomy.SyncSourceInterface = "gastronomicdata";
             gastronomy.SyncUpdateMode = "full";
 
-            gastronomy.Shortname = gastronomy.Detail != null ? gastronomy.Detail.FirstOrDefault().Value.Title : null;
+            gastronomy.Shortname = gastronomy.Detail != null && gastronomy.Detail.Count() > 0 ? gastronomy.Detail.FirstOrDefault().Value.Title : null;
 
             return gastronomy;
         }
