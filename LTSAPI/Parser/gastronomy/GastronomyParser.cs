@@ -250,6 +250,14 @@ namespace LTSAPI.Parser
                                 contactinfoadditional.Phonenumber = ltsgastronomycontact.phone != null ? ltsgastronomycontact.phone : null;
                                 contactinfoadditional.Url = ltsgastronomycontact.website != null ? ltsgastronomycontact.website : null;
 
+                                var cnamedict = ltsgastronomycontact.address.name2 != null ? ltsgastronomycontact.address.name2 : null;
+                                if(cnamedict != null)
+                                {
+                                    var cname = cnamedict.GetValue(language);
+                                    if(cname != null)
+                                        contactinfoadditional.Givenname = cname;
+                                }
+
                                 additionalcontact.ContactInfos = contactinfoadditional;
                                 additionalcontactlist.Add(additionalcontact);
                             }
