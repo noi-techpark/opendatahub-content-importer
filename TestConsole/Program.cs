@@ -128,6 +128,6 @@ LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
 
 await TestRequests.RetrieveAndParseEvent(settings);
 
-//await TestRequests.RetrieveAndParseGastronomy(settings);
+await TestRequests.RetrieveAndParseGastronomy(settings);
 
 Console.ReadLine();

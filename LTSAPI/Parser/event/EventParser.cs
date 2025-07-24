@@ -261,6 +261,8 @@ namespace LTSAPI.Parser
 
                     imagepoi.ImageName = image.rid;
                     imagepoi.ImageTitle = image.name;
+                    imagepoi.ImageTitle.RemoveNullValues();
+
                     imagepoi.CopyRight = image.copyright;
                     imagepoi.License = image.license;
 
