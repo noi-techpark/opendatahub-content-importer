@@ -1,4 +1,8 @@
-﻿using LTSAPI;
+﻿// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using LTSAPI;
 using HGVApi;
 using GenericHelper;
 using Microsoft.Extensions.Configuration;

@@ -6,6 +6,8 @@ SPDX-License-Identifier: CC0-1.0
 
 # Open Data Hub DataImport Content Api V2
 
+[![REUSE Compliance](https://github.com/noi-techpark/opendatahub-content-api/actions/workflows/reuse.yml/badge.svg)](https://github.com/noi-techpark/opendatahub-docs/wiki/REUSE#badges)
+
 ## Main Components
 
 ### DataImport Api

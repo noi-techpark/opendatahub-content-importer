@@ -1,4 +1,10 @@
-﻿# Open Data Hub - LTS Api Importer Library
+﻿<!--
+SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
+# Open Data Hub - LTS Api Importer Library
 
 A library created for the Open Data Hub Project to import tourism data from the LTS Rest Api.
 

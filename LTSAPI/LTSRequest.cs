@@ -1,4 +1,8 @@
-﻿using System.Net;
+﻿// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Text;
