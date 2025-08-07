@@ -65,10 +65,16 @@ namespace LTSAPI.Parser
             gastronomy.HasLanguage = new List<string>();
 
             //Let's find out for which languages there is a name (To check if gastronomies without name exists)
-            foreach (var desc in ltsgastronomy.contacts.FirstOrDefault().address.name)
+            if (ltsgastronomy.contacts.Any(x => x.type != null))
             {
-                if (!String.IsNullOrEmpty(desc.Value))
-                    gastronomy.HasLanguage.Add(desc.Key);
+                foreach (var gcontacts in ltsgastronomy.contacts)
+                {
+                    foreach (var desc in gcontacts.address.name)
+                    {
+                        if (!String.IsNullOrEmpty(desc.Value) && !gastronomy.HasLanguage.Contains(desc.Key))
+                            gastronomy.HasLanguage.Add(desc.Key);
+                    }
+                }
             }
 
             gastronomy.LocationInfo = new LocationInfoLinked();
