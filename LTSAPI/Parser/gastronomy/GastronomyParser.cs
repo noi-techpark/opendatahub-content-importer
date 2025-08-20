@@ -420,7 +420,7 @@ namespace LTSAPI.Parser
                 gpsinfo.Gpstype = "position";
                 gpsinfo.Latitude = ltsgastronomy.position.coordinates[1];
                 gpsinfo.Longitude = ltsgastronomy.position.coordinates[0];
-                gpsinfo.Altitude = ltsgastronomy.position.altitude;
+                gpsinfo.Altitude = ltsgastronomy.position.altitude;                
                 gpsinfo.AltitudeUnitofMeasure = "m";
 
                 gastronomy.GpsInfo.Add(gpsinfo);

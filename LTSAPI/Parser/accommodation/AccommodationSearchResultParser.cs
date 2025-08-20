@@ -204,7 +204,7 @@ namespace LTSAPI.Parser
         {
             if (!String.IsNullOrEmpty(roominfo) && roominfo != "null")
             {
-                //roominfo aufteilen Form 1Z-1P-18 oder 1Z-2P-18.18,1Z-1P-18
+                //roominfo has format 1Z-1P-18 oder 1Z-2P-18.18,1Z-1P-18
                 List<LTSAvailabilitySearchRequestRoomoption> myroominfo = new List<LTSAvailabilitySearchRequestRoomoption>();
 
                 var zimmerinfos = roominfo.Split('|');
@@ -225,6 +225,12 @@ namespace LTSAPI.Parser
 
                     var myroom = new LTSAvailabilitySearchRequestRoomoption();
                     myroom.id = roomseq;
+
+                    int.TryParse(myspittetzimmerinfo[0], out int roomtype);
+
+                    if(roomtype != 0)
+                        myroom.typeBitmask = roomtype;
+
                     myroom.guests = mypersons.Count;
                     
                     myroom.guestAges = mypersons;
