@@ -228,8 +228,12 @@ namespace LTSAPI.Parser
 
                     int.TryParse(myspittetzimmerinfo[0], out int roomtype);
 
-                    if(roomtype != 0)
+                    if(roomtype == 0)
+                        myroom.typeBitmask = 15;
+                    else
                         myroom.typeBitmask = roomtype;
+
+
 
                     myroom.guests = mypersons.Count;
                     
