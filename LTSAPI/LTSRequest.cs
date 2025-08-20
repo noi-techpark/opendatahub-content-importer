@@ -917,6 +917,15 @@ namespace LTSAPI
         public string endDate { get; set; }
         public LTSAvailabilitySearchRequestPaging paging { get; set; }
         public ICollection<LTSAvailabilitySearchRequestRoomoption> roomOptions { get; set; }
+
+        public string language { get; set; }
+        public bool onlyBookable { get; set; }
+        public bool checkAvailabilityStatus { get; set; }
+
+        /// <summary>
+        /// Indicates a specific meal plan as OTA MPT Code Type 1=allInclusive,3=bed&breakfast, 10=fullBoard, 12=halfBoard, 14=roomOnly
+        /// </summary>
+        public List<int> mealPlanCodes { get; set; }
     }   
 
     public class LTSAvailabilitySearchRequestPaging
@@ -928,6 +937,10 @@ namespace LTSAPI
     public class LTSAvailabilitySearchRequestRoomoption
     {
         public int id { get; set; }
+        /// <summary>
+        /// "Bitmask for the roomType:  1=(0001) room, 2 (0010)=apartment, 4 (0100)=pitch, 8 (1000)=dorm , example 3 equals to 0011 and means 1 OR 2 (room or apartment)"
+        /// </summary>
+        public int typeBitmask { get; set; }
         public int guests { get; set; }
         public ICollection<int> guestAges { get; set; }
     }
