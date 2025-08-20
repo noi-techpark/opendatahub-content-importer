@@ -69,7 +69,7 @@ namespace LTSAPI
  
                 using (var client = new HttpClient())
                 {
-                    client.Timeout = TimeSpan.FromSeconds(30);
+                    client.Timeout = TimeSpan.FromSeconds(60);
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(credentials.username + ":" + credentials.password)));
                     client.DefaultRequestHeaders.Add("X-LTS-ClientID", credentials.ltsclientid);
 
