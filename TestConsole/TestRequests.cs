@@ -6,12 +6,16 @@ using DataImportHelper;
 using GenericHelper;
 using LTSAPI;
 using LTSAPI.Parser;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -101,8 +105,34 @@ namespace TestConsole
             //var parsedgastro2 = GastronomyParser.ParseLTSGastronomy(ltsgastro2.FirstOrDefault().Value<JObject>(), false, null);
         }
 
+        public static async Task RetrieveAndParseActivity(Settings settings, List<string> idlist)
+        {
+            foreach (var id in idlist)
+            {
+                LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+                var ltsactivity = await ltsapi.ActivityDetailRequest(id.ToUpper(), null);
+                var parsedactivity = ActivityParser.ParseLTSActivity(ltsactivity.FirstOrDefault().Value<JObject>(), false);
 
+                // Create settings with alphabetical property ordering
+                var serializersettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new AlphabeticalContractResolver(),
+                    Formatting = Formatting.Indented // Optional: for pretty printing
+                };
 
+                Console.WriteLine(JsonConvert.SerializeObject(parsedactivity, serializersettings));
+            }
+        }
+
+        public static async Task RetrieveAndParsePoi(Settings settings, List<string> idlist)
+        {
+            foreach(var id in idlist)
+            {
+                LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+                var ltspoi = await ltsapi.PoiDetailRequest(id.ToUpper(), null);
+                var parsedpoi = PointofInterestParser.ParseLTSPointofInterest(ltspoi.FirstOrDefault().Value<JObject>(), false);
+            }            
+        }
 
         #region Accommodation Helper
 
@@ -158,5 +188,15 @@ namespace TestConsole
         }
 
         #endregion
+    }
+
+    public class AlphabeticalContractResolver : DefaultContractResolver
+    {
+        protected override IList<Newtonsoft.Json.Serialization.JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+        {
+            return base.CreateProperties(type, memberSerialization)
+                .OrderBy(p => p.PropertyName)
+                .ToList();
+        }
     }
 }

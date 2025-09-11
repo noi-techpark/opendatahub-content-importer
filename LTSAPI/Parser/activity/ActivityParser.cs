@@ -51,7 +51,7 @@ namespace LTSAPI.Parser
             odhactivitypoi.LastChange = ltsactivity.lastUpdate;
 
             //Tourism Organization
-            odhactivitypoi.TourismorganizationId = ltsactivity.tourismOrganization.rid;
+            odhactivitypoi.TourismorganizationId = ltsactivity.tourismOrganization != null ? ltsactivity.tourismOrganization.rid : null;
 
             //Rating
             if (ltsactivity.rating != null)
@@ -315,7 +315,8 @@ namespace LTSAPI.Parser
             if (ltsactivity.mountainBike.officialWayNumber != null)
                 ltsmapping.Add("mountainBike.officialWayNumber", ltsactivity.mountainBike.officialWayNumber.ToString());
             
-            ltsmapping.Add("tourismOrganization", ltsactivity.tourismOrganization.rid);
+            if(ltsactivity.tourismOrganization != null)
+                ltsmapping.Add("tourismOrganization", ltsactivity.tourismOrganization.rid);
 
             if (ltsactivity.rating != null && ltsactivity.rating.viaFerrataTechnique != null)
                 ltsmapping.Add("rating.viaFerrataTechnique", ltsactivity.rating.viaFerrataTechnique);
