@@ -279,8 +279,8 @@ namespace LTSAPI.Parser
                     foreach (var openingtimelts in operationschedulelts.openingTimes)
                     {
                         OperationScheduleTime openingtime = new OperationScheduleTime();
-                        openingtime.Start = TimeSpan.Parse(openingtimelts.startDate);
-                        openingtime.End = TimeSpan.Parse(openingtimelts.endDate);
+                        openingtime.Start = TimeSpan.Parse(openingtimelts.startTime);
+                        openingtime.End = TimeSpan.Parse(openingtimelts.endTime);
                         openingtime.Monday = openingtimelts.isMondayOpen;
                         openingtime.Tuesday = openingtimelts.isTuesdayOpen;
                         openingtime.Wednesday = openingtimelts.isWednesdayOpen;
@@ -305,9 +305,9 @@ namespace LTSAPI.Parser
             ltsmapping.Add("hasCopyright", ltspoi.hasCopyright.ToString());
             ltsmapping.Add("favouriteFor", ltspoi.favouriteFor);
 
-            if(ltspoi.district == null && !String.IsNullOrEmpty(ltspoi.district.rid))
+            if(ltspoi.district != null && !String.IsNullOrEmpty(ltspoi.district.rid))
                 ltsmapping.Add("district", ltspoi.district.rid);
-            if (ltspoi.tourismOrganization == null && !String.IsNullOrEmpty(ltspoi.tourismOrganization.rid))
+            if (ltspoi.tourismOrganization != null && !String.IsNullOrEmpty(ltspoi.tourismOrganization.rid))
                 ltsmapping.Add("tourismOrganization", ltspoi.tourismOrganization.rid);
 
             //Adding the Location to the Contactinfo

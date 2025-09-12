@@ -134,11 +134,12 @@ LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
 
 //await TestRequests.RetrieveAndParseGastronomy(settings);
 
-await TestRequests.RetrieveAndParseActivity(settings, new List<string>() { "78e3fd5425aed454defe139567ded23c", 
+await TestRequests.RetrieveAndParseActivity(settings, new List<string>() {
+    "bbc8e274833cf08839bda485b388defd",
+    "78e3fd5425aed454defe139567ded23c", 
     "078883a95ff002aa246b5b99da5bb9d7", 
     "3e8499b295a047012deaf51b7b438a73",
-    "076e3f8e307ec7a6c533c6b97efbaad1",
-    "bbc8e274833cf08839bda485b388defd",
+    "076e3f8e307ec7a6c533c6b97efbaad1",    
     "7fc702d2210cfaa29e153ba9ab5abb62"
 } );
 

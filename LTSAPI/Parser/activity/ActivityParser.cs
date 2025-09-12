@@ -187,8 +187,8 @@ namespace LTSAPI.Parser
                     foreach (var openingtimelts in operationschedulelts.openingTimes)
                     {
                         OperationScheduleTime openingtime = new OperationScheduleTime();
-                        openingtime.Start = TimeSpan.Parse(openingtimelts.startDate);
-                        openingtime.End = TimeSpan.Parse(openingtimelts.endDate);
+                        openingtime.Start = TimeSpan.Parse(openingtimelts.startTime);
+                        openingtime.End = TimeSpan.Parse(openingtimelts.endTime);
                         openingtime.Monday = openingtimelts.isMondayOpen;
                         openingtime.Tuesday = openingtimelts.isTuesdayOpen;
                         openingtime.Wednesday = openingtimelts.isWednesdayOpen;

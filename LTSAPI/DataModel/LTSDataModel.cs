@@ -902,7 +902,7 @@ namespace LTSAPI
     {
         public string rid { get; set; }
     }
-
+      
     public class LTSOpeningschedule
     {
         public string startDate { get; set; }
@@ -1108,7 +1108,20 @@ namespace LTSAPI
         public string validFrom { get; set; }
         public string validTo { get; set; }
         public IDictionary<string, string> name { get; set; }
-        public LTSOpeningschedule[] openingTimes { get; set; }
+        public LTSOpeningtimeActivityPoi[] openingTimes { get; set; }
+    }
+
+    public class LTSOpeningtimeActivityPoi
+    {
+        public string startTime { get; set; }
+        public string endTime { get; set; }
+        public bool isMondayOpen { get; set; }
+        public bool isTuesdayOpen { get; set; }
+        public bool isWednesdayOpen { get; set; }
+        public bool isThursdayOpen { get; set; }
+        public bool isFridayOpen { get; set; }
+        public bool isSaturdayOpen { get; set; }
+        public bool isSundayOpen { get; set; }
     }
 
     public class LTSTag
