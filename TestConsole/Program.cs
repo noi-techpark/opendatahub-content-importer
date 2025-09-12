@@ -134,7 +134,26 @@ LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
 
 //await TestRequests.RetrieveAndParseGastronomy(settings);
 
-await TestRequests.RetrieveAndParseActivity(settings, new List<string>() { "78e3fd5425aed454defe139567ded23c" } );
+await TestRequests.RetrieveAndParseActivity(settings, new List<string>() { "78e3fd5425aed454defe139567ded23c", 
+    "078883a95ff002aa246b5b99da5bb9d7", 
+    "3e8499b295a047012deaf51b7b438a73",
+    "076e3f8e307ec7a6c533c6b97efbaad1",
+    "bbc8e274833cf08839bda485b388defd",
+    "7fc702d2210cfaa29e153ba9ab5abb62"
+} );
+
+await TestRequests.RetrieveAndParsePoi(settings, new List<string>() { "3931c131da2923919105e403361a4cd0",
+    "3361695701cccc5de1effcba2487245c",
+    "a152e6bb003c43ae896cc0d146e3ff61",
+    "3b52338426f97883a80b9de864af24f9",
+    "deb6e4f3bdcc3855eb2bf1f5a98a7f8e",
+    "5a22f7103afd3511e3ee39c200aec6d3",
+    "c32182c4c64a23181cb6b127047ecfda",
+    "94d61c67ecf788f21b6793e4262e04d7",
+    "663a538db4088691ea0abbf04239db4d"
+});
+
+
 
 
 Console.ReadLine();

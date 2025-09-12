@@ -131,6 +131,15 @@ namespace TestConsole
                 LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
                 var ltspoi = await ltsapi.PoiDetailRequest(id.ToUpper(), null);
                 var parsedpoi = PointofInterestParser.ParseLTSPointofInterest(ltspoi.FirstOrDefault().Value<JObject>(), false);
+
+                // Create settings with alphabetical property ordering
+                var serializersettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new AlphabeticalContractResolver(),
+                    Formatting = Formatting.Indented // Optional: for pretty printing
+                };
+
+                Console.WriteLine(JsonConvert.SerializeObject(parsedpoi, serializersettings));
             }            
         }
 
