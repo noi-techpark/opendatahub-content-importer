@@ -78,16 +78,16 @@ namespace LTSAPI.Parser
 
                 detail.Language = language;
                 detail.Title = ltspoi.name[language];
-                detail.BaseText = ltspoi.descriptions.Where(x => x.type == "generalDescription").FirstOrDefault()?.description.GetValue(language);
-                detail.IntroText = ltspoi.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description.GetValue(language);
-                detail.ParkingInfo = ltspoi.descriptions.Where(x => x.type == "howToPark").FirstOrDefault()?.description.GetValue(language);
-                detail.GetThereText = ltspoi.descriptions.Where(x => x.type == "howToArrive").FirstOrDefault()?.description.GetValue(language);
+                detail.BaseText = ltspoi.descriptions != null ? ltspoi.descriptions.Where(x => x.type == "generalDescription").FirstOrDefault()?.description.GetValue(language) : null;
+                detail.IntroText = ltspoi.descriptions != null ? ltspoi.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description.GetValue(language) : null;
+                detail.ParkingInfo = ltspoi.descriptions != null ? ltspoi.descriptions.Where(x => x.type == "howToPark").FirstOrDefault()?.description.GetValue(language) : null;
+                detail.GetThereText = ltspoi.descriptions != null ? ltspoi.descriptions.Where(x => x.type == "howToArrive").FirstOrDefault()?.description.GetValue(language) : null;
                 
-                detail.AdditionalText = ltspoi.descriptions.Where(x => x.type == "routeDescription").FirstOrDefault()?.description.GetValue(language);
-                detail.PublicTransportationInfo = ltspoi.descriptions.Where(x => x.type == "publicTransport").FirstOrDefault()?.description.GetValue(language);
-                detail.AuthorTip = ltspoi.descriptions.Where(x => x.type == "authorTip").FirstOrDefault()?.description.GetValue(language);
-                detail.SafetyInfo = ltspoi.descriptions.Where(x => x.type == "safetyInstructions").FirstOrDefault()?.description.GetValue(language);
-                detail.EquipmentInfo = ltspoi.descriptions.Where(x => x.type == "equipment").FirstOrDefault()?.description.GetValue(language);
+                detail.AdditionalText = ltspoi.descriptions != null ? ltspoi.descriptions.Where(x => x.type == "routeDescription").FirstOrDefault()?.description.GetValue(language) : null;
+                detail.PublicTransportationInfo = ltspoi.descriptions != null ? ltspoi.descriptions.Where(x => x.type == "publicTransport").FirstOrDefault()?.description.GetValue(language) : null;
+                detail.AuthorTip = ltspoi.descriptions != null ? ltspoi.descriptions.Where(x => x.type == "authorTip").FirstOrDefault()?.description.GetValue(language) : null;
+                detail.SafetyInfo = ltspoi.descriptions != null ? ltspoi.descriptions.Where(x => x.type == "safetyInstructions").FirstOrDefault()?.description.GetValue(language) : null;
+                detail.EquipmentInfo = ltspoi.descriptions != null ? ltspoi.descriptions.Where(x => x.type == "equipment").FirstOrDefault()?.description.GetValue(language) : null;
 
                 odhactivitypoi.Detail.TryAddOrUpdate(language, detail);
             }
@@ -98,14 +98,14 @@ namespace LTSAPI.Parser
                 ContactInfos contactinfo = new ContactInfos();
 
                 contactinfo.Language = language;
-                contactinfo.CompanyName = ltspoi.contact.address.name.GetValue(language);
-                contactinfo.Address = ltspoi.contact.address.street.GetValue(language);
-                contactinfo.City = ltspoi.contact.address.city.GetValue(language);
-                contactinfo.CountryCode = ltspoi.contact.address.country;
-                contactinfo.ZipCode = ltspoi.contact.address.postalCode;
-                contactinfo.Email = ltspoi.contact.email;
-                contactinfo.Phonenumber = ltspoi.contact.phone;
-                contactinfo.Url = ltspoi.contact.website;
+                contactinfo.CompanyName = ltspoi.contact != null && ltspoi.contact.address != null ? ltspoi.contact.address.name.GetValue(language) : null;
+                contactinfo.Address = ltspoi.contact != null && ltspoi.contact.address != null ? ltspoi.contact.address.street.GetValue(language) : null;
+                contactinfo.City = ltspoi.contact != null && ltspoi.contact.address != null ? ltspoi.contact.address.city.GetValue(language) : null;
+                contactinfo.CountryCode = ltspoi.contact != null && ltspoi.contact.address != null ? ltspoi.contact.address.country : null;
+                contactinfo.ZipCode = ltspoi.contact != null && ltspoi.contact.address != null ? ltspoi.contact.address.postalCode : null;
+                contactinfo.Email = ltspoi.contact != null ? ltspoi.contact.email : null;
+                contactinfo.Phonenumber = ltspoi.contact != null ? ltspoi.contact.phone : null;
+                contactinfo.Url = ltspoi.contact != null ? ltspoi.contact.website : null;
 
                 if(ltspoi.location != null && ltspoi.location.ContainsKey(language))
                 {
@@ -264,38 +264,42 @@ namespace LTSAPI.Parser
 
 
             //Opening Schedules
-            List<OperationSchedule> operationschedulelist = new List<OperationSchedule>();            
-            foreach (var operationschedulelts in ltspoi.openingSchedules)
+            List<OperationSchedule> operationschedulelist = new List<OperationSchedule>();
+
+            if (ltspoi.openingSchedules != null)
             {
-                OperationSchedule operationschedule = new OperationSchedule();
-                operationschedule.Start = Convert.ToDateTime(operationschedulelts.validFrom);
-                operationschedule.Stop = Convert.ToDateTime(operationschedulelts.validTo);
-                operationschedule.Type = ParserHelper.ParseOperationScheduleType(operationschedulelts.type);
-                operationschedule.OperationscheduleName = operationschedulelts.name;
-
-                if (operationschedulelts.openingTimes != null)
+                foreach (var operationschedulelts in ltspoi.openingSchedules)
                 {
-                    operationschedule.OperationScheduleTime = new List<OperationScheduleTime>();
-                    foreach (var openingtimelts in operationschedulelts.openingTimes)
-                    {
-                        OperationScheduleTime openingtime = new OperationScheduleTime();
-                        openingtime.Start = TimeSpan.Parse(openingtimelts.startTime);
-                        openingtime.End = TimeSpan.Parse(openingtimelts.endTime);
-                        openingtime.Monday = openingtimelts.isMondayOpen;
-                        openingtime.Tuesday = openingtimelts.isTuesdayOpen;
-                        openingtime.Wednesday = openingtimelts.isWednesdayOpen;
-                        openingtime.Thursday = openingtimelts.isThursdayOpen;
-                        openingtime.Friday = openingtimelts.isFridayOpen;
-                        openingtime.Saturday = openingtimelts.isSaturdayOpen;
-                        openingtime.Sunday = openingtimelts.isSundayOpen;
-                        openingtime.State = 2;
-                        openingtime.Timecode = 1;
+                    OperationSchedule operationschedule = new OperationSchedule();
+                    operationschedule.Start = Convert.ToDateTime(operationschedulelts.validFrom);
+                    operationschedule.Stop = Convert.ToDateTime(operationschedulelts.validTo);
+                    operationschedule.Type = ParserHelper.ParseOperationScheduleType(operationschedulelts.type);
+                    operationschedule.OperationscheduleName = operationschedulelts.name;
 
-                        operationschedule.OperationScheduleTime.Add(openingtime);
+                    if (operationschedulelts.openingTimes != null)
+                    {
+                        operationschedule.OperationScheduleTime = new List<OperationScheduleTime>();
+                        foreach (var openingtimelts in operationschedulelts.openingTimes)
+                        {
+                            OperationScheduleTime openingtime = new OperationScheduleTime();
+                            openingtime.Start = TimeSpan.Parse(openingtimelts.startTime);
+                            openingtime.End = TimeSpan.Parse(openingtimelts.endTime);
+                            openingtime.Monday = openingtimelts.isMondayOpen;
+                            openingtime.Tuesday = openingtimelts.isTuesdayOpen;
+                            openingtime.Wednesday = openingtimelts.isWednesdayOpen;
+                            openingtime.Thursday = openingtimelts.isThursdayOpen;
+                            openingtime.Friday = openingtimelts.isFridayOpen;
+                            openingtime.Saturday = openingtimelts.isSaturdayOpen;
+                            openingtime.Sunday = openingtimelts.isSundayOpen;
+                            openingtime.State = 2;
+                            openingtime.Timecode = 1;
+
+                            operationschedule.OperationScheduleTime.Add(openingtime);
+                        }
                     }
-                }                
+                }
+                odhactivitypoi.OperationSchedule = operationschedulelist;
             }
-            odhactivitypoi.OperationSchedule = operationschedulelist;
 
             //Mapping
             var ltsmapping = new Dictionary<string, string>();

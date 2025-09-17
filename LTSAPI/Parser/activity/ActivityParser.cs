@@ -136,17 +136,17 @@ namespace LTSAPI.Parser
                 Detail detail = new Detail();
 
                 detail.Language = language;
-                detail.Title = ltsactivity.name[language];
-                detail.BaseText = ltsactivity.descriptions.Where(x => x.type == "generalDescription").FirstOrDefault()?.description.GetValue(language);
-                detail.IntroText = ltsactivity.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description.GetValue(language);
-                detail.ParkingInfo = ltsactivity.descriptions.Where(x => x.type == "howToPark").FirstOrDefault()?.description.GetValue(language);
-                detail.GetThereText = ltsactivity.descriptions.Where(x => x.type == "howToArrive").FirstOrDefault()?.description.GetValue(language);
+                detail.Title = ltsactivity.name != null ? ltsactivity.name[language] : null;
+                detail.BaseText = ltsactivity.descriptions != null ? ltsactivity.descriptions.Where(x => x.type == "generalDescription").FirstOrDefault()?.description.GetValue(language) : null;
+                detail.IntroText = ltsactivity.descriptions != null ? ltsactivity.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description.GetValue(language) : null;
+                detail.ParkingInfo = ltsactivity.descriptions != null ? ltsactivity.descriptions.Where(x => x.type == "howToPark").FirstOrDefault()?.description.GetValue(language) : null;
+                detail.GetThereText = ltsactivity.descriptions != null ? ltsactivity.descriptions.Where(x => x.type == "howToArrive").FirstOrDefault()?.description.GetValue(language) : null;
                 
-                detail.AdditionalText = ltsactivity.descriptions.Where(x => x.type == "routeDescription").FirstOrDefault()?.description.GetValue(language);
-                detail.PublicTransportationInfo = ltsactivity.descriptions.Where(x => x.type == "publicTransport").FirstOrDefault()?.description.GetValue(language);
-                detail.AuthorTip = ltsactivity.descriptions.Where(x => x.type == "authorTip").FirstOrDefault()?.description.GetValue(language);
-                detail.SafetyInfo = ltsactivity.descriptions.Where(x => x.type == "safetyInstructions").FirstOrDefault()?.description.GetValue(language);
-                detail.EquipmentInfo = ltsactivity.descriptions.Where(x => x.type == "equipment").FirstOrDefault()?.description.GetValue(language);
+                detail.AdditionalText = ltsactivity.descriptions != null ? ltsactivity.descriptions.Where(x => x.type == "routeDescription").FirstOrDefault()?.description.GetValue(language) : null;
+                detail.PublicTransportationInfo = ltsactivity.descriptions != null ? ltsactivity.descriptions.Where(x => x.type == "publicTransport").FirstOrDefault()?.description.GetValue(language) : null;
+                detail.AuthorTip = ltsactivity.descriptions != null ? ltsactivity.descriptions.Where(x => x.type == "authorTip").FirstOrDefault()?.description.GetValue(language) : null;
+                detail.SafetyInfo = ltsactivity.descriptions != null ? ltsactivity.descriptions.Where(x => x.type == "safetyInstructions").FirstOrDefault()?.description.GetValue(language) : null;
+                detail.EquipmentInfo = ltsactivity.descriptions != null ? ltsactivity.descriptions.Where(x => x.type == "equipment").FirstOrDefault()?.description.GetValue(language) : null;
 
                 odhactivitypoi.Detail.TryAddOrUpdate(language, detail);
             }
@@ -157,14 +157,14 @@ namespace LTSAPI.Parser
                 ContactInfos contactinfo = new ContactInfos();
 
                 contactinfo.Language = language;
-                contactinfo.CompanyName = ltsactivity.contact.address.name.GetValue(language);
-                contactinfo.Address = ltsactivity.contact.address.street.GetValue(language);
-                contactinfo.City = ltsactivity.contact.address.city.GetValue(language);
-                contactinfo.CountryCode = ltsactivity.contact.address.country;
-                contactinfo.ZipCode = ltsactivity.contact.address.postalCode;
-                contactinfo.Email = ltsactivity.contact.email;
-                contactinfo.Phonenumber = ltsactivity.contact.phone;
-                contactinfo.Url = ltsactivity.contact.website;
+                contactinfo.CompanyName = ltsactivity.contact != null && ltsactivity.contact.address != null ? ltsactivity.contact.address.name.GetValue(language) : null;
+                contactinfo.Address = ltsactivity.contact != null && ltsactivity.contact.address != null ? ltsactivity.contact.address.street.GetValue(language) : null;
+                contactinfo.City = ltsactivity.contact != null && ltsactivity.contact.address != null ? ltsactivity.contact.address.city.GetValue(language) : null;
+                contactinfo.CountryCode = ltsactivity.contact != null && ltsactivity.contact.address != null ? ltsactivity.contact.address.country : null;
+                contactinfo.ZipCode = ltsactivity.contact != null && ltsactivity.contact.address != null ? ltsactivity.contact.address.postalCode : null;
+                contactinfo.Email = ltsactivity.contact != null ? ltsactivity.contact.email : null;
+                contactinfo.Phonenumber = ltsactivity.contact != null ? ltsactivity.contact.phone : null;
+                contactinfo.Url = ltsactivity.contact != null ? ltsactivity.contact.website : null;
 
                 if (ltsactivity.location != null && ltsactivity.location.ContainsKey(language))
                 {
@@ -176,38 +176,41 @@ namespace LTSAPI.Parser
 
             //Opening Schedules
             List<OperationSchedule> operationschedulelist = new List<OperationSchedule>();
-            foreach (var operationschedulelts in ltsactivity.openingSchedules)
+
+            if (ltsactivity.openingSchedules != null)
             {
-                OperationSchedule operationschedule = new OperationSchedule();
-                operationschedule.Start = Convert.ToDateTime(operationschedulelts.validFrom);
-                operationschedule.Stop = Convert.ToDateTime(operationschedulelts.validTo);
-                operationschedule.Type = ParserHelper.ParseOperationScheduleType(operationschedulelts.type);
-                operationschedule.OperationscheduleName = operationschedulelts.name;
-
-                if (operationschedulelts.openingTimes != null)
+                foreach (var operationschedulelts in ltsactivity.openingSchedules)
                 {
-                    operationschedule.OperationScheduleTime = new List<OperationScheduleTime>();
-                    foreach (var openingtimelts in operationschedulelts.openingTimes)
-                    {
-                        OperationScheduleTime openingtime = new OperationScheduleTime();
-                        openingtime.Start = TimeSpan.Parse(openingtimelts.startTime);
-                        openingtime.End = TimeSpan.Parse(openingtimelts.endTime);
-                        openingtime.Monday = openingtimelts.isMondayOpen;
-                        openingtime.Tuesday = openingtimelts.isTuesdayOpen;
-                        openingtime.Wednesday = openingtimelts.isWednesdayOpen;
-                        openingtime.Thursday = openingtimelts.isThursdayOpen;
-                        openingtime.Friday = openingtimelts.isFridayOpen;
-                        openingtime.Saturday = openingtimelts.isSaturdayOpen;
-                        openingtime.Sunday = openingtimelts.isSundayOpen;
-                        openingtime.State = 2;
-                        openingtime.Timecode = 1;
+                    OperationSchedule operationschedule = new OperationSchedule();
+                    operationschedule.Start = Convert.ToDateTime(operationschedulelts.validFrom);
+                    operationschedule.Stop = Convert.ToDateTime(operationschedulelts.validTo);
+                    operationschedule.Type = ParserHelper.ParseOperationScheduleType(operationschedulelts.type);
+                    operationschedule.OperationscheduleName = operationschedulelts.name;
 
-                        operationschedule.OperationScheduleTime.Add(openingtime);
+                    if (operationschedulelts.openingTimes != null)
+                    {
+                        operationschedule.OperationScheduleTime = new List<OperationScheduleTime>();
+                        foreach (var openingtimelts in operationschedulelts.openingTimes)
+                        {
+                            OperationScheduleTime openingtime = new OperationScheduleTime();
+                            openingtime.Start = TimeSpan.Parse(openingtimelts.startTime);
+                            openingtime.End = TimeSpan.Parse(openingtimelts.endTime);
+                            openingtime.Monday = openingtimelts.isMondayOpen;
+                            openingtime.Tuesday = openingtimelts.isTuesdayOpen;
+                            openingtime.Wednesday = openingtimelts.isWednesdayOpen;
+                            openingtime.Thursday = openingtimelts.isThursdayOpen;
+                            openingtime.Friday = openingtimelts.isFridayOpen;
+                            openingtime.Saturday = openingtimelts.isSaturdayOpen;
+                            openingtime.Sunday = openingtimelts.isSundayOpen;
+                            openingtime.State = 2;
+                            openingtime.Timecode = 1;
+
+                            operationschedule.OperationScheduleTime.Add(openingtime);
+                        }
                     }
                 }
+                odhactivitypoi.OperationSchedule = operationschedulelist;
             }
-            odhactivitypoi.OperationSchedule = operationschedulelist;
-
             //Tags
             if (ltsactivity.tags != null && ltsactivity.tags.Count() > 0)
             {
@@ -328,9 +331,9 @@ namespace LTSAPI.Parser
             if (ltsactivity.rating != null && ltsactivity.rating.singletrackScale != null)
                 ltsmapping.Add("rating.singletrackScale", ltsactivity.rating.singletrackScale);
 
-            if (ltsactivity.liftPointCard.pointsSingleTripUp != null)
+            if (ltsactivity.liftPointCard != null && ltsactivity.liftPointCard.pointsSingleTripUp != null)
                 ltsmapping.Add("liftPointCard.pointsSingleTripUp", ltsactivity.liftPointCard.pointsSingleTripUp.ToString());
-            if (ltsactivity.liftPointCard.pointsSingleTripDown != null)
+            if (ltsactivity.liftPointCard != null && ltsactivity.liftPointCard.pointsSingleTripDown != null)
                 ltsmapping.Add("liftPointCard.pointsSingleTripDown", ltsactivity.liftPointCard.pointsSingleTripDown.ToString());
 
             if (ltsactivity.hasLift != null)
