@@ -59,7 +59,7 @@ namespace LTSAPI.Parser
                 }
             }     
 
-            odhactivitypoi.LocationInfo.DistrictInfo = new DistrictInfoLinked() { Id = ltspoi.district.rid };
+            odhactivitypoi.LocationInfo.DistrictInfo = ltspoi.district != null ? new DistrictInfoLinked() { Id = ltspoi.district.rid } : null;
 
             odhactivitypoi.HasLanguage = new List<string>();
             odhactivitypoi.Detail = new Dictionary<string, Detail>();

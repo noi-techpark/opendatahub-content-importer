@@ -124,11 +124,11 @@ namespace TestConsole
             }
         }
 
-        public static async Task RetrieveAndParsePoi(Settings settings, List<string> idlist)
+        public static async Task RetrieveAndParsePoi(Settings settings, List<string> idlist, LTSCredentials ltscreds)
         {
             foreach(var id in idlist)
             {
-                LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+                LtsApi ltsapi = new LtsApi(ltscreds);
                 var ltspoi = await ltsapi.PoiDetailRequest(id.ToUpper(), null);
                 var parsedpoi = PointofInterestParser.ParseLTSPointofInterest(ltspoi.FirstOrDefault().Value<JObject>(), false);
 
