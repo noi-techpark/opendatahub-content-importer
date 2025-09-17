@@ -69,21 +69,21 @@ namespace LTSAPI.Parser
             //GetoData
             if(ltsactivity.geoData != null)
             {
-                odhactivitypoi.AltitudeDifference = ltsactivity.geoData.altitudeDifference.difference;
-                odhactivitypoi.AltitudeHighestPoint = ltsactivity.geoData.altitudeDifference.max;
-                odhactivitypoi.AltitudeLowestPoint = ltsactivity.geoData.altitudeDifference.min;
+                odhactivitypoi.AltitudeDifference = ltsactivity.geoData.altitudeDifference != null ? ltsactivity.geoData.altitudeDifference.difference : null;
+                odhactivitypoi.AltitudeHighestPoint = ltsactivity.geoData.altitudeDifference != null ? ltsactivity.geoData.altitudeDifference.max : null;
+                odhactivitypoi.AltitudeLowestPoint = ltsactivity.geoData.altitudeDifference != null ? ltsactivity.geoData.altitudeDifference.min : null;
 
-                odhactivitypoi.AltitudeSumDown = ltsactivity.geoData.distance.sumDown;
-                odhactivitypoi.AltitudeSumUp = ltsactivity.geoData.distance.sumUp;
+                odhactivitypoi.AltitudeSumDown = ltsactivity.geoData.distance != null ? ltsactivity.geoData.distance.sumDown : null;
+                odhactivitypoi.AltitudeSumUp = ltsactivity.geoData.distance != null ? ltsactivity.geoData.distance.sumUp : null;
                 //odhactivitypoi.DistanceDuration = ltsactivity.geoData.distance.duration; //TODO Convert To Double
 
-                odhactivitypoi.DistanceLength = ltsactivity.geoData.distance.length;
+                odhactivitypoi.DistanceLength = ltsactivity.geoData.distance != null ? ltsactivity.geoData.distance.length : null;
 
                 odhactivitypoi.Exposition = ltsactivity.geoData.exposition != null ? ltsactivity.geoData.exposition.Select(x => x.value).ToList() : null;
 
                 foreach(var position in ltsactivity.geoData.positions)
                 {
-                    if (position != null && position.coordinates.Length == 2)
+                    if (position != null && position.coordinates != null && position.coordinates.Length == 2)
                     {
                         if (odhactivitypoi.GpsInfo == null)
                             odhactivitypoi.GpsInfo = new List<GpsInfo>();
@@ -99,20 +99,23 @@ namespace LTSAPI.Parser
                     }
                 }
 
-                foreach (var ltsgpstrack in ltsactivity.geoData.gpsTracks)
+                if (ltsactivity.geoData.gpsTracks != null)
                 {
-                    if (ltsgpstrack != null)
+                    foreach (var ltsgpstrack in ltsactivity.geoData.gpsTracks)
                     {
-                        if (odhactivitypoi.GpsTrack == null)
-                            odhactivitypoi.GpsTrack = new List<GpsTrack>();
+                        if (ltsgpstrack != null)
+                        {
+                            if (odhactivitypoi.GpsTrack == null)
+                                odhactivitypoi.GpsTrack = new List<GpsTrack>();
 
-                        GpsTrack gpstrack = new GpsTrack();
-                        gpstrack.Type = ParserHelper.GetGpxTrackType(ltsgpstrack.file.url);
-                        gpstrack.GpxTrackDesc = ParserHelper.GetGpxTrackDescription(ltsgpstrack.file.url);
-                        gpstrack.GpxTrackUrl = ltsgpstrack.file.url;
-                        gpstrack.Format = "gpx";
-              
-                        odhactivitypoi.GpsTrack.Add(gpstrack);
+                            GpsTrack gpstrack = new GpsTrack();
+                            gpstrack.Type = ParserHelper.GetGpxTrackType(ltsgpstrack.file.url);
+                            gpstrack.GpxTrackDesc = ParserHelper.GetGpxTrackDescription(ltsgpstrack.file.url);
+                            gpstrack.GpxTrackUrl = ltsgpstrack.file.url;
+                            gpstrack.Format = "gpx";
+
+                            odhactivitypoi.GpsTrack.Add(gpstrack);
+                        }
                     }
                 }
             }

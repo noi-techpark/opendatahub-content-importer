@@ -26,7 +26,7 @@ Settings settings = new Settings(config);
 
 //var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
 
-LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+//LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
 //var qs = new LTSQueryStrings()
 //{
 //    page_size = 1,
@@ -141,7 +141,18 @@ await TestRequests.RetrieveAndParseActivity(settings, new List<string>() {
     "3e8499b295a047012deaf51b7b438a73",
     "076e3f8e307ec7a6c533c6b97efbaad1",    
     "7fc702d2210cfaa29e153ba9ab5abb62"
-} );
+} ,
+settings.LtsCredentials);
+
+await TestRequests.RetrieveAndParseActivity(settings, new List<string>() {
+    "bbc8e274833cf08839bda485b388defd",
+    "78e3fd5425aed454defe139567ded23c",
+    "078883a95ff002aa246b5b99da5bb9d7",
+    "3e8499b295a047012deaf51b7b438a73",
+    "076e3f8e307ec7a6c533c6b97efbaad1",
+    "7fc702d2210cfaa29e153ba9ab5abb62"
+},
+settings.LtsCredentialsOpen);
 
 await TestRequests.RetrieveAndParsePoi(settings, new List<string>() { "3931c131da2923919105e403361a4cd0",
     "3361695701cccc5de1effcba2487245c",

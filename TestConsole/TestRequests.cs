@@ -105,11 +105,11 @@ namespace TestConsole
             //var parsedgastro2 = GastronomyParser.ParseLTSGastronomy(ltsgastro2.FirstOrDefault().Value<JObject>(), false, null);
         }
 
-        public static async Task RetrieveAndParseActivity(Settings settings, List<string> idlist)
+        public static async Task RetrieveAndParseActivity(Settings settings, List<string> idlist, LTSCredentials ltscreds)
         {
             foreach (var id in idlist)
             {
-                LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+                LtsApi ltsapi = new LtsApi(ltscreds);
                 var ltsactivity = await ltsapi.ActivityDetailRequest(id.ToUpper(), null);
                 var parsedactivity = ActivityParser.ParseLTSActivity(ltsactivity.FirstOrDefault().Value<JObject>(), false);
 
