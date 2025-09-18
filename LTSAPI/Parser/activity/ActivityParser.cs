@@ -84,23 +84,8 @@ namespace LTSAPI.Parser
 
                 odhactivitypoi.Exposition = ltsactivity.geoData.exposition != null ? ltsactivity.geoData.exposition.Select(x => x.value).ToList() : null;
 
-                foreach(var position in ltsactivity.geoData.positions)
-                {
-                    if (position != null && position.coordinates != null && position.coordinates.Length == 2)
-                    {
-                        if (odhactivitypoi.GpsInfo == null)
-                            odhactivitypoi.GpsInfo = new List<GpsInfo>();
-
-                        GpsInfo gpsinfo = new GpsInfo();
-                        gpsinfo.Gpstype = "position";  //TODO transforms the positions.category from lts to opendatahub gpstype
-                        gpsinfo.Latitude = position.coordinates[1];
-                        gpsinfo.Longitude = position.coordinates[0];
-                        gpsinfo.Altitude = position.altitude;
-                        gpsinfo.AltitudeUnitofMeasure = "m";
-
-                        odhactivitypoi.GpsInfo.Add(gpsinfo);
-                    }
-                }
+                //Create GPSInfo like before
+                odhactivitypoi.GpsInfo = ParserHelper.GetGpsInfoForActivityPoi(ltsactivity.geoData.positions);                
 
                 if (ltsactivity.geoData.gpsTracks != null)
                 {
@@ -112,6 +97,7 @@ namespace LTSAPI.Parser
                                 odhactivitypoi.GpsTrack = new List<GpsTrack>();
 
                             GpsTrack gpstrack = new GpsTrack();
+                            gpstrack.Id = ltsgpstrack.rid;                            
                             gpstrack.Type = ParserHelper.GetGpxTrackType(ltsgpstrack.file.url);
                             gpstrack.GpxTrackDesc = ParserHelper.GetGpxTrackDescription(ltsgpstrack.file.url);
                             gpstrack.GpxTrackUrl = ltsgpstrack.file.url;
@@ -218,14 +204,44 @@ namespace LTSAPI.Parser
                 odhactivitypoi.OperationSchedule = operationschedulelist;
             }
             //Tags
+            //Fill also LTSTags, and the Tags object for the TINs
             if (ltsactivity.tags != null && ltsactivity.tags.Count() > 0)
             {
                 if (odhactivitypoi.TagIds == null)
                     odhactivitypoi.TagIds = new List<string>();
 
+                if (odhactivitypoi.Tags == null)
+                    odhactivitypoi.Tags = new List<Tags>();
+
+                if (odhactivitypoi.LTSTags == null)
+                    odhactivitypoi.LTSTags = new List<LTSTagsLinked>();
+
                 foreach (var tag in ltsactivity.tags)
                 {
                     odhactivitypoi.TagIds.Add(tag.rid);
+
+                    Tags tagdata = new Tags();
+                    tagdata.Id = tag.rid;
+
+
+                    LTSTagsLinked ltstag = new LTSTagsLinked();                    
+                    ltstag.LTSRID = tag.rid;
+
+                    if(tag.properties != null && tag.properties.Count() > 0)
+                    {
+                        ltstag.LTSTins = new List<LTSTins>();
+                        tagdata.TagEntry = new Dictionary<string, string>();
+
+                        foreach (var tin in tag.properties)
+                        {
+                            ltstag.LTSTins.Add(new LTSTins() { LTSRID = tin.rid });                            
+                        }
+
+                        tagdata.TagEntry.TryAddOrUpdate("tagproperties", String.Join(",", tag.properties.Select(x => x.rid).ToList()));
+                    }
+
+                    odhactivitypoi.LTSTags.Add(ltstag);
+                    odhactivitypoi.Tags.Add(tagdata);
                 }
             }
 

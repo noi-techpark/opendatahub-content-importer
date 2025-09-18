@@ -134,17 +134,45 @@ namespace LTSAPI.Parser
             }
 
             //Tags
-            if(ltspoi.tags != null && ltspoi.tags.Count() > 0)
+            //Fill also LTSTags, and the Tags object for the TINs
+            if (ltspoi.tags != null && ltspoi.tags.Count() > 0)
             {
                 if (odhactivitypoi.TagIds == null)
                     odhactivitypoi.TagIds = new List<string>();
 
+                if (odhactivitypoi.Tags == null)
+                    odhactivitypoi.Tags = new List<Tags>();
+
+                if (odhactivitypoi.LTSTags == null)
+                    odhactivitypoi.LTSTags = new List<LTSTagsLinked>();
+
                 foreach (var tag in ltspoi.tags)
                 {
                     odhactivitypoi.TagIds.Add(tag.rid);
+
+                    Tags tagdata = new Tags();
+                    tagdata.Id = tag.rid;
+
+
+                    LTSTagsLinked ltstag = new LTSTagsLinked();
+                    ltstag.LTSRID = tag.rid;
+
+                    if (tag.properties != null && tag.properties.Count() > 0)
+                    {
+                        ltstag.LTSTins = new List<LTSTins>();
+                        tagdata.TagEntry = new Dictionary<string, string>();
+
+                        foreach (var tin in tag.properties)
+                        {
+                            ltstag.LTSTins.Add(new LTSTins() { LTSRID = tin.rid });
+                        }
+                    }
+
+                    odhactivitypoi.LTSTags.Add(ltstag);
+                    odhactivitypoi.Tags.Add(tagdata);
                 }
             }
-            
+
             //Images
             //Images (Main Images with ValidFrom)
             List<ImageGallery> imagegallerylist = new List<ImageGallery>();
