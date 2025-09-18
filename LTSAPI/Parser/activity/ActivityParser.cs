@@ -366,6 +366,21 @@ namespace LTSAPI.Parser
             odhactivitypoi.BikeTransport = ltsactivity.hasBikeTransport;
             odhactivitypoi.CopyrightChecked = ltsactivity.hasCopyright;
 
+            //Novelty
+            if (ltsactivity.novelty != null)
+            {
+                foreach(var novelty in ltsactivity.novelty)
+                {
+                    if(!String.IsNullOrEmpty(novelty.Value))
+                    {
+                        if (odhactivitypoi.AdditionalPoiInfos == null)
+                            odhactivitypoi.AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
+
+                        odhactivitypoi.AdditionalPoiInfos.TryAddOrUpdate(novelty.Key, new AdditionalPoiInfos() { Language = novelty.Key, Novelty = novelty.Value });
+                    }
+                }
+            }
+
 
             //code
             //specificNumberCode

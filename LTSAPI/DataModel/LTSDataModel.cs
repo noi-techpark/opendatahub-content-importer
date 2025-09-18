@@ -992,7 +992,7 @@ namespace LTSAPI
         public bool isPossibleRunToValley { get; set; }
         public GenericLTSRidResult snowType { get; set; }
         public LTSSnowpark snowPark { get; set; }
-        public IDictionary<string, string> novelty { get; set; }
+        public IDictionary<string, string>? novelty { get; set; }
         public LTSActivityOpeningschedule[] openingSchedules { get; set; }
         public LTSActivityPoiContact contact { get; set; }
         public LTSGeodata geoData { get; set; }
@@ -1179,7 +1179,7 @@ namespace LTSAPI
         //public IDictionary<string, string> novelty { get; set; }
 
         //Works only with object because it can contain null / [] / Dictionary<string,string>()
-        public object novelty { get; set; }
+        public IDictionary<string, string>? novelty { get; set; }
         public GenericLTSRidResult[] beacons { get; set; }
     }
 

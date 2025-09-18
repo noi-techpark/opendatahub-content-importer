@@ -333,6 +333,21 @@ namespace LTSAPI.Parser
                 odhactivitypoi.OperationSchedule = operationschedulelist;
             }
 
+            //Novelty
+            if (ltspoi.novelty != null)
+            {
+                foreach (var novelty in ltspoi.novelty)
+                {
+                    if (!String.IsNullOrEmpty(novelty.Value))
+                    {
+                        if (odhactivitypoi.AdditionalPoiInfos == null)
+                            odhactivitypoi.AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
+
+                        odhactivitypoi.AdditionalPoiInfos.TryAddOrUpdate(novelty.Key, new AdditionalPoiInfos() { Language = novelty.Key, Novelty = novelty.Value });
+                    }
+                }
+            }
+
             //Mapping
             var ltsmapping = new Dictionary<string, string>();
             ltsmapping.Add("rid", ltspoi.rid);
