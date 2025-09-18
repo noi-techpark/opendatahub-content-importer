@@ -228,6 +228,7 @@ namespace LTSAPI.Parser
                         contactinfo.Address = ltsevent.contact != null && ltsevent.contact.address != null && ltsevent.contact.address.street != null ? ltsevent.contact.address.street.GetValue(language) : null;
                         contactinfo.City = ltsevent.contact != null && ltsevent.contact.address != null && ltsevent.contact.address.city != null ? ltsevent.contact.address.city.GetValue(language) : null;
                         contactinfo.CountryCode = ltsevent.contact != null && ltsevent.contact.address != null && ltsevent.contact.address.country != null ? ltsevent.contact.address.country : null;
+                        contactinfo.CountryName = ParserHelper.GetCountryName(language);
                         contactinfo.ZipCode = ltsevent.contact != null && ltsevent.contact.address != null && ltsevent.contact.address.postalCode != null ? ltsevent.contact.address.postalCode : null;
                     }
                     contactinfo.Email = ltsevent.contact != null && ltsevent.contact.email != null ? ltsevent.contact.email.GetValue(language) : null;
@@ -272,7 +273,7 @@ namespace LTSAPI.Parser
 
                     imagepoi.ImageUrl = image.url;
                     imagepoi.IsInGallery = true;
-
+                    
                     imagepoi.Height = image.heightPixel;
                     imagepoi.Width = image.widthPixel;
                     imagepoi.ValidFrom = image.applicableStartDate;
@@ -644,7 +645,15 @@ namespace LTSAPI.Parser
 
             eventv1.Mapping.TryAddOrUpdate("lts", ltsmapping);
 
-            eventv1.Shortname = eventv1.Detail != null && eventv1.Detail.Count() > 0 ? eventv1.Detail.FirstOrDefault().Value.Title : null;
+
+            //Take the German Shortname if available otherwise use the first available
+            eventv1.Shortname = eventv1.Detail != null && eventv1.Detail.Count() > 0 ?
+                        eventv1.Detail.ContainsKey("de") && String.IsNullOrEmpty(eventv1.Detail["de"].Title) ? eventv1.Detail["de"].Title :
+                    eventv1.Detail.FirstOrDefault().Value.Title
+                    : null;
+
+            //Resort HasLanguage
+            eventv1.HasLanguage = eventv1.HasLanguage.OrderBy(x => x).ToList();
 
             //Check if success for parsing should be logged
             //Console.WriteLine(JsonConvert.SerializeObject(new { operation = "event.parse", id = ltsevent.rid, source = "lts", success = true, error = false));

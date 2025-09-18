@@ -404,16 +404,13 @@ namespace LTSAPI.Parser
                         //De Adress
                         mydetail.Language = lang;
 
-                        mydetail.CountryCode = contactinfo.address.country;
+                        mydetail.CountryCode = contactinfo.address.country;                        
                         mydetail.City = contactinfo.address.city[lang];
                         mydetail.Email = contactinfo.email;
                         mydetail.Name = contactinfo.address.name[lang];
 
                         mydetail.Firstname = contactinfo.address.name2[lang];
                         mydetail.Lastname = contactinfo.address.name2[lang];
-
-                        if (lang == "de")
-                            accommodationlinked.Shortname = contactinfo.address.name[lang];
 
                         mydetail.Street = contactinfo.address.street[lang];
 
@@ -465,7 +462,7 @@ namespace LTSAPI.Parser
                     //DE
                     mainimage.ImageUrl = image.url;
                     mainimage.IsInGallery = true;
-
+                    mainimage.ImageSource = "lts";
                     mainimage.Height = image.heightPixel;
                     mainimage.Width = image.widthPixel;
                     mainimage.ValidFrom = image.applicableStartDate;
@@ -518,7 +515,7 @@ namespace LTSAPI.Parser
                         mygallery.ImageUrl = image.url;
                         mygallery.ListPosition = image.order;
                         mygallery.IsInGallery = image.isActive;
-
+                        mygallery.ImageSource = "lts";
                         mygallery.Height = image.heightPixel;
                         mygallery.Width = image.widthPixel;
 
@@ -633,6 +630,15 @@ namespace LTSAPI.Parser
                 }
             }
             accommodationlinked.RatePlan = rateplans;
+
+            //Take the German Shortname if available otherwise use the first available
+            accommodationlinked.Shortname = accommodationlinked.AccoDetail != null && accommodationlinked.AccoDetail.Count() > 0 ?
+                        accommodationlinked.AccoDetail.ContainsKey("de") && String.IsNullOrEmpty(accommodationlinked.AccoDetail["de"].Name) ? accommodationlinked.AccoDetail["de"].Name :
+                    accommodationlinked.AccoDetail.FirstOrDefault().Value.Name
+                    : null;
+
+            //Resort HasLanguage
+            accommodationlinked.HasLanguage = accommodationlinked.HasLanguage.OrderBy(x => x).ToList();            
 
 
             //Special Operations for IDM

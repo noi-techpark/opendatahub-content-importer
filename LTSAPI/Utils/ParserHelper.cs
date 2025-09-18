@@ -45,6 +45,19 @@ namespace LTSAPI.Utils
                 return "";
         }
 
+        public static string GetCountryName(string language) => language switch
+        {
+            "de" => "Italien",
+            "it" => "Italia",
+            "en" => "Italy",
+            "cs" => "Itálie",
+            "pl" => "Włochy",
+            "nl" => "Italië",
+            "fr" => "Italie",
+            "ru" => "Италия",
+            "_" => "Italy"
+        };
+
         #endregion
 
         #region Accommodation

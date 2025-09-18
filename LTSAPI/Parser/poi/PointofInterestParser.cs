@@ -3,6 +3,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using DataModel;
+using GenericHelper;
+using LTSAPI.Utils;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -10,8 +13,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LTSAPI.Utils;
-using GenericHelper;
 
 namespace LTSAPI.Parser
 {    
@@ -102,6 +103,7 @@ namespace LTSAPI.Parser
                 contactinfo.Address = ltspoi.contact != null && ltspoi.contact.address != null ? ltspoi.contact.address.street.GetValue(language) : null;
                 contactinfo.City = ltspoi.contact != null && ltspoi.contact.address != null ? ltspoi.contact.address.city.GetValue(language) : null;
                 contactinfo.CountryCode = ltspoi.contact != null && ltspoi.contact.address != null ? ltspoi.contact.address.country : null;
+                contactinfo.CountryName = ParserHelper.GetCountryName(language);
                 contactinfo.ZipCode = ltspoi.contact != null && ltspoi.contact.address != null ? ltspoi.contact.address.postalCode : null;
                 contactinfo.Email = ltspoi.contact != null ? ltspoi.contact.email : null;
                 contactinfo.Phonenumber = ltspoi.contact != null ? ltspoi.contact.phone : null;
@@ -157,7 +159,7 @@ namespace LTSAPI.Parser
                     imagepoi.ImageTitle = image.name;
                     imagepoi.CopyRight = image.copyright;
                     imagepoi.License = image.license;
-
+                    imagepoi.ImageSource = "lts";
                     imagepoi.ImageUrl = image.url;
                     imagepoi.IsInGallery = true;                    
 
@@ -296,6 +298,8 @@ namespace LTSAPI.Parser
 
                             operationschedule.OperationScheduleTime.Add(openingtime);
                         }
+
+                        operationschedulelist.Add(operationschedule);
                     }
                 }
                 odhactivitypoi.OperationSchedule = operationschedulelist;
@@ -320,6 +324,19 @@ namespace LTSAPI.Parser
             //ltsmapping.Add("location_en", ltspoi.location["en"]);
 
             odhactivitypoi.Mapping.TryAddOrUpdate("lts", ltsmapping);
+
+            //Take the German Shortname if available otherwise use the first available
+            odhactivitypoi.Shortname = odhactivitypoi.Detail != null && odhactivitypoi.Detail.Count() > 0 ?
+                        odhactivitypoi.Detail.ContainsKey("de") && String.IsNullOrEmpty(odhactivitypoi.Detail["de"].Title) ? odhactivitypoi.Detail["de"].Title :
+                    odhactivitypoi.Detail.FirstOrDefault().Value.Title
+                    : null;
+
+            //Resort HasLanguage
+            odhactivitypoi.HasLanguage = odhactivitypoi.HasLanguage.OrderBy(x => x).ToList();
+
+            //Sync Information
+            odhactivitypoi.SyncSourceInterface = "activitydata";
+            odhactivitypoi.SyncUpdateMode = "full";
 
             return odhactivitypoi;
         }

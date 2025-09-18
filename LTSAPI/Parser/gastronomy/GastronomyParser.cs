@@ -197,6 +197,7 @@ namespace LTSAPI.Parser
                     contactinfo.Address = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().address.street.GetValue(language);
                     contactinfo.City = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().address.city.GetValue(language);
                     contactinfo.CountryCode = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().address.country;
+                    contactinfo.CountryName = ParserHelper.GetCountryName(language);
                     contactinfo.ZipCode = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().address.postalCode;
                     contactinfo.Email = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().email;
                     contactinfo.Phonenumber = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().phone;
@@ -209,6 +210,7 @@ namespace LTSAPI.Parser
                     contactinfo.Address = ltsgastronomy.contacts.FirstOrDefault().address.street != null ? ltsgastronomy.contacts.FirstOrDefault().address.street.GetValue(language) : null;
                     contactinfo.City = ltsgastronomy.contacts.FirstOrDefault().address.city != null ? ltsgastronomy.contacts.FirstOrDefault().address.city.GetValue(language) : null;
                     contactinfo.CountryCode = ltsgastronomy.contacts.FirstOrDefault().address.country != null ? ltsgastronomy.contacts.FirstOrDefault().address.country : null;
+                    contactinfo.CountryName = ParserHelper.GetCountryName(language);
                     contactinfo.ZipCode = ltsgastronomy.contacts.FirstOrDefault().postalCode != null ? ltsgastronomy.contacts.FirstOrDefault().address.postalCode : null;
                     contactinfo.Email = ltsgastronomy.contacts.FirstOrDefault().email != null ? ltsgastronomy.contacts.FirstOrDefault().email : null;
                     contactinfo.Phonenumber = ltsgastronomy.contacts.FirstOrDefault().phone != null ? ltsgastronomy.contacts.FirstOrDefault().phone : null;
@@ -255,6 +257,7 @@ namespace LTSAPI.Parser
                                 contactinfoadditional.Address = ltsgastronomycontact.address.street != null ? ltsgastronomycontact.address.street.GetValue(language) : null;
                                 contactinfoadditional.City = ltsgastronomycontact.address.city != null ? ltsgastronomycontact.address.city.GetValue(language) : null;
                                 contactinfoadditional.CountryCode = ltsgastronomycontact.address.country != null ? ltsgastronomycontact.address.country : null;
+                                contactinfoadditional.CountryName = ParserHelper.GetCountryName(language);
                                 contactinfoadditional.ZipCode = ltsgastronomycontact.postalCode != null ? ltsgastronomycontact.address.postalCode : null;
                                 contactinfoadditional.Email = ltsgastronomycontact.email != null ? ltsgastronomycontact.email : null;
                                 contactinfoadditional.Phonenumber = ltsgastronomycontact.phone != null ? ltsgastronomycontact.phone : null;
@@ -384,6 +387,7 @@ namespace LTSAPI.Parser
                     imagepoi.ImageName = image.rid;
                     imagepoi.ImageTitle = image.name;
                     imagepoi.ImageTitle.RemoveNullValues();
+                    imagepoi.ImageSource = "lts";
 
                     imagepoi.CopyRight = image.copyright;
                     imagepoi.License = image.license;
@@ -455,14 +459,21 @@ namespace LTSAPI.Parser
             gastronomy.Mapping.TryAddOrUpdate("lts", ltsmapping);
 
 
-            //TODO add the IDM Tags
+            //add the IDM Tags
             gastronomy.SmgTags = new List<string>();
             gastronomy.SmgTags.Add("gastronomy");
 
             gastronomy.SyncSourceInterface = "gastronomicdata";
             gastronomy.SyncUpdateMode = "full";
 
-            gastronomy.Shortname = gastronomy.Detail != null && gastronomy.Detail.Count() > 0 ? gastronomy.Detail.FirstOrDefault().Value.Title : null;
+            //Take the German Shortname if available otherwise use the first available
+            gastronomy.Shortname = gastronomy.Detail != null && gastronomy.Detail.Count() > 0 ? 
+                        gastronomy.Detail.ContainsKey("de") && String.IsNullOrEmpty(gastronomy.Detail["de"].Title) ? gastronomy.Detail["de"].Title :
+                    gastronomy.Detail.FirstOrDefault().Value.Title 
+                    : null;
+
+            //Resort HasLanguage
+            gastronomy.HasLanguage = gastronomy.HasLanguage.OrderBy(x => x).ToList();
 
             return gastronomy;
         }

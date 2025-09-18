@@ -64,6 +64,9 @@ namespace LTSAPI.Parser
                     Stamina = ltsactivity.rating.stamina.ToString(),
                     Technique = ltsactivity.rating.technique.ToString()
                 };
+
+                if (ltsactivity.rating.difficulty != null)
+                    odhactivitypoi.Difficulty = ltsactivity.rating.difficulty.ToString();
             }
 
             //GetoData
@@ -161,6 +164,7 @@ namespace LTSAPI.Parser
                 contactinfo.Address = ltsactivity.contact != null && ltsactivity.contact.address != null ? ltsactivity.contact.address.street.GetValue(language) : null;
                 contactinfo.City = ltsactivity.contact != null && ltsactivity.contact.address != null ? ltsactivity.contact.address.city.GetValue(language) : null;
                 contactinfo.CountryCode = ltsactivity.contact != null && ltsactivity.contact.address != null ? ltsactivity.contact.address.country : null;
+                contactinfo.CountryName = ParserHelper.GetCountryName(language);
                 contactinfo.ZipCode = ltsactivity.contact != null && ltsactivity.contact.address != null ? ltsactivity.contact.address.postalCode : null;
                 contactinfo.Email = ltsactivity.contact != null ? ltsactivity.contact.email : null;
                 contactinfo.Phonenumber = ltsactivity.contact != null ? ltsactivity.contact.phone : null;
@@ -208,6 +212,8 @@ namespace LTSAPI.Parser
                             operationschedule.OperationScheduleTime.Add(openingtime);
                         }
                     }
+
+                    operationschedulelist.Add(operationschedule);
                 }
                 odhactivitypoi.OperationSchedule = operationschedulelist;
             }
@@ -237,6 +243,7 @@ namespace LTSAPI.Parser
                     imagepoi.ImageTitle = image.name;
                     imagepoi.CopyRight = image.copyright;
                     imagepoi.License = image.license;
+                    imagepoi.ImageSource = "lts";
 
                     imagepoi.ImageUrl = image.url;
                     imagepoi.IsInGallery = true;
@@ -279,6 +286,58 @@ namespace LTSAPI.Parser
             odhactivitypoi.ImageGallery = imagegallerylist;
 
             //Videos
+            if (ltsactivity.videos != null)
+            {
+                odhactivitypoi.VideoItems = new Dictionary<string, ICollection<VideoItems>>();
+
+                List<VideoItems> allvideoitems = new List<VideoItems>();
+                List<string> videolanguages = new List<string>();
+
+                foreach (var videos in ltsactivity.videos)
+                {
+                    foreach (var lang in videos.url.Where(x => x.Value != null).Select(x => x.Key))
+                    {
+                        videolanguages.Add(lang);
+                        VideoItems videoitem = new VideoItems();
+                        videoitem.Active = videos.isActive;
+                        videoitem.Bitrate = null;
+                        videoitem.CopyRight = videos.copyright;
+                        videoitem.Definition = null;
+                        videoitem.Duration = null;
+                        videoitem.Height = null;
+                        videoitem.Language = lang;
+                        videoitem.License = videos.license;
+                        videoitem.LicenseHolder = null;
+                        videoitem.Name = videos.genre.rid;
+                        videoitem.Resolution = null;
+                        videoitem.StreamingSource = videos.url[lang];
+                        videoitem.Url = videos.htmlSnippet[lang];
+                        videoitem.VideoDesc = null;
+                        videoitem.VideoSource = videos.source;
+                        videoitem.VideoTitle = videos.name[lang];
+                        videoitem.VideoType = videos.genre.rid;
+                        videoitem.Width = null;
+
+                        allvideoitems.Add(videoitem);
+                    }
+                }
+                foreach (var lang in videolanguages)
+                {
+                    odhactivitypoi.VideoItems.TryAddOrUpdate(lang, allvideoitems.Where(x => x.Language == lang).ToList());
+                }
+            }
+
+
+            //Areas
+            if (ltsactivity.areas != null)
+            {
+                odhactivitypoi.AreaId = new HashSet<string>();
+
+                foreach (var area in ltsactivity.areas)
+                {
+                    odhactivitypoi.AreaId.Add(area.rid);
+                }
+            }            
 
             //Custom Fields
             odhactivitypoi.Active = ltsactivity.isActive;
@@ -313,13 +372,23 @@ namespace LTSAPI.Parser
             var ltsmapping = new Dictionary<string, string>();
             ltsmapping.Add("rid", ltsactivity.rid);
             ltsmapping.Add("code", ltsactivity.code);
-            ltsmapping.Add("specificNumberCode", ltsactivity.specificNumberCode);
-            ltsmapping.Add("order", ltsactivity.order.ToString());
+
+            if (!String.IsNullOrEmpty(ltsactivity.specificNumberCode))
+            {
+                ltsmapping.Add("specificNumberCode", ltsactivity.specificNumberCode);
+                odhactivitypoi.Number = ltsactivity.specificNumberCode;
+            }
+            if(ltsactivity.order != null)
+                ltsmapping.Add("order", ltsactivity.order.ToString());
             
             if(ltsactivity.mountainBike.isPermitted != null)
                 ltsmapping.Add("mountainBike.isPermitted", ltsactivity.mountainBike.isPermitted.ToString());
             if (ltsactivity.mountainBike.officialWayNumber != null)
+            {
                 ltsmapping.Add("mountainBike.officialWayNumber", ltsactivity.mountainBike.officialWayNumber.ToString());
+                odhactivitypoi.WayNumber = ltsactivity.mountainBike.officialWayNumber;
+            }
+                
             
             if(ltsactivity.tourismOrganization != null)
                 ltsmapping.Add("tourismOrganization", ltsactivity.tourismOrganization.rid);
@@ -360,6 +429,19 @@ namespace LTSAPI.Parser
             ltsmapping.Add("favouriteFor", ltsactivity.favouriteFor);
 
             odhactivitypoi.Mapping.TryAddOrUpdate("lts", ltsmapping);
+
+            //Take the German Shortname if available otherwise use the first available
+            odhactivitypoi.Shortname = odhactivitypoi.Detail != null && odhactivitypoi.Detail.Count() > 0 ?
+                        odhactivitypoi.Detail.ContainsKey("de") && String.IsNullOrEmpty(odhactivitypoi.Detail["de"].Title) ? odhactivitypoi.Detail["de"].Title :
+                    odhactivitypoi.Detail.FirstOrDefault().Value.Title
+                    : null;
+
+            //Resort HasLanguage
+            odhactivitypoi.HasLanguage = odhactivitypoi.HasLanguage.OrderBy(x => x).ToList();
+
+            //Sync Information
+            odhactivitypoi.SyncSourceInterface = "activitydata";
+            odhactivitypoi.SyncUpdateMode = "full";
 
             return odhactivitypoi;
         }
