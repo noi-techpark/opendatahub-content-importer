@@ -185,6 +185,7 @@ namespace LTSAPI.Parser
                     
                     imagepoi.ImageName = image.rid;
                     imagepoi.ImageTitle = image.name;
+                    imagepoi.ImageTitle.RemoveNullValues();
                     imagepoi.CopyRight = image.copyright;
                     imagepoi.License = image.license;
                     imagepoi.ImageSource = "lts";
@@ -306,7 +307,7 @@ namespace LTSAPI.Parser
                     operationschedule.Type = ParserHelper.ParseOperationScheduleType(operationschedulelts.type);
                     operationschedule.OperationscheduleName = operationschedulelts.name;
 
-                    if (operationschedulelts.openingTimes != null)
+                    if (operationschedulelts.openingTimes != null && operationschedulelts.openingTimes.Count() > 0)
                     {
                         operationschedule.OperationScheduleTime = new List<OperationScheduleTime>();
                         foreach (var openingtimelts in operationschedulelts.openingTimes)

@@ -58,15 +58,15 @@ namespace LTSAPI.Parser
             {
                 odhactivitypoi.Ratings = new Ratings()
                 {
-                    Difficulty = ltsactivity.rating.difficulty.ToString(),
-                    Landscape = ltsactivity.rating.landscape.ToString(),
-                    Experience = ltsactivity.rating.experience.ToString(),
-                    Stamina = ltsactivity.rating.stamina.ToString(),
-                    Technique = ltsactivity.rating.technique.ToString()
+                    Difficulty = ltsactivity.rating.difficulty != null ? ltsactivity.rating.difficulty.ToString() : null,
+                    Landscape = ltsactivity.rating.landscape != null ? ltsactivity.rating.landscape.ToString() : null,
+                    Experience = ltsactivity.rating.experience != null ? ltsactivity.rating.experience.ToString() : null,
+                    Stamina = ltsactivity.rating.stamina != null ? ltsactivity.rating.stamina.ToString() : null,
+                    Technique = ltsactivity.rating.technique != null ? ltsactivity.rating.technique.ToString() : null
                 };
 
                 if (ltsactivity.rating.difficulty != null)
-                    odhactivitypoi.Difficulty = ltsactivity.rating.difficulty.ToString();
+                    odhactivitypoi.Difficulty = ltsactivity.rating.difficulty != null ? ltsactivity.rating.difficulty.ToString() : null;
             }
 
             //GetoData
@@ -177,7 +177,7 @@ namespace LTSAPI.Parser
                     operationschedule.Type = ParserHelper.ParseOperationScheduleType(operationschedulelts.type);
                     operationschedule.OperationscheduleName = operationschedulelts.name;
 
-                    if (operationschedulelts.openingTimes != null)
+                    if (operationschedulelts.openingTimes != null && operationschedulelts.openingTimes.Count() > 0)
                     {
                         operationschedule.OperationScheduleTime = new List<OperationScheduleTime>();
                         foreach (var openingtimelts in operationschedulelts.openingTimes)
@@ -257,6 +257,7 @@ namespace LTSAPI.Parser
 
                     imagepoi.ImageName = image.rid;
                     imagepoi.ImageTitle = image.name;
+                    imagepoi.ImageTitle.RemoveNullValues();
                     imagepoi.CopyRight = image.copyright;
                     imagepoi.License = image.license;
                     imagepoi.ImageSource = "lts";
