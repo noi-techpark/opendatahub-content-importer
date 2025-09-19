@@ -78,7 +78,7 @@ namespace LTSAPI.Parser
 
                 odhactivitypoi.AltitudeSumDown = ltsactivity.geoData.distance != null ? ltsactivity.geoData.distance.sumDown : null;
                 odhactivitypoi.AltitudeSumUp = ltsactivity.geoData.distance != null ? ltsactivity.geoData.distance.sumUp : null;
-                //odhactivitypoi.DistanceDuration = ltsactivity.geoData.distance.duration; //TODO Convert To Double
+                odhactivitypoi.DistanceDuration = ltsactivity.geoData.distance != null ? TimeStringToHours(ltsactivity.geoData.distance.duration) : null; 
 
                 odhactivitypoi.DistanceLength = ltsactivity.geoData.distance != null ? ltsactivity.geoData.distance.length : null;
 
@@ -462,6 +462,13 @@ namespace LTSAPI.Parser
 
             odhactivitypoi.Mapping.TryAddOrUpdate("lts", ltsmapping);
 
+            //IDM Favorite over Area, to check if this favouriteFor is usable?
+            if (ltsactivity.areas != null && ltsactivity.areas.Where(x => x.rid == "EEDD568AC5B14A9DB6BED6C2592483BF").Count() > 0)
+                odhactivitypoi.Highlight = true;
+            else
+                odhactivitypoi.Highlight = false;
+
+
             //Take the German Shortname if available otherwise use the first available
             odhactivitypoi.Shortname = odhactivitypoi.Detail != null && odhactivitypoi.Detail.Count() > 0 ?
                         odhactivitypoi.Detail.ContainsKey("de") && String.IsNullOrEmpty(odhactivitypoi.Detail["de"].Title) ? odhactivitypoi.Detail["de"].Title :
@@ -476,6 +483,19 @@ namespace LTSAPI.Parser
             odhactivitypoi.SyncUpdateMode = "full";
 
             return odhactivitypoi;
+        }
+
+        public static double? TimeStringToHours(string timeString)
+        {
+            if (string.IsNullOrEmpty(timeString))
+                return null;
+
+            if (TimeSpan.TryParse(timeString, out TimeSpan timeSpan))
+            {
+                return timeSpan.TotalHours;
+            }
+            else
+                return null;
         }
     }
 
