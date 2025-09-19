@@ -379,7 +379,7 @@ namespace LTSAPI.Parser
             odhactivitypoi.HasLanguage = odhactivitypoi.HasLanguage.OrderBy(x => x).ToList();
 
             //Sync Information
-            odhactivitypoi.SyncSourceInterface = "activitydata";
+            odhactivitypoi.SyncSourceInterface = "poidata";
             odhactivitypoi.SyncUpdateMode = "full";
 
             return odhactivitypoi;

@@ -135,7 +135,7 @@ Settings settings = new Settings(config);
 //await TestRequests.RetrieveAndParseGastronomy(settings);
 
 await TestRequests.RetrieveAndParseActivity(settings, new List<string>() {
-    "bbc8e274833cf08839bda485b388defd",
+    "142dbfabb10ac7226c435ce85a38694e",
     "1c2c4b1f4345171d7f1a98fdab3b439f"    
 },
 settings.LtsCredentials);
@@ -145,7 +145,7 @@ await TestRequests.RetrieveAndParseActivity(settings, new List<string>() {
 },
 settings.LtsCredentialsOpen);
 
-await TestRequests.RetrieveAndParsePoi(settings, new List<string>() { "3931c131da2923919105e403361a4cd0",
+await TestRequests.RetrieveAndParsePoi(settings, new List<string>() { "142dbfabb10ac7226c435ce85a38694e",
     "3361695701cccc5de1effcba2487245c",
     "a152e6bb003c43ae896cc0d146e3ff61",
     "3b52338426f97883a80b9de864af24f9",
