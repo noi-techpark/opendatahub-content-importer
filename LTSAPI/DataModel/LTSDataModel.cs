@@ -975,6 +975,10 @@ namespace LTSAPI
         public LTSRating rating { get; set; }
         public IDictionary<string, string> location { get; set; }
         public LTSLiftpointcard liftPointCard { get; set; }
+
+        public string? liftType { get; set; }
+        public string? liftCapacityType { get; set; }
+
         public LTSArea[] areas { get; set; }
         public bool isIlluminated { get; set; }
         public bool hasRental { get; set; }

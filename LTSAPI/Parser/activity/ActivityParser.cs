@@ -304,7 +304,7 @@ namespace LTSAPI.Parser
             odhactivitypoi.ImageGallery = imagegallerylist;
 
             //Videos
-            if (ltsactivity.videos != null)
+            if (ltsactivity.videos != null && ltsactivity.videos.Count() > 0)
             {
                 odhactivitypoi.VideoItems = new Dictionary<string, ICollection<VideoItems>>();
 
@@ -440,6 +440,13 @@ namespace LTSAPI.Parser
 
             if (ltsactivity.hasLift != null)
                 ltsmapping.Add("hasLift", ltsactivity.hasLift.ToString());
+            if (ltsactivity.liftType != null)
+                ltsmapping.Add("liftType", ltsactivity.liftType);
+            if (ltsactivity.liftCapacityType != null)
+                ltsmapping.Add("liftCapacityType", ltsactivity.liftCapacityType);
+
+
+
             if (ltsactivity.minRopeLength != null)
                 ltsmapping.Add("minRopeLength", ltsactivity.minRopeLength);
             if (ltsactivity.quantityQuickDraws != null)
@@ -469,6 +476,8 @@ namespace LTSAPI.Parser
             else
                 odhactivitypoi.Highlight = false;
 
+            //liftType, liftCapacityType
+
 
             //Take the German Shortname if available otherwise use the first available
             odhactivitypoi.Shortname = odhactivitypoi.Detail != null && odhactivitypoi.Detail.Count() > 0 ?
@@ -497,7 +506,7 @@ namespace LTSAPI.Parser
             }
             else
                 return null;
-        }
+        }        
     }
 
 }

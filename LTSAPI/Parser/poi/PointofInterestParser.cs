@@ -242,7 +242,7 @@ namespace LTSAPI.Parser
             //ltspoi.isReadOnly ???
             
             //Beacons
-            if(ltspoi.beacons != null)
+            if(ltspoi.beacons != null && ltspoi.beacons.Count() > 0)
             {
                 odhactivitypoi.ChildPoiIds = new List<string>();
                 foreach (var beacon in ltspoi.beacons)
@@ -252,7 +252,7 @@ namespace LTSAPI.Parser
             }
 
             //Videos
-            if(ltspoi.videos != null)
+            if(ltspoi.videos != null && ltspoi.videos.Count() > 0)
             {
                 odhactivitypoi.VideoItems = new Dictionary<string, ICollection<VideoItems>>();
 
