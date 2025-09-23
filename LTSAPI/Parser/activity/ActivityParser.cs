@@ -176,6 +176,7 @@ namespace LTSAPI.Parser
                     operationschedule.Stop = Convert.ToDateTime(operationschedulelts.validTo);
                     operationschedule.Type = ParserHelper.ParseOperationScheduleType(operationschedulelts.type);
                     operationschedule.OperationscheduleName = operationschedulelts.name;
+                    operationschedule.OperationscheduleName.RemoveNullValues();
 
                     if (operationschedulelts.openingTimes != null && operationschedulelts.openingTimes.Count() > 0)
                     {
