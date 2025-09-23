@@ -492,7 +492,7 @@ namespace LTSAPI.Parser
 
             if (TimeSpan.TryParse(timeString, out TimeSpan timeSpan))
             {
-                return timeSpan.TotalHours;
+                return Math.Round(timeSpan.TotalHours, 2);
             }
             else
                 return null;
