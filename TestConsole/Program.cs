@@ -135,8 +135,7 @@ Settings settings = new Settings(config);
 //await TestRequests.RetrieveAndParseGastronomy(settings);
 
 await TestRequests.RetrieveAndParseActivity(settings, new List<string>() {
-    "142dbfabb10ac7226c435ce85a38694e",
-    "1c2c4b1f4345171d7f1a98fdab3b439f"    
+    "49A4560AF5D84691A095B9D466D392D7"    
 },
 settings.LtsCredentials);
 

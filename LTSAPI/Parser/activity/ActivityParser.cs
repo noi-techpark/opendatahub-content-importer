@@ -423,28 +423,33 @@ namespace LTSAPI.Parser
             if (ltsactivity.liftCapacityType != null)
                 ltsmapping.Add("liftCapacityType", ltsactivity.liftCapacityType);
 
-
-
-            if (ltsactivity.minRopeLength != null)
+            if (ltsactivity.minRopeLength != null && !string.IsNullOrEmpty(ltsactivity.minRopeLength))
                 ltsmapping.Add("minRopeLength", ltsactivity.minRopeLength);
-            if (ltsactivity.quantityQuickDraws != null)
+            if (ltsactivity.quantityQuickDraws != null && !string.IsNullOrEmpty(ltsactivity.quantityQuickDraws))
                 ltsmapping.Add("quantityQuickDraws", ltsactivity.quantityQuickDraws);
             if (ltsactivity.snowType != null)
                 ltsmapping.Add("snowType", ltsactivity.snowType.rid);
             if (ltsactivity.snowPark != null)
             {
-                ltsmapping.Add("snowPark.hasPipe", ltsactivity.snowPark.hasPipe.ToString());
-                ltsmapping.Add("snowPark.linesNumber", ltsactivity.snowPark.linesNumber.ToString());
-                ltsmapping.Add("snowPark.jumpsNumber", ltsactivity.snowPark.jumpsNumber.ToString());
-                ltsmapping.Add("snowPark.isInground", ltsactivity.snowPark.isInground.ToString());
-                ltsmapping.Add("snowPark.hasArtificiallySnow", ltsactivity.snowPark.hasArtificiallySnow.ToString());
-                ltsmapping.Add("snowPark.hasBoarderCross", ltsactivity.snowPark.hasBoarderCross.ToString());
-                ltsmapping.Add("snowPark.hasPipe", ltsactivity.snowPark.hasPipe.ToString());                
+                if(ltsactivity.snowPark.hasPipe != null)
+                    ltsmapping.Add("snowPark.hasPipe", ltsactivity.snowPark.hasPipe.ToString());
+                if (ltsactivity.snowPark.linesNumber != null)
+                    ltsmapping.Add("snowPark.linesNumber", ltsactivity.snowPark.linesNumber.ToString());
+                if (ltsactivity.snowPark.jumpsNumber != null)
+                    ltsmapping.Add("snowPark.jumpsNumber", ltsactivity.snowPark.jumpsNumber.ToString());
+                if (ltsactivity.snowPark.isInground != null)
+                    ltsmapping.Add("snowPark.isInground", ltsactivity.snowPark.isInground.ToString());
+                if (ltsactivity.snowPark.hasArtificiallySnow != null)
+                    ltsmapping.Add("snowPark.hasArtificiallySnow", ltsactivity.snowPark.hasArtificiallySnow.ToString());
+                if (ltsactivity.snowPark.hasBoarderCross != null) 
+                    ltsmapping.Add("snowPark.hasBoarderCross", ltsactivity.snowPark.hasBoarderCross.ToString());                
             }
 
             ltsmapping.Add("isReadOnly", ltsactivity.isReadOnly.ToString());
             ltsmapping.Add("hasCopyright", ltsactivity.hasCopyright.ToString());
-            ltsmapping.Add("favouriteFor", ltsactivity.favouriteFor);
+
+            if (ltsactivity.favouriteFor != null && !string.IsNullOrEmpty(ltsactivity.favouriteFor))
+                ltsmapping.Add("favouriteFor", ltsactivity.favouriteFor);
 
             odhactivitypoi.Mapping.TryAddOrUpdate("lts", ltsmapping);
 
@@ -453,9 +458,7 @@ namespace LTSAPI.Parser
                 odhactivitypoi.Highlight = true;
             else
                 odhactivitypoi.Highlight = false;
-
-            //liftType, liftCapacityType
-
+            
 
             //Take the German Shortname if available otherwise use the first available
             odhactivitypoi.Shortname = odhactivitypoi.Detail != null && odhactivitypoi.Detail.Count() > 0 ?

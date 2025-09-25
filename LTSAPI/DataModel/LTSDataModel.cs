@@ -1031,11 +1031,11 @@ namespace LTSAPI
 
     public class LTSSnowpark
     {
-        public bool isInground { get; set; }
-        public bool hasPipe { get; set; }
-        public bool hasBoarderCross { get; set; }
-        public bool hasArtificiallySnow { get; set; }
-        public int jibsNumber { get; set; }
+        public bool? isInground { get; set; }
+        public bool? hasPipe { get; set; }
+        public bool? hasBoarderCross { get; set; }
+        public bool? hasArtificiallySnow { get; set; }
+        public int? jibsNumber { get; set; }
         public LTSJumpsnumber jumpsNumber { get; set; }
         public LTSLinesnumber linesNumber { get; set; }
     }

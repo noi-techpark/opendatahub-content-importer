@@ -333,7 +333,9 @@ namespace LTSAPI.Parser
             ltsmapping.Add("code", ltspoi.code);
             ltsmapping.Add("isReadOnly", ltspoi.isReadOnly.ToString());
             ltsmapping.Add("hasCopyright", ltspoi.hasCopyright.ToString());
-            ltsmapping.Add("favouriteFor", ltspoi.favouriteFor);
+
+            if(ltspoi.favouriteFor != null && !String.IsNullOrEmpty(ltspoi.favouriteFor))
+                ltsmapping.Add("favouriteFor", ltspoi.favouriteFor);
 
             if(ltspoi.district != null && !String.IsNullOrEmpty(ltspoi.district.rid))
                 ltsmapping.Add("district", ltspoi.district.rid);
