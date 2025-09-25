@@ -198,36 +198,13 @@ namespace LTSAPI.Parser
                     imagepoi.ValidTo = image.applicableEndDate;
                     imagepoi.ListPosition = image.order;
 
-                    //image.ismainimage?
-
-                    ////New Check date and give Image Tag
-                    //if (imagepoi.ValidFrom != null && imagepoi.ValidTo != null)
-                    //{
-                    //    List<string> imagetaglist = new List<string>();
-
-                    //    //Date is set 
-                    //    var checkbegindate = ((DateTime)mainimage.ValidFrom).Date;
-                    //    var checkenddate = ((DateTime)mainimage.ValidTo).Date;
-
-                    //    var summer = new DateTime(mainimage.ValidFrom.Value.Year, 7, 15).Date;
-                    //    var winter = new DateTime(mainimage.ValidTo.Value.Year, 1, 15).Date;
-
-                    //    //check if date is into 15.07
-                    //    if (summer >= checkbegindate && summer <= checkenddate)
-                    //        imagetaglist.Add("Summer");
-
-                    //    //check if date is into 15.01
-                    //    if (winter >= checkbegindate && winter <= checkenddate)
-                    //        imagetaglist.Add("Winter");
-
-                    //    mainimage.ImageTags = imagetaglist;
-                    //}
-
+                    //image.ismainimage?                   
                     imagegallerylist.Add(imagepoi);
                 }
             }
 
             odhactivitypoi.ImageGallery = imagegallerylist;
+            odhactivitypoi.ImageGallery.AddImageTagsToGallery();
 
             //Properties
             odhactivitypoi.Active = ltspoi.isActive;

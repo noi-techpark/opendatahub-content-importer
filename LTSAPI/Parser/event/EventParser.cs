@@ -286,6 +286,7 @@ namespace LTSAPI.Parser
             }
 
             eventv1.ImageGallery = imagegallerylist;
+            eventv1.ImageGallery.AddImageTagsToGallery();
 
             //periods
             eventv1.EventDate = new List<EventDate>();

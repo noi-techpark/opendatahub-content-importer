@@ -410,7 +410,7 @@ namespace LTSAPI.Parser
             }
 
             gastronomy.ImageGallery = imagegallerylist;
-
+            gastronomy.ImageGallery.AddImageTagsToGallery();
 
             //Videos
 

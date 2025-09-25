@@ -10,15 +10,13 @@ using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using GenericHelper;
-using static System.Net.Mime.MediaTypeNames;
 using Newtonsoft.Json;
-using Microsoft.Extensions.Logging;
+using LTSAPI.Utils;
 
 namespace LTSAPI.Parser
 {
@@ -477,27 +475,27 @@ namespace LTSAPI.Parser
                     mainimage.License = image.license;
 
                     //New Check date and give Image Tag
-                    if (mainimage.ValidFrom != null && mainimage.ValidTo != null)
-                    {
-                        List<string> imagetaglist = new List<string>();
+                    //if (mainimage.ValidFrom != null && mainimage.ValidTo != null)
+                    //{
+                    //    List<string> imagetaglist = new List<string>();
 
-                        //Date is set 
-                        var checkbegindate = ((DateTime)mainimage.ValidFrom).Date;
-                        var checkenddate = ((DateTime)mainimage.ValidTo).Date;
+                    //    //Date is set 
+                    //    var checkbegindate = ((DateTime)mainimage.ValidFrom).Date;
+                    //    var checkenddate = ((DateTime)mainimage.ValidTo).Date;
 
-                        var summer = new DateTime(mainimage.ValidFrom.Value.Year, 7, 15).Date;
-                        var winter = new DateTime(mainimage.ValidTo.Value.Year, 1, 15).Date;
+                    //    var summer = new DateTime(mainimage.ValidFrom.Value.Year, 7, 15).Date;
+                    //    var winter = new DateTime(mainimage.ValidTo.Value.Year, 1, 15).Date;
 
-                        //check if date is into 15.07
-                        if (summer >= checkbegindate && summer <= checkenddate)
-                            imagetaglist.Add("Summer");
+                    //    //check if date is into 15.07
+                    //    if (summer >= checkbegindate && summer <= checkenddate)
+                    //        imagetaglist.Add("Summer");
 
-                        //check if date is into 15.01
-                        if (winter >= checkbegindate && winter <= checkenddate)
-                            imagetaglist.Add("Winter");
+                    //    //check if date is into 15.01
+                    //    if (winter >= checkbegindate && winter <= checkenddate)
+                    //        imagetaglist.Add("Winter");
 
-                        mainimage.ImageTags = imagetaglist;
-                    }
+                    //    mainimage.ImageTags = imagetaglist;
+                    //}
 
                     imagegallerylist.Add(mainimage);
                 }
@@ -530,6 +528,7 @@ namespace LTSAPI.Parser
                 }
             }
             accommodationlinked.ImageGallery = imagegallerylist.ToList();
+            accommodationlinked.ImageGallery.AddImageTagsToGallery();
 
             //Reorder Image Gallery
             if (accommodationlinked.ImageGallery.Count() > 0)

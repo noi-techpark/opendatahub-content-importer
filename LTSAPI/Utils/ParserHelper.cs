@@ -144,5 +144,41 @@ namespace LTSAPI.Utils
 
 
         #endregion
+
+        #region ImageGallery
+
+        public static void AddImageTagsToGallery(this ICollection<ImageGallery>? imagegallery)
+        {
+            if (imagegallery != null)
+            {
+                foreach (var image in imagegallery)
+                {
+                    //New Check date and give Image Tag
+                    if (image.ValidFrom != null && image.ValidTo != null)
+                    {
+                        List<string> imagetaglist = new List<string>();
+
+                        //Date is set 
+                        var checkbegindate = ((DateTime)image.ValidFrom).Date;
+                        var checkenddate = ((DateTime)image.ValidTo).Date;
+
+                        var summer = new DateTime(image.ValidFrom.Value.Year, 7, 15).Date;
+                        var winter = new DateTime(image.ValidTo.Value.Year, 1, 15).Date;
+
+                        //check if date is into 15.07
+                        if (summer >= checkbegindate && summer <= checkenddate)
+                            imagetaglist.Add("Summer");
+
+                        //check if date is into 15.01
+                        if (winter >= checkbegindate && winter <= checkenddate)
+                            imagetaglist.Add("Winter");
+
+                        image.ImageTags = imagetaglist;
+                    }
+                }
+            }
+        }
+
+        #endregion
     }
 }
