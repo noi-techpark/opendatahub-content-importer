@@ -345,6 +345,7 @@ namespace LTSAPI.Parser
             odhactivitypoi.FeetClimb = ltsactivity.isPossibleClimbByFeet;
             odhactivitypoi.BikeTransport = ltsactivity.hasBikeTransport;
             odhactivitypoi.CopyrightChecked = ltsactivity.hasCopyright;
+            odhactivitypoi.LiftAvailable = ltsactivity.hasLift;
 
             //Novelty
             if (ltsactivity.novelty != null)
@@ -382,7 +383,9 @@ namespace LTSAPI.Parser
             //Mapping
             var ltsmapping = new Dictionary<string, string>();
             ltsmapping.Add("rid", ltsactivity.rid);
-            ltsmapping.Add("code", ltsactivity.code);
+
+            if(!String.IsNullOrEmpty(ltsactivity.code))
+                ltsmapping.Add("code", ltsactivity.code);
 
             if (!String.IsNullOrEmpty(ltsactivity.specificNumberCode))
             {
@@ -415,9 +418,7 @@ namespace LTSAPI.Parser
                 ltsmapping.Add("liftPointCard.pointsSingleTripUp", ltsactivity.liftPointCard.pointsSingleTripUp.ToString());
             if (ltsactivity.liftPointCard != null && ltsactivity.liftPointCard.pointsSingleTripDown != null)
                 ltsmapping.Add("liftPointCard.pointsSingleTripDown", ltsactivity.liftPointCard.pointsSingleTripDown.ToString());
-
-            if (ltsactivity.hasLift != null)
-                ltsmapping.Add("hasLift", ltsactivity.hasLift.ToString());
+            
             if (ltsactivity.liftType != null)
                 ltsmapping.Add("liftType", ltsactivity.liftType);
             if (ltsactivity.liftCapacityType != null)
