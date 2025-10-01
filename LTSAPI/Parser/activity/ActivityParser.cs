@@ -50,6 +50,8 @@ namespace LTSAPI.Parser
 
             odhactivitypoi.LastChange = ltsactivity.lastUpdate;
 
+            odhactivitypoi.LocationInfo = new LocationInfoLinked();
+
             //Tourism Organization
             odhactivitypoi.TourismorganizationId = ltsactivity.tourismOrganization != null ? ltsactivity.tourismOrganization.rid : null;
 
