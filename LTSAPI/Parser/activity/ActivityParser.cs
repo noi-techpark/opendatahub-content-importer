@@ -53,6 +53,9 @@ namespace LTSAPI.Parser
             //Tourism Organization
             odhactivitypoi.TourismorganizationId = ltsactivity.tourismOrganization != null ? ltsactivity.tourismOrganization.rid : null;
 
+            //District Id
+            odhactivitypoi.LocationInfo.DistrictInfo = ltsactivity.district != null ? new DistrictInfoLinked() { Id = ltsactivity.district.rid } : null;
+
             //Rating
             if (ltsactivity.rating != null)
             {
@@ -406,6 +409,9 @@ namespace LTSAPI.Parser
             
             if(ltsactivity.tourismOrganization != null)
                 ltsmapping.Add("tourismOrganization", ltsactivity.tourismOrganization.rid);
+
+            if (ltsactivity.district != null && !String.IsNullOrEmpty(ltsactivity.district.rid))
+                ltsmapping.Add("district", ltsactivity.district.rid);
 
             if (ltsactivity.rating != null && ltsactivity.rating.viaFerrataTechnique != null)
                 ltsmapping.Add("rating.viaFerrataTechnique", ltsactivity.rating.viaFerrataTechnique);

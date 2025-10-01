@@ -1003,6 +1003,8 @@ namespace LTSAPI
         public LTSTag[] tags { get; set; }
         public LTSImage[] images { get; set; }
         public LTSVideo[] videos { get; set; }
+
+        public LTSDistrict district { get; set; }
     }
 
     public class LTSMountainbike

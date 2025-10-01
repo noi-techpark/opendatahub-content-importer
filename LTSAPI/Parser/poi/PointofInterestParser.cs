@@ -330,7 +330,10 @@ namespace LTSAPI.Parser
             //Mapping
             var ltsmapping = new Dictionary<string, string>();
             ltsmapping.Add("rid", ltspoi.rid);
-            ltsmapping.Add("code", ltspoi.code);
+
+            if(!String.IsNullOrEmpty(ltspoi.code))
+                ltsmapping.Add("code", ltspoi.code);
+
             ltsmapping.Add("isReadOnly", ltspoi.isReadOnly.ToString());
             ltsmapping.Add("hasCopyright", ltspoi.hasCopyright.ToString());
 
@@ -339,6 +342,7 @@ namespace LTSAPI.Parser
 
             if(ltspoi.district != null && !String.IsNullOrEmpty(ltspoi.district.rid))
                 ltsmapping.Add("district", ltspoi.district.rid);
+
             if (ltspoi.tourismOrganization != null && !String.IsNullOrEmpty(ltspoi.tourismOrganization.rid))
                 ltsmapping.Add("tourismOrganization", ltspoi.tourismOrganization.rid);
 
