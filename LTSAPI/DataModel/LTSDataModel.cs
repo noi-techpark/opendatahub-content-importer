@@ -82,6 +82,19 @@ namespace LTSAPI
         public string country { get; set; }
     }
 
+    public class LTSTourismOrganizationContact
+    {
+        public string type { get; set; }
+        public string phone { get; set; }
+        public string mobile { get; set; }
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string fax { get; set; }
+        public string website { get; set; }
+        public string email { get; set; }
+        public LTSAddress address { get; set; }
+    }
+
     public class LTSAddress
     {
         //Localised name of the city of the contact address
@@ -1270,13 +1283,21 @@ namespace LTSAPI
 
     #region WeatherSnow
 
-    public class LTSWeatherSnows
+    public class LTSWeatherSnows : LTSData<LTSWeatherSnowsData>
+    {
+        public new LTSWeatherSnowsData data { get; set; }
+    }
+
+    public class LTSWeatherSnowsData
     {
         public string rid { get; set; }
         public DateTime lastUpdate { get; set; }
         public LTSTourismorganization tourismOrganization { get; set; }
+        //Defines if the WeatherSnow is active
         public bool isActive { get; set; }
+        //Defines if the WeatherSnow is out of order
         public bool isOutOfOrder { get; set; }
+        //Defines if the WeatherSnow can only be read
         public bool isReadOnly { get; set; }
         public IDictionary<string, string> name { get; set; }
         public LTSArea[] areas { get; set; }
@@ -1286,6 +1307,7 @@ namespace LTSAPI
 
     public class LTSWeatherSnowsConditions
     {
+        //Measured temperature in Celsius degrees
         public float? temperature { get; set; }
         public LTSSnow snow { get; set; }
         public LTSWeatherforecasts weatherForecasts { get; set; }
@@ -1293,22 +1315,30 @@ namespace LTSAPI
 
     public class LTSSnow
     {
+        //Actual snow height in centimeters
         public int? height { get; set; }
+        //Date and time of last observation of snow
         public DateTime? lastEvent { get; set; }
+        //Snow height of last event in centimeters
         public int? lastEventHeight { get; set; }
     }
 
     public class LTSWeatherforecasts
     {
+        //Unique identification number of the region of the forecasts
         public int? regionId { get; set; }
         public LTSWeatherForecast[] forecasts { get; set; }
     }
 
     public class LTSWeatherForecast
     {
+        //Unique identifier of the forecast
         public string rid { get; set; }
+        //Date of the forecast
         public string date { get; set; }
+        //Unique identification number of the icon of the forecast
         public int iconId { get; set; }
+        //Localised description of the forecast
         public IDictionary<string, string> description { get; set; }
     }
 
@@ -1418,6 +1448,7 @@ namespace LTSAPI
 
         //public bool isActive { get; set; }
         public string code { get; set; }
+        //Type of the Amenity (see enums list for possible values in the schema definition) (title, option)
         public string type { get; set; }
     }
 
@@ -1535,9 +1566,198 @@ namespace LTSAPI
 
     #endregion
 
+    #region TourismOrganization
 
+    public class LTSTourismOrganizationData
+    {
+        //Unique identifier of the Country
+        public string rid { get; set; }
+        //Date and time of last change
+        public DateTime lastUpdate { get; set; }
+        //tourismOrganization-tourismFederation-touristOfficeMerano-touristOfficeBolzano
+        public string type { get; set; }
+        //String code of the TourismOrganization
+        public string code { get; set; }
+        //Unique identifier of the municipality
+        public GenericLTSRidResult parentTourismOrganization { get; set; }
 
+        public LTSSuedtirolguestpass suedtirolGuestPass { get; set; }
 
+        public LTSTourismOrganizationContact[] contacts { get; set; }
+
+        //Defines if the TourismOrganization is active
+        public bool isActive { get; set; }
+    }
+
+    #endregion
+
+    #region Municipality
+
+    public class LTSMunicipalityData
+    {
+        //Unique identifier of the Municipality
+        public string rid { get; set; }
+        //Date and time of last change
+        public DateTime lastUpdate { get; set; }
+        //String code of the Municipality
+        public string code { get; set; }
+        //Localised name of the Municipality
+        public IDictionary<string, string> name { get; set; }
+        public bool isActive { get; set; }
+    }
+
+    #endregion
+
+    #region District
+
+    public class LTSDistrictData
+    {
+        //Unique identifier of the District
+        public string rid { get; set; }
+        //Date and time of last change
+        public DateTime lastUpdate { get; set; }
+        //String code of the Municipality
+        public string code { get; set; }
+        //Unique identifier of the municipality
+        public GenericLTSRidResult municipality { get; set; }
+        //Localised name of the Municipality
+        public IDictionary<string, string> name { get; set; }
+        public bool isActive { get; set; }
+    }
+
+    #endregion
+
+    #region Countries
+
+    public class LTSCountryData
+    {
+        //Unique identifier of the Country
+        public string rid { get; set; }
+        //Date and time of last change
+        public DateTime lastUpdate { get; set; }
+        //String code of the Country
+        public string code { get; set; }
+        //Code of the country following ISO 639-2/T standards
+        public string isoCode2 { get; set; }        
+        //Localised name of the Municipality
+        public IDictionary<string, string> name { get; set; }
+        public bool isActive { get; set; }
+    }
+
+    #endregion
+
+    #region Salutation
+
+    public class LTSSalutiationData
+    {
+        //Unique identifier of the Country
+        public string rid { get; set; }
+        //Date and time of last change
+        public DateTime lastUpdate { get; set; }
+        //String code of the Salutation
+        public string code { get; set; }       
+        public LTSSalutationNamePrefixes[] namePrefixes { get; set; }
+    }
+
+    public class LTSSalutationNamePrefixes
+    {
+        //Type of the prefix of the Salutation (standard, letter, address) 
+        public string type { get; set; }
+        //Localised name of the prefix of the Salutation related to the type
+        public IDictionary<string, string> name { get; set; }
+    }
+
+    #endregion
+
+    #region Areas
+
+    public class LTSAreaData
+    {
+        //Unique identifier of the Area
+        public string rid { get; set; }
+        //Date and time of last change
+        public DateTime lastUpdate { get; set; }
+        //String code of the geographic position of the Area
+        public string geographicCode { get; set; }
+        //Unique identifier of the category of the Area
+        public GenericLTSRidResult category { get; set; }
+        //String code of the Area
+        public string code { get; set; }
+        //Defines if the Area is active
+        public bool isActive { get; set; }
+        //Localised name of the Area
+        public IDictionary<string, string> name { get; set; }
+    }
+
+    #endregion
+
+    #region AreaCategory
+
+    public class LTSAreaCategoryData
+    {
+        //Unique identifier of the Area
+        public string rid { get; set; }
+        //Date and time of last change
+        public DateTime lastUpdate { get; set; }
+        //Localised name of the Category
+        public IDictionary<string, string> name { get; set; }
+    }
+
+    #endregion
+
+    #region VideoGenre
+
+    public class LTSVideoGenreData
+    {
+        //Unique identifier of the VideoGenre
+        public string rid { get; set; }
+        //Date and time of last change
+        public DateTime lastUpdate { get; set; }
+        //String code of the VideoGenre
+        public string code { get; set; }
+        //Localised name of the VideoGenre
+        public IDictionary<string, string> name { get; set; }
+    }
+
+    #endregion
+
+    #region TaxRate
+
+    #endregion
+
+    #region Amenity
+
+    #endregion
+
+    #region AddressGroup
+
+    public class LTSAddressGroupData
+    {
+        //Unique identifier of the AddressGroup
+        public string rid { get; set; }
+        //Date and time of last change
+        public DateTime lastUpdate { get; set; }
+        //String code of the AddressGroup
+        public string code { get; set; }
+        //Localised name of the AddressGroup
+        public IDictionary<string, string> name { get; set; }
+    }
+
+    #endregion
+
+    #region PositionCategory
+
+    public class LTSPositionCategoryData
+    {
+        //Unique identifier of the Category
+        public string rid { get; set; }
+        //Date and time of last change
+        public DateTime lastUpdate { get; set; }
+        //Localised name of the Category
+        public IDictionary<string, string> name { get; set; }
+    }
+
+    #endregion
 
 
 
