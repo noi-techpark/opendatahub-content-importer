@@ -23,15 +23,15 @@ namespace LTSAPI.Parser
 {
     public class MeasuringpointParser
     {
-        public static WebcamInfoLinked ParseLTSWebcam(
-            JObject webcamlts, bool reduced
+        public static MeasuringpointLinked ParseLTSMeasuringpoint(
+            JObject weathersnowlts, bool reduced
             )
         {
             try
             {
-                LTSWebcam ltswebcam = webcamlts.ToObject<LTSWebcam>();
+                LTSWeatherSnows ltsweathersnow = weathersnowlts.ToObject<LTSWeatherSnows>();
 
-                return ParseLTSWebcam(ltswebcam.data, reduced);
+                return ParseLTSMeasuringpoint(ltsweathersnow.data, reduced);
             }
             catch(Exception ex)
             {           
@@ -39,94 +39,94 @@ namespace LTSAPI.Parser
             }          
         }
 
-        public static WebcamInfoLinked ParseLTSWebcam(
-            LTSWebcamData ltswebcam, 
+        public static MeasuringpointLinked ParseLTSMeasuringpoint(
+            LTSWeatherSnowsData ltswebcam, 
             bool reduced)
         {
-            WebcamInfoLinked webcam = new WebcamInfoLinked();
+            MeasuringpointLinked measuringpoint = new MeasuringpointLinked();
 
-            webcam.Id = ltswebcam.rid;
-            webcam._Meta = new Metadata() { Id = webcam.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "webcam", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
-            webcam.Source = "lts";
+            //webcam.Id = ltswebcam.rid;
+            //webcam._Meta = new Metadata() { Id = webcam.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "webcam", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
+            //webcam.Source = "lts";
 
-            webcam.LastChange = ltswebcam.lastUpdate;
+            //webcam.LastChange = ltswebcam.lastUpdate;
             
-            webcam.Active = ltswebcam.isActive;
-            webcam.AreaIds = ltswebcam.areas.Select(x => x.rid).ToList();
+            //webcam.Active = ltswebcam.isActive;
+            //webcam.AreaIds = ltswebcam.areas.Select(x => x.rid).ToList();
 
-            //Webcam Details
-            webcam.WebCamProperties = new WebcamProperties();
-            webcam.WebCamProperties.StreamUrl = ltswebcam.streamUrl;
-            webcam.WebCamProperties.PreviewUrl = ltswebcam.previewUrl;
-            webcam.WebCamProperties.WebcamUrl = ltswebcam.url;
+            ////Webcam Details
+            //webcam.WebCamProperties = new WebcamProperties();
+            //webcam.WebCamProperties.StreamUrl = ltswebcam.streamUrl;
+            //webcam.WebCamProperties.PreviewUrl = ltswebcam.previewUrl;
+            //webcam.WebCamProperties.WebcamUrl = ltswebcam.url;
 
-            webcam.WebcamId = ltswebcam.rid;
+            //webcam.WebcamId = ltswebcam.rid;
 
-            webcam.FirstImport =
-                webcam.FirstImport == null ? DateTime.Now : webcam.FirstImport;
+            //webcam.FirstImport =
+            //    webcam.FirstImport == null ? DateTime.Now : webcam.FirstImport;
 
-            //Let's find out for which languages there is a name
-            foreach (var name in ltswebcam.name)
-            {
-                if (!String.IsNullOrEmpty(name.Value))
-                    webcam.HasLanguage.Add(name.Key);
-            }
+            ////Let's find out for which languages there is a name
+            //foreach (var name in ltswebcam.name)
+            //{
+            //    if (!String.IsNullOrEmpty(name.Value))
+            //        webcam.HasLanguage.Add(name.Key);
+            //}
 
-            //Detail Information
-            foreach (var language in webcam.HasLanguage)
-            {
-                Detail detail = new Detail();
-                detail.Language = language;
+            ////Detail Information
+            //foreach (var language in webcam.HasLanguage)
+            //{
+            //    Detail detail = new Detail();
+            //    detail.Language = language;
 
-                detail.Title = ltswebcam.name.GetValue(language);
+            //    detail.Title = ltswebcam.name.GetValue(language);
 
-                webcam.Detail.TryAddOrUpdate(language, detail);
-            }
+            //    webcam.Detail.TryAddOrUpdate(language, detail);
+            //}
 
-            //Position
-            if (ltswebcam.position != null && ltswebcam.position.coordinates.Length == 2)
-            {
-                if (webcam.GpsInfo == null)
-                    webcam.GpsInfo = new List<GpsInfo>();
+            ////Position
+            //if (ltswebcam.position != null && ltswebcam.position.coordinates.Length == 2)
+            //{
+            //    if (webcam.GpsInfo == null)
+            //        webcam.GpsInfo = new List<GpsInfo>();
 
-                GpsInfo gpsinfo = new GpsInfo();
-                gpsinfo.Gpstype = "position";
-                gpsinfo.Latitude = ltswebcam.position.coordinates[1];
-                gpsinfo.Longitude = ltswebcam.position.coordinates[0];
-                gpsinfo.Altitude = ltswebcam.position.altitude;
-                gpsinfo.AltitudeUnitofMeasure = "m";
+            //    GpsInfo gpsinfo = new GpsInfo();
+            //    gpsinfo.Gpstype = "position";
+            //    gpsinfo.Latitude = ltswebcam.position.coordinates[1];
+            //    gpsinfo.Longitude = ltswebcam.position.coordinates[0];
+            //    gpsinfo.Altitude = ltswebcam.position.altitude;
+            //    gpsinfo.AltitudeUnitofMeasure = "m";
 
-                webcam.GpsInfo.Add(gpsinfo);
-            }
+            //    webcam.GpsInfo.Add(gpsinfo);
+            //}
 
-            //Images
-            if (!String.IsNullOrEmpty(ltswebcam.url))
-            {
-                List<ImageGallery> imagegallerylist = new List<ImageGallery>();
+            ////Images
+            //if (!String.IsNullOrEmpty(ltswebcam.url))
+            //{
+            //    List<ImageGallery> imagegallerylist = new List<ImageGallery>();
 
-                ImageGallery imagepoi = new ImageGallery();
+            //    ImageGallery imagepoi = new ImageGallery();
 
-                imagepoi.ImageTitle = ltswebcam.name;                
-                imagepoi.ImageUrl = ltswebcam.url;
+            //    imagepoi.ImageTitle = ltswebcam.name;                
+            //    imagepoi.ImageUrl = ltswebcam.url;
 
-                imagegallerylist.Add(imagepoi);
-                webcam.ImageGallery = imagegallerylist;
-            }
+            //    imagegallerylist.Add(imagepoi);
+            //    webcam.ImageGallery = imagegallerylist;
+            //}
 
-            //Videos
+            ////Videos
 
-            //Mapping
-            var ltsmapping = new Dictionary<string, string>();
-            ltsmapping.Add("rid", ltswebcam.rid);            
-            ltsmapping.Add("tourismOrganization", ltswebcam.tourismOrganization.rid);
+            ////Mapping
+            //var ltsmapping = new Dictionary<string, string>();
+            //ltsmapping.Add("rid", ltswebcam.rid);            
+            //ltsmapping.Add("tourismOrganization", ltswebcam.tourismOrganization.rid);
 
-            ltsmapping.Add("isReadOnly", ltswebcam.isReadOnly.ToString());
-            ltsmapping.Add("isOutOfOrder", ltswebcam.isOutOfOrder.ToString());
-            ltsmapping.Add("hasCopyright", ltswebcam.hasCopyright.ToString());
+            //ltsmapping.Add("isReadOnly", ltswebcam.isReadOnly.ToString());
+            //ltsmapping.Add("isOutOfOrder", ltswebcam.isOutOfOrder.ToString());
+            //ltsmapping.Add("hasCopyright", ltswebcam.hasCopyright.ToString());
 
-            webcam.Mapping.TryAddOrUpdate("lts", ltsmapping);
+            //webcam.Mapping.TryAddOrUpdate("lts", ltsmapping);
 
-            return webcam;
+            return measuringpoint;
         }
     }
 

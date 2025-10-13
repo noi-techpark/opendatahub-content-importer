@@ -33,7 +33,7 @@ namespace LTSAPI.Parser
                 return ParseLTSActivity(activityltsdetail.data, reduced);
             }
             catch(Exception ex)
-            {           
+            {         
                 return null;
             }          
         }

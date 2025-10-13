@@ -1080,22 +1080,22 @@ namespace LTSAPI
 
     public class LTSAltitudedifference
     {
-        public int difference { get; set; }
+        public int? difference { get; set; }
         public int? max { get; set; }
         public int? min { get; set; }
     }
 
     public class LTSDistance
     {
-        public int length { get; set; }
-        public string duration { get; set; }
+        public int? length { get; set; }
+        public string? duration { get; set; }
         public int? sumUp { get; set; }
         public int? sumDown { get; set; }
     }
 
     public class LTSExposition
     {
-        public string value { get; set; }
+        public string? value { get; set; }
     }
 
     public class LTSPositionExtended : LTSPosition
@@ -1111,8 +1111,8 @@ namespace LTSAPI
 
     public class LTSFile
     {
-        public float filesize { get; set; }
-        public string url { get; set; }
+        public float? filesize { get; set; }
+        public string? url { get; set; }
     }
 
     public class LTSArea

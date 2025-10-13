@@ -134,39 +134,34 @@ Settings settings = new Settings(config);
 
 //await TestRequests.RetrieveAndParseGastronomy(settings);
 
-await TestRequests.RetrieveAndParseActivity(settings, new List<string>() {
-    "49A4560AF5D84691A095B9D466D392D7"    
+//await TestRequests.RetrieveAndParseActivity(settings, new List<string>() {
+//    "0F5505E54E1B304216ED620EEEAE07FD",
+//    "B6A3E2F228D4FCCF33F39649E489D231"
+//},
+//settings.LtsCredentials);
+
+//await TestRequests.RetrieveAndParseActivity(settings, new List<string>() {
+//    "78E3FD5425AED454DEFE139567DED23C"
+//},
+//settings.LtsCredentialsOpen);
+
+await TestRequests.RetrieveAndParsePoi(settings, new List<string>() { 
+    "B2E9533FC4A0409F91C7878731812227",
+    "30A6A456325B7170E649A67521684FE3"
 },
 settings.LtsCredentials);
 
-await TestRequests.RetrieveAndParseActivity(settings, new List<string>() {
-    "78E3FD5425AED454DEFE139567DED23C"
-},
-settings.LtsCredentialsOpen);
-
-await TestRequests.RetrieveAndParsePoi(settings, new List<string>() { "142dbfabb10ac7226c435ce85a38694e",
-    "3361695701cccc5de1effcba2487245c",
-    "a152e6bb003c43ae896cc0d146e3ff61",
-    "3b52338426f97883a80b9de864af24f9",
-    "deb6e4f3bdcc3855eb2bf1f5a98a7f8e",
-    "5a22f7103afd3511e3ee39c200aec6d3",
-    "c32182c4c64a23181cb6b127047ecfda",
-    "94d61c67ecf788f21b6793e4262e04d7",
-    "663a538db4088691ea0abbf04239db4d"
-},
-settings.LtsCredentials);
-
-await TestRequests.RetrieveAndParsePoi(settings, new List<string>() { "3931c131da2923919105e403361a4cd0",
-    "3361695701cccc5de1effcba2487245c",
-    "a152e6bb003c43ae896cc0d146e3ff61",
-    "3b52338426f97883a80b9de864af24f9",
-    "deb6e4f3bdcc3855eb2bf1f5a98a7f8e",
-    "5a22f7103afd3511e3ee39c200aec6d3",
-    "c32182c4c64a23181cb6b127047ecfda",
-    "94d61c67ecf788f21b6793e4262e04d7",
-    "663a538db4088691ea0abbf04239db4d"
-},
-settings.LtsCredentialsOpen);
+//await TestRequests.RetrieveAndParsePoi(settings, new List<string>() { "3931c131da2923919105e403361a4cd0",
+//    "3361695701cccc5de1effcba2487245c",
+//    "a152e6bb003c43ae896cc0d146e3ff61",
+//    "3b52338426f97883a80b9de864af24f9",
+//    "deb6e4f3bdcc3855eb2bf1f5a98a7f8e",
+//    "5a22f7103afd3511e3ee39c200aec6d3",
+//    "c32182c4c64a23181cb6b127047ecfda",
+//    "94d61c67ecf788f21b6793e4262e04d7",
+//    "663a538db4088691ea0abbf04239db4d"
+//},
+//settings.LtsCredentialsOpen);
 
 
 

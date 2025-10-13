@@ -21,7 +21,7 @@ using LTSAPI.Utils;
 
 namespace LTSAPI.Parser
 {
-    public class MeasuringpointParser
+    public class WebcamInfoParser
     {
         public static WebcamInfoLinked ParseLTSWebcam(
             JObject webcamlts, bool reduced
