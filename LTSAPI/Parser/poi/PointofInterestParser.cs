@@ -238,9 +238,12 @@ namespace LTSAPI.Parser
 
                 foreach(var videos in ltspoi.videos)
                 {
-                    foreach(var lang in videos.url.Where(x => x.Value != null).Select(x => x.Key))
-                    {
-                        videolanguages.Add(lang);
+                    videolanguages = videos.url != null ? videos.url.Where(x => x.Value != null).Select(x => x.Key).ToList() :
+                        videos.name != null ? videos.name.Where(x => x.Value != null).Select(x => x.Key).ToList() :
+                        videos.name != null ? videos.name.Where(x => x.Value != null).Select(x => x.Key).ToList() : new List<string>();
+
+                    foreach (var lang in videolanguages)
+                    {                        
                         VideoItems videoitem = new VideoItems();
                         videoitem.Active = videos.isActive;                        
                         videoitem.Bitrate = null;
@@ -253,11 +256,11 @@ namespace LTSAPI.Parser
                         videoitem.LicenseHolder = null;
                         videoitem.Name = videos.genre.rid;
                         videoitem.Resolution = null;
-                        videoitem.StreamingSource = videos.url[lang];
-                        videoitem.Url = videos.htmlSnippet[lang];
+                        videoitem.StreamingSource = videos.url != null ? videos.url[lang] : null;
+                        videoitem.Url = videos.htmlSnippet != null ? videos.htmlSnippet[lang] : null;
                         videoitem.VideoDesc = null;
                         videoitem.VideoSource = videos.source;
-                        videoitem.VideoTitle = videos.name[lang];
+                        videoitem.VideoTitle = videos.name != null ? videos.name[lang] : null;
                         videoitem.VideoType = videos.genre.rid;
                         videoitem.Width = null;
 

@@ -145,10 +145,10 @@ Settings settings = new Settings(config);
 //},
 //settings.LtsCredentialsOpen);
 
-await TestRequests.RetrieveAndParsePoi(settings, new List<string>() {
-    "4DB4B03B746FB952B4525C691E04A125"
-},
-settings.LtsCredentialsOpen);
+//await TestRequests.RetrieveAndParsePoi(settings, new List<string>() {
+//    "4DB4B03B746FB952B4525C691E04A125"
+//},
+//settings.LtsCredentialsOpen);
 
 await TestRequests.RetrieveAndParsePoi(settings, new List<string>() {
     "4DB4B03B746FB952B4525C691E04A125"
