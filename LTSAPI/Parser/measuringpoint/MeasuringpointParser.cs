@@ -18,12 +18,13 @@ using System.Xml.Linq;
 using GenericHelper;
 using static System.Net.Mime.MediaTypeNames;
 using LTSAPI.Utils;
+using Microsoft.OpenApi;
 
 namespace LTSAPI.Parser
 {
     public class MeasuringpointParser
     {
-        public static MeasuringpointLinked ParseLTSMeasuringpoint(
+        public static MeasuringpointV2 ParseLTSMeasuringpoint(
             JObject weathersnowlts, bool reduced
             )
         {
@@ -39,92 +40,104 @@ namespace LTSAPI.Parser
             }          
         }
 
-        public static MeasuringpointLinked ParseLTSMeasuringpoint(
-            LTSWeatherSnowsData ltswebcam, 
+        public static MeasuringpointV2 ParseLTSMeasuringpoint(
+            LTSWeatherSnowsData ltsweathersnow, 
             bool reduced)
         {
-            MeasuringpointLinked measuringpoint = new MeasuringpointLinked();
+            MeasuringpointV2 measuringpoint = new MeasuringpointV2();
 
-            //webcam.Id = ltswebcam.rid;
-            //webcam._Meta = new Metadata() { Id = webcam.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "webcam", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
-            //webcam.Source = "lts";
+            measuringpoint.Id = ltsweathersnow.rid;
 
-            //webcam.LastChange = ltswebcam.lastUpdate;
+            measuringpoint._Meta = new Metadata() { Id = measuringpoint.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "measuringpoint", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
+            measuringpoint.Source = "lts";
+            measuringpoint.Active = ltsweathersnow.isActive;
+            measuringpoint.LastChange = ltsweathersnow.lastUpdate;
+            measuringpoint.LastUpdate = ltsweathersnow.lastUpdate;            
+
+            //Position
+            if (ltsweathersnow.position != null && ltsweathersnow.position.coordinates.Length == 2)
+            {
+                if (measuringpoint.GpsInfo == null)
+                    measuringpoint.GpsInfo = new List<GpsInfo>();
+
+                GpsInfo gpsinfo = new GpsInfo();
+                gpsinfo.Gpstype = "position";
+                gpsinfo.Latitude = ltsweathersnow.position.coordinates[1];
+                gpsinfo.Longitude = ltsweathersnow.position.coordinates[0];
+                gpsinfo.Altitude = ltsweathersnow.position.altitude;
+                gpsinfo.AltitudeUnitofMeasure = "m";
+
+                measuringpoint.GpsInfo.Add(gpsinfo);
+            }
+
+            measuringpoint.AreaIds = ltsweathersnow.areas.Select(x => x.rid).ToList();
             
-            //webcam.Active = ltswebcam.isActive;
-            //webcam.AreaIds = ltswebcam.areas.Select(x => x.rid).ToList();
+            measuringpoint.Shortname = ltsweathersnow.name.FirstOrDefault().Value;
 
-            ////Webcam Details
-            //webcam.WebCamProperties = new WebcamProperties();
-            //webcam.WebCamProperties.StreamUrl = ltswebcam.streamUrl;
-            //webcam.WebCamProperties.PreviewUrl = ltswebcam.previewUrl;
-            //webcam.WebCamProperties.WebcamUrl = ltswebcam.url;
+            measuringpoint.HasLanguage = new List<string>();
 
-            //webcam.WebcamId = ltswebcam.rid;
 
-            //webcam.FirstImport =
-            //    webcam.FirstImport == null ? DateTime.Now : webcam.FirstImport;
+            if (ltsweathersnow.name != null)
+            {
+                foreach (var desc in ltsweathersnow.name)
+                {
+                    if (!String.IsNullOrEmpty(desc.Value) && !measuringpoint.HasLanguage.Contains(desc.Key))
+                        measuringpoint.HasLanguage.Add(desc.Key);
+                }
 
-            ////Let's find out for which languages there is a name
-            //foreach (var name in ltswebcam.name)
-            //{
-            //    if (!String.IsNullOrEmpty(name.Value))
-            //        webcam.HasLanguage.Add(name.Key);
-            //}
+                //Detail Information
+                foreach (var language in measuringpoint.HasLanguage)
+                {
+                    DetailGeneric detail = new DetailGeneric();
+                    detail.Language = language;
 
-            ////Detail Information
-            //foreach (var language in webcam.HasLanguage)
-            //{
-            //    Detail detail = new Detail();
-            //    detail.Language = language;
+                    detail.Title = ltsweathersnow.name.ContainsKey(language) ? ltsweathersnow.name.GetValue(language) : null;
 
-            //    detail.Title = ltswebcam.name.GetValue(language);
+                    measuringpoint.Detail.TryAddOrUpdate(language, detail);
+                }
+            }
 
-            //    webcam.Detail.TryAddOrUpdate(language, detail);
-            //}
+            if (ltsweathersnow.conditions != null)
+            {
+                measuringpoint.Temperature = ltsweathersnow.conditions.temperature != null ? ltsweathersnow.conditions.temperature.ToString() :null;
+                measuringpoint.SnowHeight = ltsweathersnow.conditions.snow != null && ltsweathersnow.conditions.snow.height != null ? ltsweathersnow.conditions.snow.height.ToString() : null;
+                measuringpoint.LastSnowDate = ltsweathersnow.conditions.snow != null && ltsweathersnow.conditions.snow.lastEvent != null ? ltsweathersnow.conditions.snow.lastEvent.Value : DateTime.MinValue;
+                measuringpoint.newSnowHeight = ltsweathersnow.conditions.snow != null && ltsweathersnow.conditions.snow.lastEventHeight != null ? ltsweathersnow.conditions.snow.lastEventHeight.ToString() : null;
 
-            ////Position
-            //if (ltswebcam.position != null && ltswebcam.position.coordinates.Length == 2)
-            //{
-            //    if (webcam.GpsInfo == null)
-            //        webcam.GpsInfo = new List<GpsInfo>();
+                if (ltsweathersnow.conditions.weatherForecasts != null)
+                {
+                    measuringpoint.WeatherObservation = new List<WeatherObservation>();
+                    
+                    foreach (var ltsweatherforecast in ltsweathersnow.conditions.weatherForecasts.forecasts)
+                    {
+                        WeatherObservation observation = new WeatherObservation();
 
-            //    GpsInfo gpsinfo = new GpsInfo();
-            //    gpsinfo.Gpstype = "position";
-            //    gpsinfo.Latitude = ltswebcam.position.coordinates[1];
-            //    gpsinfo.Longitude = ltswebcam.position.coordinates[0];
-            //    gpsinfo.Altitude = ltswebcam.position.altitude;
-            //    gpsinfo.AltitudeUnitofMeasure = "m";
+                        observation.Id = ltsweatherforecast.rid;
+                        observation.IconID = ltsweatherforecast.iconId.ToString();
+                        observation.Date = Convert.ToDateTime(ltsweatherforecast.date);
+                        observation.WeatherStatus = (Dictionary<string, string>)ltsweatherforecast.description;
 
-            //    webcam.GpsInfo.Add(gpsinfo);
-            //}
-
-            ////Images
-            //if (!String.IsNullOrEmpty(ltswebcam.url))
-            //{
-            //    List<ImageGallery> imagegallerylist = new List<ImageGallery>();
-
-            //    ImageGallery imagepoi = new ImageGallery();
-
-            //    imagepoi.ImageTitle = ltswebcam.name;                
-            //    imagepoi.ImageUrl = ltswebcam.url;
-
-            //    imagegallerylist.Add(imagepoi);
-            //    webcam.ImageGallery = imagegallerylist;
-            //}
-
-            ////Videos
+                        measuringpoint.WeatherObservation.Add(observation);
+                    }
+                }
+            }
+            
+            
 
             ////Mapping
-            //var ltsmapping = new Dictionary<string, string>();
-            //ltsmapping.Add("rid", ltswebcam.rid);            
-            //ltsmapping.Add("tourismOrganization", ltswebcam.tourismOrganization.rid);
+            var ltsmapping = new Dictionary<string, string>();
+            ltsmapping.Add("rid", ltsweathersnow.rid);            
+            if(!String.IsNullOrEmpty(ltsweathersnow.tourismOrganization.rid))
+                ltsmapping.Add("tourismOrganization", ltsweathersnow.tourismOrganization.rid);
 
-            //ltsmapping.Add("isReadOnly", ltswebcam.isReadOnly.ToString());
-            //ltsmapping.Add("isOutOfOrder", ltswebcam.isOutOfOrder.ToString());
-            //ltsmapping.Add("hasCopyright", ltswebcam.hasCopyright.ToString());
+            ltsmapping.Add("isReadOnly", ltsweathersnow.isReadOnly.ToString());
+            ltsmapping.Add("isOutOfOrder", ltsweathersnow.isOutOfOrder.ToString());
 
-            //webcam.Mapping.TryAddOrUpdate("lts", ltsmapping);
+            if (ltsweathersnow.conditions?.weatherForecasts?.regionId != null)
+                ltsmapping.Add("weatherForecasts.regionId", ltsweathersnow.conditions.weatherForecasts.regionId.ToString());
+
+
+            measuringpoint.Mapping.TryAddOrUpdate("lts", ltsmapping);
 
             return measuringpoint;
         }

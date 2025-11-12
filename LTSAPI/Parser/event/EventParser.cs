@@ -25,7 +25,7 @@ namespace LTSAPI.Parser
 {
     public class EventParser
     {
-        public static (List<EventV2>, VenueV2) ParseLTSEvent(
+        public static (List<EventFlattened>, VenueFlattened) ParseLTSEvent(
             JObject eventlts, bool reduced
             )
         {
@@ -33,7 +33,7 @@ namespace LTSAPI.Parser
             {
                 LTSEvent eventltsdetail = eventlts.ToObject<LTSEvent>();
 
-                return ParseLTSEvent(eventltsdetail.data, reduced);
+                return ParseLTSEventFlattened(eventltsdetail.data, reduced);
             }
             catch(Exception ex)
             {           
@@ -41,11 +41,11 @@ namespace LTSAPI.Parser
             }          
         }
 
-        public static (List<EventV2>, VenueV2) ParseLTSEvent(
+        public static (List<EventFlattened>, VenueFlattened) ParseLTSEventFlattened(
             LTSEventData eventlts, 
             bool reduced)
         {
-            EventV2 eventv2 = new EventV2();
+            EventFlattened eventv2 = new EventFlattened();
 
             eventv2.Id = eventlts.rid;
             eventv2._Meta = new Metadata() { Id = eventv2.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "event", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
@@ -68,7 +68,7 @@ namespace LTSAPI.Parser
             //Custom Fields
 
 
-            return (new List<EventV2>() { eventv2 }, new VenueV2());
+            return (new List<EventFlattened>() { eventv2 }, new VenueFlattened());
         }
 
         public static EventLinked ParseLTSEventV1(

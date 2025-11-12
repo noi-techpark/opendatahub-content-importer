@@ -45,6 +45,14 @@ namespace LTSAPI
         public string website { get; set; }
     }
 
+    public class LTSVenueContact
+    {
+        public LTSAddress? address { get; set; }
+        public string? email { get; set; }
+        public string? phone { get; set; }
+        public string? website { get; set; }
+    }
+
     public class LTSEventContact
     {
         public LTSAddress? address { get; set; }
@@ -1215,7 +1223,7 @@ namespace LTSAPI
     {
         public string rid { get; set; }
         public GenericLTSRidResult accommodation { get; set; }
-        public LTSEventContact contact { get; set; }
+        public LTSVenueContact contact { get; set; }
         public LTSDescription[] descriptions { get; set; }
         public LTSHall[] halls { get; set; }
         public bool isActive { get; set; }
