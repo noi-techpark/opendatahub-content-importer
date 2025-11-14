@@ -175,8 +175,11 @@ namespace LTSAPI.Parser
 
             //Opening Schedules
 
-            //Tags  Add Categories here
+            //Tags Add Categories here
+            //if(ltsvenue.categories != null)
+            //{
 
+            //}
 
             //Images
 
@@ -276,6 +279,23 @@ namespace LTSAPI.Parser
             venue.Mapping.TryAddOrUpdate("lts", ltsmapping);
 
             return venue;
+        }
+
+        public static string GetIDPurposeOfUse(string purposeofUse)
+        {
+            switch (purposeofUse)
+            {
+                case "audience": return "VENE4AA0F13DDF1410489F237FF6B181831";
+                case "board": return "VEN3D1C707DCA794BBFBAA76ECA49465865";
+                case "class": return "VEN0536C64E86B44FC2A2FBA77B6948993D";
+                case "cocktail": return "VEN6E29B13DB4B04860B97DC993E203B1CF";
+                case "galaDinner": return "VENDB7A4015D38543C5B8971362BDE1986A";
+                case "horseshoe": return "VENDF70389DB7C54D57BCA0778AB7AA9C73";
+                case "theaterSetup": return "VEN1A7079E1D02E48BE906FEE5CA73B534E";
+                case "parliamentarySetup": return "VENA060940F647545F595C4017AA4D79CD0";
+                case "circleSetup": return "VENC9296B94D05D4B6E9FFDF363B96842FB";
+                default:  return "";
+            }
         }
     }
 
