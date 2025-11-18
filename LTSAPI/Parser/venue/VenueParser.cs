@@ -231,7 +231,7 @@ namespace LTSAPI.Parser
                     //Add Features as Tags
                     if (ltshall.features != null)
                     {
-                        if(venueroomdetail.TagIds != null)
+                        if(venueroomdetail.TagIds == null)
                             venueroomdetail.TagIds = new List<string>();
 
                         foreach(var feature in ltshall.features)
@@ -243,7 +243,7 @@ namespace LTSAPI.Parser
                     //Add Features as Tags
                     if (ltshall.purposesOfUse != null)
                     {
-                        if (venueroomdetail.TagIds != null)
+                        if (venueroomdetail.TagIds == null)
                             venueroomdetail.TagIds = new List<string>();
 
                         //if (venueroomdetail.Tags != null)

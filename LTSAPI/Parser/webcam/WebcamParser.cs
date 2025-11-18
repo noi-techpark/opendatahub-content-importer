@@ -66,6 +66,8 @@ namespace LTSAPI.Parser
             //Let's find out for which languages there is a name
             if (ltswebcam.name != null)
             {
+                webcam.HasLanguage = new List<string>();
+
                 foreach (var name in ltswebcam.name)
                 {
                     if (!String.IsNullOrEmpty(name.Value))
@@ -74,14 +76,17 @@ namespace LTSAPI.Parser
             }
 
             //Detail Information
-            foreach (var language in webcam.HasLanguage)
+            if (webcam.HasLanguage != null)
             {
-                Detail detail = new Detail();
-                detail.Language = language;
+                foreach (var language in webcam.HasLanguage)
+                {
+                    Detail detail = new Detail();
+                    detail.Language = language;
 
-                detail.Title = ltswebcam.name.GetValue(language);
+                    detail.Title = ltswebcam.name.GetValue(language);
 
-                webcam.Detail.TryAddOrUpdate(language, detail);
+                    webcam.Detail.TryAddOrUpdate(language, detail);
+                }
             }
 
             //Position
