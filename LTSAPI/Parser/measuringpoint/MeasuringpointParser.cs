@@ -10,15 +10,12 @@ using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using GenericHelper;
-using static System.Net.Mime.MediaTypeNames;
 using LTSAPI.Utils;
-using Microsoft.OpenApi;
 
 namespace LTSAPI.Parser
 {
@@ -70,7 +67,7 @@ namespace LTSAPI.Parser
                 measuringpoint.GpsInfo.Add(gpsinfo);
             }
 
-            measuringpoint.AreaIds = ltsweathersnow.areas.Select(x => x.rid).ToList();
+            measuringpoint.AreaIds = ltsweathersnow.areas != null ? ltsweathersnow.areas.Select(x => x.rid).ToList() : null;
             
             measuringpoint.Shortname = ltsweathersnow.name.FirstOrDefault().Value;
 
@@ -101,7 +98,7 @@ namespace LTSAPI.Parser
             {
                 measuringpoint.Temperature = ltsweathersnow.conditions.temperature != null ? ltsweathersnow.conditions.temperature.ToString() :null;
                 measuringpoint.SnowHeight = ltsweathersnow.conditions.snow != null && ltsweathersnow.conditions.snow.height != null ? ltsweathersnow.conditions.snow.height.ToString() : null;
-                measuringpoint.LastSnowDate = ltsweathersnow.conditions.snow != null && ltsweathersnow.conditions.snow.lastEvent != null ? ltsweathersnow.conditions.snow.lastEvent.Value : DateTime.MinValue;
+                measuringpoint.LastSnowDate = ltsweathersnow.conditions.snow != null && ltsweathersnow.conditions.snow.lastEvent != null ? ltsweathersnow.conditions.snow.lastEvent.Value : null;
                 measuringpoint.newSnowHeight = ltsweathersnow.conditions.snow != null && ltsweathersnow.conditions.snow.lastEventHeight != null ? ltsweathersnow.conditions.snow.lastEventHeight.ToString() : null;
 
                 if (ltsweathersnow.conditions.weatherForecasts != null)
@@ -126,12 +123,15 @@ namespace LTSAPI.Parser
 
             ////Mapping
             var ltsmapping = new Dictionary<string, string>();
-            ltsmapping.Add("rid", ltsweathersnow.rid);            
-            if(!String.IsNullOrEmpty(ltsweathersnow.tourismOrganization.rid))
+            ltsmapping.Add("rid", ltsweathersnow.rid);     
+            
+            if(ltsweathersnow.tourismOrganization != null && !String.IsNullOrEmpty(ltsweathersnow.tourismOrganization.rid))
                 ltsmapping.Add("tourismOrganization", ltsweathersnow.tourismOrganization.rid);
 
-            ltsmapping.Add("isReadOnly", ltsweathersnow.isReadOnly.ToString());
-            ltsmapping.Add("isOutOfOrder", ltsweathersnow.isOutOfOrder.ToString());
+            if(ltsweathersnow.isReadOnly != null)
+                ltsmapping.Add("isReadOnly", ltsweathersnow.isReadOnly.ToString());
+            if (ltsweathersnow.isOutOfOrder != null)
+                ltsmapping.Add("isOutOfOrder", ltsweathersnow.isOutOfOrder.ToString());
 
             if (ltsweathersnow.conditions?.weatherForecasts?.regionId != null)
                 ltsmapping.Add("weatherForecasts.regionId", ltsweathersnow.conditions.weatherForecasts.regionId.ToString());

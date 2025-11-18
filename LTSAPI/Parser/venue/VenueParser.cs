@@ -10,13 +10,11 @@ using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using GenericHelper;
-using static System.Net.Mime.MediaTypeNames;
 using LTSAPI.Utils;
 
 namespace LTSAPI.Parser
@@ -24,12 +22,12 @@ namespace LTSAPI.Parser
     public class VenueParser
     {
         public static VenueFlattened ParseLTSVenueFlattened(
-            JObject webcamlts, bool reduced
+            JObject venuelts, bool reduced
             )
         {
             try
             {
-                LTSVenue ltsvenue = webcamlts.ToObject<LTSVenue>();
+                LTSVenue ltsvenue = venuelts.ToObject<LTSVenue>();
 
                 return ParseLTSVenueVenueFlattened(ltsvenue.data, reduced);
             }
@@ -71,15 +69,15 @@ namespace LTSAPI.Parser
             return venue;
         }
 
-        public static VenueV2 ParseLTSVenueV1(
-            JObject webcamlts, bool reduced
+        public static VenueV2 ParseLTSVenue(
+            JObject venuelts, bool reduced
             )
         {
             try
             {
-                LTSVenue ltsvenue = webcamlts.ToObject<LTSVenue>();
+                LTSVenue ltsvenue = venuelts.ToObject<LTSVenue>();
 
-                return ParseLTSVenueV1(ltsvenue.data, reduced);
+                return ParseLTSVenue(ltsvenue.data, reduced);
             }
             catch (Exception ex)
             {
@@ -87,7 +85,7 @@ namespace LTSAPI.Parser
             }
         }
 
-        public static VenueV2 ParseLTSVenueV1(
+        public static VenueV2 ParseLTSVenue(
             LTSVenueData ltsvenue,
             bool reduced)
         {
@@ -270,7 +268,8 @@ namespace LTSAPI.Parser
             //Mapping
             var ltsmapping = new Dictionary<string, string>();
             ltsmapping.Add("rid", ltsvenue.rid);
-            if (!String.IsNullOrEmpty(ltsvenue.tourismOrganization.rid))
+
+            if (ltsvenue.tourismOrganization != null && !String.IsNullOrEmpty(ltsvenue.tourismOrganization.rid))
                 ltsmapping.Add("tourismOrganization", ltsvenue.tourismOrganization.rid);
 
             if (!String.IsNullOrEmpty(ltsvenue.accommodation?.rid))

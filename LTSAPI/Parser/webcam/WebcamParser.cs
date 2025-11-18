@@ -10,13 +10,11 @@ using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using GenericHelper;
-using static System.Net.Mime.MediaTypeNames;
 using LTSAPI.Utils;
 
 namespace LTSAPI.Parser
@@ -52,7 +50,7 @@ namespace LTSAPI.Parser
             webcam.LastChange = ltswebcam.lastUpdate;
             
             webcam.Active = ltswebcam.isActive;
-            webcam.AreaIds = ltswebcam.areas.Select(x => x.rid).ToList();
+            webcam.AreaIds = ltswebcam.areas != null ? ltswebcam.areas.Select(x => x.rid).ToList() : null;
 
             //Webcam Details
             webcam.WebCamProperties = new WebcamProperties();
@@ -66,10 +64,13 @@ namespace LTSAPI.Parser
                 webcam.FirstImport == null ? DateTime.Now : webcam.FirstImport;
 
             //Let's find out for which languages there is a name
-            foreach (var name in ltswebcam.name)
+            if (ltswebcam.name != null)
             {
-                if (!String.IsNullOrEmpty(name.Value))
-                    webcam.HasLanguage.Add(name.Key);
+                foreach (var name in ltswebcam.name)
+                {
+                    if (!String.IsNullOrEmpty(name.Value))
+                        webcam.HasLanguage.Add(name.Key);
+                }
             }
 
             //Detail Information
@@ -117,12 +118,17 @@ namespace LTSAPI.Parser
 
             //Mapping
             var ltsmapping = new Dictionary<string, string>();
-            ltsmapping.Add("rid", ltswebcam.rid);            
-            ltsmapping.Add("tourismOrganization", ltswebcam.tourismOrganization.rid);
+            ltsmapping.Add("rid", ltswebcam.rid);       
+            
+            if(ltswebcam.tourismOrganization != null && !String.IsNullOrEmpty(ltswebcam.tourismOrganization.rid))
+                ltsmapping.Add("tourismOrganization", ltswebcam.tourismOrganization.rid);
 
-            ltsmapping.Add("isReadOnly", ltswebcam.isReadOnly.ToString());
-            ltsmapping.Add("isOutOfOrder", ltswebcam.isOutOfOrder.ToString());
-            ltsmapping.Add("hasCopyright", ltswebcam.hasCopyright.ToString());
+            if (ltswebcam.isReadOnly != null)
+                ltsmapping.Add("isReadOnly", ltswebcam.isReadOnly.ToString());
+            if (ltswebcam.isOutOfOrder != null)
+                ltsmapping.Add("isOutOfOrder", ltswebcam.isOutOfOrder.ToString());
+            if (ltswebcam.hasCopyright != null)
+                ltsmapping.Add("hasCopyright", ltswebcam.hasCopyright.ToString());
 
             webcam.Mapping.TryAddOrUpdate("lts", ltsmapping);
 

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using DataImportHelper;
+using DataModel;
 using GenericHelper;
 using LTSAPI;
 using LTSAPI.Parser;
@@ -142,6 +143,65 @@ namespace TestConsole
                 Console.WriteLine(JsonConvert.SerializeObject(parsedpoi, serializersettings));
             }            
         }
+
+        public static async Task RetrieveAndParseMeasuringpoint(Settings settings, List<string> idlist, LTSCredentials ltscreds)
+        {
+            foreach (var id in idlist)
+            {
+                LtsApi ltsapi = new LtsApi(ltscreds);
+                var measuringpoint = await ltsapi.WeatherSnowDetailRequest(id.ToUpper(), null);
+                var parsed = MeasuringpointParser.ParseLTSMeasuringpoint(measuringpoint.FirstOrDefault().Value<JObject>(), false);
+
+                // Create settings with alphabetical property ordering
+                var serializersettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new AlphabeticalContractResolver(),
+                    Formatting = Formatting.Indented // Optional: for pretty printing
+                };
+
+                Console.WriteLine(JsonConvert.SerializeObject(parsed, serializersettings));
+            }
+        }
+
+        public static async Task RetrieveAndParseVenue(Settings settings, List<string> idlist, LTSCredentials ltscreds)
+        {
+            foreach (var id in idlist)
+            {
+                LtsApi ltsapi = new LtsApi(ltscreds);
+                var venue = await ltsapi.VenueDetailRequest(id.ToUpper(), null);
+                var parsed = VenueParser.ParseLTSVenue(venue.FirstOrDefault().Value<JObject>(), false);
+
+                // Create settings with alphabetical property ordering
+                var serializersettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new AlphabeticalContractResolver(),
+                    Formatting = Formatting.Indented // Optional: for pretty printing
+                };
+
+                Console.WriteLine(JsonConvert.SerializeObject(parsed, serializersettings));
+            }
+        }
+
+
+        public static async Task RetrieveAndParseWebcam(Settings settings, List<string> idlist, LTSCredentials ltscreds)
+        {
+            foreach (var id in idlist)
+            {
+                LtsApi ltsapi = new LtsApi(ltscreds);
+                var webcam = await ltsapi.WebcamDetailRequest(id.ToUpper(), null);
+                var parsed = WebcamInfoParser.ParseLTSWebcam(webcam.FirstOrDefault().Value<JObject>(), false);
+
+                // Create settings with alphabetical property ordering
+                var serializersettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new AlphabeticalContractResolver(),
+                    Formatting = Formatting.Indented // Optional: for pretty printing
+                };
+
+                Console.WriteLine(JsonConvert.SerializeObject(parsed, serializersettings));
+            }
+        }
+
 
         #region Accommodation Helper
 

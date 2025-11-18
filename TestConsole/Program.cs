@@ -150,10 +150,10 @@ Settings settings = new Settings(config);
 //},
 //settings.LtsCredentialsOpen);
 
-await TestRequests.RetrieveAndParsePoi(settings, new List<string>() {
-    "4DB4B03B746FB952B4525C691E04A125"
-},
-settings.LtsCredentials);
+//await TestRequests.RetrieveAndParsePoi(settings, new List<string>() {
+//    "4DB4B03B746FB952B4525C691E04A125"
+//},
+//settings.LtsCredentials);
 
 //await TestRequests.RetrieveAndParsePoi(settings, new List<string>() { "3931c131da2923919105e403361a4cd0",
 //    "3361695701cccc5de1effcba2487245c",
@@ -168,6 +168,20 @@ settings.LtsCredentials);
 //settings.LtsCredentialsOpen);
 
 
+await TestRequests.RetrieveAndParseWebcam(settings, new List<string>() {
+    "02FC162B43AAB00A2C54FBC8A4F6EF03"
+},
+settings.LtsCredentialsOpen);
+
+await TestRequests.RetrieveAndParseVenue(settings, new List<string>() {
+    "027AD1BA641C49F9B3D3A914E98416E1"
+},
+settings.LtsCredentialsOpen);
+
+await TestRequests.RetrieveAndParseMeasuringpoint(settings, new List<string>() {
+    "8297CEB0064538392DD4F1148A9D24B3"
+},
+settings.LtsCredentialsOpen);
 
 
 Console.ReadLine();
