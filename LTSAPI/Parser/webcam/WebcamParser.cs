@@ -75,6 +75,10 @@ namespace LTSAPI.Parser
                 }
             }
 
+            if (ltswebcam.name != null)
+                webcam.Shortname = ltswebcam.name.Where(x => !String.IsNullOrEmpty(x.Value)).FirstOrDefault().Value;
+
+
             //Detail Information
             if (webcam.HasLanguage != null)
             {

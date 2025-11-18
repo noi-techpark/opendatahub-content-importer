@@ -171,6 +171,10 @@ namespace LTSAPI.Parser
                 venue.ContactInfos.TryAddOrUpdate(language, contactinfo);
             }
 
+            if (ltsvenue.name != null)
+                venue.Shortname = ltsvenue.name.Where(x => !String.IsNullOrEmpty(x.Value)).FirstOrDefault().Value;
+
+
             //Opening Schedules
 
             //Tags Add Categories here
@@ -185,7 +189,7 @@ namespace LTSAPI.Parser
 
             //Halls
 
-            if(ltsvenue.halls != null)
+            if (ltsvenue.halls != null)
             {
                 venue.RoomDetails = new List<VenueRoomDetailsV2>();
 
@@ -251,10 +255,13 @@ namespace LTSAPI.Parser
 
                         foreach (var purposesofuse in ltshall.purposesOfUse)
                         {
-                            venueroomdetail.TagIds.Add(purposesofuse.type);
+                            if (!String.IsNullOrEmpty(purposesofuse.type))
+                            {
+                                venueroomdetail.TagIds.Add(GetIDPurposeOfUse(purposesofuse.type));
 
-                            //Problem the ID is not here, and we cannot 
-                            //venueroomdetail.Tags.Add(new Tags() { Id = purposesofuse.type, Source = "lts", TagEntry = new Dictionary<string, string>() { { "maxCapacity", purposesofuse.maxCapacity.ToString() } } });
+                                //Problem the ID is not here, and we cannot 
+                                venueroomdetail.Tags.Add(new Tags() { Id = GetIDPurposeOfUse(purposesofuse.type), Source = "lts", Name = purposesofuse.type, TagEntry = new Dictionary<string, string>() { { "maxCapacity", purposesofuse.maxCapacity.ToString() } } });
+                            }
                         }
                     }
 

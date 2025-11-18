@@ -68,11 +68,8 @@ namespace LTSAPI.Parser
             }
 
             measuringpoint.AreaIds = ltsweathersnow.areas != null ? ltsweathersnow.areas.Select(x => x.rid).ToList() : null;
-            
-            measuringpoint.Shortname = ltsweathersnow.name.FirstOrDefault().Value;
-
+                   
             measuringpoint.HasLanguage = new List<string>();
-
 
             if (ltsweathersnow.name != null)
             {
@@ -93,6 +90,10 @@ namespace LTSAPI.Parser
                     measuringpoint.Detail.TryAddOrUpdate(language, detail);
                 }
             }
+
+            if(ltsweathersnow.name != null)
+                measuringpoint.Shortname = ltsweathersnow.name.Where(x => !String.IsNullOrEmpty(x.Value)).FirstOrDefault().Value;
+
 
             if (ltsweathersnow.conditions != null)
             {

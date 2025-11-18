@@ -167,6 +167,11 @@ Settings settings = new Settings(config);
 //},
 //settings.LtsCredentialsOpen);
 
+await TestRequests.RetrieveAndParseMeasuringpoint(settings, new List<string>() {
+    "8297CEB0064538392DD4F1148A9D24B3"
+},
+settings.LtsCredentials);
+
 
 await TestRequests.RetrieveAndParseWebcam(settings, new List<string>() {
     "02FC162B43AAB00A2C54FBC8A4F6EF03"
@@ -178,10 +183,6 @@ await TestRequests.RetrieveAndParseVenue(settings, new List<string>() {
 },
 settings.LtsCredentialsOpen);
 
-await TestRequests.RetrieveAndParseMeasuringpoint(settings, new List<string>() {
-    "8297CEB0064538392DD4F1148A9D24B3"
-},
-settings.LtsCredentialsOpen);
 
 
 Console.ReadLine();
