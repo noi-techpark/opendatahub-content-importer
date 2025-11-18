@@ -105,17 +105,20 @@ namespace LTSAPI.Parser
                 if (ltsweathersnow.conditions.weatherForecasts != null)
                 {
                     measuringpoint.WeatherObservation = new List<WeatherObservation>();
-                    
-                    foreach (var ltsweatherforecast in ltsweathersnow.conditions.weatherForecasts.forecasts)
+
+                    if (ltsweathersnow.conditions.weatherForecasts.forecasts != null)
                     {
-                        WeatherObservation observation = new WeatherObservation();
+                        foreach (var ltsweatherforecast in ltsweathersnow.conditions.weatherForecasts.forecasts)
+                        {
+                            WeatherObservation observation = new WeatherObservation();
 
-                        observation.Id = ltsweatherforecast.rid;
-                        observation.IconID = ltsweatherforecast.iconId.ToString();
-                        observation.Date = Convert.ToDateTime(ltsweatherforecast.date);
-                        observation.WeatherStatus = (Dictionary<string, string>)ltsweatherforecast.description;
+                            observation.Id = ltsweatherforecast.rid;
+                            observation.IconID = ltsweatherforecast.iconId.ToString();
+                            observation.Date = Convert.ToDateTime(ltsweatherforecast.date);
+                            observation.WeatherStatus = (Dictionary<string, string>)ltsweatherforecast.description;
 
-                        measuringpoint.WeatherObservation.Add(observation);
+                            measuringpoint.WeatherObservation.Add(observation);
+                        }
                     }
                 }
             }

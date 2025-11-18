@@ -168,7 +168,7 @@ Settings settings = new Settings(config);
 //settings.LtsCredentialsOpen);
 
 await TestRequests.RetrieveAndParseMeasuringpoint(settings, new List<string>() {
-    "8297CEB0064538392DD4F1148A9D24B3"
+    "04AF7C73242FE23115FB6A120F5079D2"
 },
 settings.LtsCredentials);
 
