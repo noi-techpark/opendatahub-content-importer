@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>opendatahub-ltsapi-importer</PackageId>
     <Title>Open Data Hub LTS Api Helper Library</Title>
-    <Version>3.7.2</Version>
+    <Version>3.7.3</Version>
     <Authors>r.thoeni</Authors>
     <Company>NOI AG</Company>
     <Product>$(AssemblyName)</Product>
@@ -24,7 +24,7 @@
   <ItemGroup>
     <PackageReference Include="Combinatorics" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="opendatahub-datamodel-tourism" Version="1.6.0" />
+    <PackageReference Include="opendatahub-datamodel-tourism" Version="1.7.0" />
   </ItemGroup>
 
   <ItemGroup>

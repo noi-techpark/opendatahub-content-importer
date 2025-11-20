@@ -171,6 +171,11 @@ await TestRequests.RetrieveAndParseMeasuringpoint(settings, new List<string>() {
     "04AF7C73242FE23115FB6A120F5079D2"
 },
 settings.LtsCredentials);
+await TestRequests.RetrieveAndParseMeasuringpoint(settings, new List<string>() {
+    "04AF7C73242FE23115FB6A120F5079D2"
+},
+settings.LtsCredentialsOpen);
+
 
 
 await TestRequests.RetrieveAndParseWebcam(settings, new List<string>() {
