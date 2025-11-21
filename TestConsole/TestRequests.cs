@@ -98,7 +98,7 @@ namespace TestConsole
         public static async Task RetrieveAndParseGastronomy(Settings settings)
         {
             LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
-            var ltsgastro = await ltsapi.GastronomyDetailRequest("AA59A0A290D511D2899A0040055BC477", null);
+            var ltsgastro = await ltsapi.GastronomyDetailRequest("724FDBF6CFC811D1BA6B444553540000", null);
             var parsedgastro = GastronomyParser.ParseLTSGastronomy(ltsgastro.FirstOrDefault().Value<JObject>(), false, null);
 
             //LtsApi ltsapi2 = new LtsApi(settings.LtsCredentials);
