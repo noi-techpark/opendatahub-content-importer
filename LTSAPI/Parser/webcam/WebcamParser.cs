@@ -54,9 +54,9 @@ namespace LTSAPI.Parser
 
             //Webcam Details
             webcam.WebCamProperties = new WebcamProperties();
-            webcam.WebCamProperties.StreamUrl = ltswebcam.streamUrl;
-            webcam.WebCamProperties.PreviewUrl = ltswebcam.previewUrl;
-            webcam.WebCamProperties.WebcamUrl = ltswebcam.url;
+            webcam.WebCamProperties.StreamUrl = String.IsNullOrEmpty(ltswebcam.streamUrl) ? null : ltswebcam.streamUrl;
+            webcam.WebCamProperties.PreviewUrl = String.IsNullOrEmpty(ltswebcam.previewUrl) ? null : ltswebcam.previewUrl;
+            webcam.WebCamProperties.WebcamUrl = String.IsNullOrEmpty(ltswebcam.url) ? null : ltswebcam.url;
 
             webcam.WebcamId = ltswebcam.rid;
 
@@ -124,6 +124,8 @@ namespace LTSAPI.Parser
             }
 
             //Videos
+            //Set videoitems if StreamUrl is set?
+
 
             //Mapping
             var ltsmapping = new Dictionary<string, string>();
