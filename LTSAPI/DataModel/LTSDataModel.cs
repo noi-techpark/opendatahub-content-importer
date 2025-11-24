@@ -1279,9 +1279,9 @@ namespace LTSAPI
         public string streamUrl { get; set; }
         public LTSTourismorganization tourismOrganization { get; set; }
         public bool isActive { get; set; }
-        public bool hasCopyright { get; set; }
-        public bool isOutOfOrder { get; set; }
-        public bool isReadOnly { get; set; }
+        public bool? hasCopyright { get; set; }
+        public bool? isOutOfOrder { get; set; }
+        public bool? isReadOnly { get; set; }
         public IDictionary<string, string> name { get; set; }
         public LTSArea[] areas { get; set; }
         public LTSPosition position { get; set; }
