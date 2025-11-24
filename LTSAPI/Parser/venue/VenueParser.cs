@@ -287,6 +287,7 @@ namespace LTSAPI.Parser
             return venue;
         }
 
+        //TO REMOVE when this info comes from LTS Interface
         public static string GetIDPurposeOfUse(string purposeofUse)
         {
             switch (purposeofUse)
