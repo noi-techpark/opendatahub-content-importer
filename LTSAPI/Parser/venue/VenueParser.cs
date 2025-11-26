@@ -131,7 +131,7 @@ namespace LTSAPI.Parser
 
 
             //District and Tourism Organization
-            venue.LocationInfo.TvInfo = ltsvenue.tourismOrganization != null ? new TvInfoLinked() { Id = ltsvenue.tourismOrganization.rid } : null;
+            //venue.LocationInfo.TvInfo = ltsvenue.tourismOrganization != null ? new TvInfoLinked() { Id = ltsvenue.tourismOrganization.rid } : null;
             venue.LocationInfo.DistrictInfo = ltsvenue.district != null && !String.IsNullOrEmpty(ltsvenue.district.rid) ? new DistrictInfoLinked() { Id = ltsvenue.district.rid } : null;
 
             //Detail Information
