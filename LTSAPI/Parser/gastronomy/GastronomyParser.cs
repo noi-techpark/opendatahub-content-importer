@@ -81,6 +81,7 @@ namespace LTSAPI.Parser
             gastronomy.TourismorganizationId = ltsgastronomy.tourismOrganization != null ? ltsgastronomy.tourismOrganization.rid : null;
             gastronomy.LocationInfo.DistrictInfo = ltsgastronomy.district != null && !String.IsNullOrEmpty(ltsgastronomy.district.rid) ? new DistrictInfoLinked() { Id = ltsgastronomy.district.rid } : null;
 
+            
             gastronomy.MaxSeatingCapacity = ltsgastronomy.maxSeatingCapacity;
 
             //Categories, Dishrates, Facilities, CeremonyCodes all to Tags

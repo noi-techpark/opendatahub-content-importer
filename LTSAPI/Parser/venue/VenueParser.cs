@@ -127,8 +127,12 @@ namespace LTSAPI.Parser
                 }
             }
 
-            //Tourism Organization
-            //ltsvenue.tourismOrganization.rid;
+            venue.LocationInfo = new LocationInfoLinked();
+
+
+            //District and Tourism Organization
+            venue.LocationInfo.TvInfo = ltsvenue.tourismOrganization != null ? new TvInfoLinked() { Id = ltsvenue.tourismOrganization.rid } : null;
+            venue.LocationInfo.DistrictInfo = ltsvenue.district != null && !String.IsNullOrEmpty(ltsvenue.district.rid) ? new DistrictInfoLinked() { Id = ltsvenue.district.rid } : null;
 
             //Detail Information
             foreach (var language in venue.HasLanguage)
@@ -168,6 +172,12 @@ namespace LTSAPI.Parser
                 contactinfo.Phonenumber = ltsvenue.contact != null ? ltsvenue.contact.phone : null;
                 contactinfo.Url = ltsvenue.contact != null ? ltsvenue.contact.website : null;
 
+                if(ltsvenue.location != null)
+                {
+                    if (!String.IsNullOrEmpty(ltsvenue.location.GetValue(language)))
+                        contactinfo.Area = ltsvenue.location.GetValue(language);
+                }
+
                 venue.ContactInfos.TryAddOrUpdate(language, contactinfo);
             }
 
@@ -175,15 +185,121 @@ namespace LTSAPI.Parser
                 venue.Shortname = ltsvenue.name.Where(x => !String.IsNullOrEmpty(x.Value)).FirstOrDefault().Value;
 
 
-            //Opening Schedules
+            //Opening Schedules            
+            if (ltsvenue.openingSchedules != null)
+            {
+                List<OperationSchedule> operationschedulelist = new List<OperationSchedule>();
+
+                foreach (var operationschedulelts in ltsvenue.openingSchedules)
+                {
+                    OperationSchedule operationschedule = new OperationSchedule();
+                    operationschedule.Start = Convert.ToDateTime(operationschedulelts.startDate);
+                    operationschedule.Stop = Convert.ToDateTime(operationschedulelts.endDate);
+                    operationschedule.Type = "1";
+                    //operationschedule.OperationscheduleName = operationschedulelts.name;
+                    //"isOpen": true
+
+                    if (operationschedulelts.openingTimes != null)
+                    {
+                        operationschedule.OperationScheduleTime = new List<OperationScheduleTime>();
+
+                        //If there are openingtimes given
+                        if (operationschedulelts.openingTimes.Count() > 0)
+                        {
+                            foreach (var openingtimelts in operationschedulelts.openingTimes)
+                            {
+                                OperationScheduleTime openingtime = new OperationScheduleTime();
+                                openingtime.Start = TimeSpan.Parse(openingtimelts.startTime);
+                                openingtime.End = TimeSpan.Parse(openingtimelts.endTime);
+                                openingtime.Monday = operationschedulelts.isMondayOpen;
+                                openingtime.Tuesday = operationschedulelts.isTuesdayOpen;
+                                openingtime.Wednesday = operationschedulelts.isWednesdayOpen;
+                                openingtime.Thursday = operationschedulelts.isThursdayOpen;
+                                openingtime.Friday = operationschedulelts.isFridayOpen;
+                                openingtime.Saturday = operationschedulelts.isSaturdayOpen;
+                                openingtime.Sunday = operationschedulelts.isSundayOpen;
+                                openingtime.Timecode = 1;
+
+                                if (operationschedulelts.isOpen)
+                                    openingtime.State = 2;
+                                else
+                                    openingtime.State = 1;
+
+                                operationschedule.OperationScheduleTime.Add(openingtime);
+                            }
+                        }
+                        else
+                        {
+                            OperationScheduleTime openingtime = new OperationScheduleTime();
+                            openingtime.Start = TimeSpan.Parse("00:00:00");
+                            openingtime.End = TimeSpan.Parse("23:59:59");
+                            openingtime.Monday = operationschedulelts.isMondayOpen;
+                            openingtime.Tuesday = operationschedulelts.isTuesdayOpen;
+                            openingtime.Wednesday = operationschedulelts.isWednesdayOpen;
+                            openingtime.Thursday = operationschedulelts.isThursdayOpen;
+                            openingtime.Friday = operationschedulelts.isFridayOpen;
+                            openingtime.Saturday = operationschedulelts.isSaturdayOpen;
+                            openingtime.Sunday = operationschedulelts.isSundayOpen;
+
+                            //TODO PARSE type
+                            openingtime.Timecode = 1;
+                            if (operationschedulelts.isOpen)
+                                openingtime.State = 2;
+                            else
+                                openingtime.State = 1;
+
+                            operationschedule.OperationScheduleTime.Add(openingtime);
+                        }
+                    }
+                    operationschedulelist.Add(operationschedule);
+                }
+
+                venue.OperationSchedule = operationschedulelist;
+            }
+
 
             //Tags Add Categories here
-            //if(ltsvenue.categories != null)
-            //{
+            if (ltsvenue.category != null)
+            {
+                if (!String.IsNullOrEmpty(ltsvenue.category.rid))
+                {
+                    if (venue.TagIds == null)
+                        venue.TagIds = new List<string>();
 
-            //}
+                    venue.TagIds.Add(ltsvenue.category.rid);
+                }
+            }
 
             //Images
+            List<ImageGallery> imagegallerylist = new List<ImageGallery>();
+
+            if (ltsvenue.images != null)
+            {
+                foreach (var image in ltsvenue.images)
+                {
+                    ImageGallery imagepoi = new ImageGallery();
+
+                    imagepoi.ImageName = image.rid;                    
+                    imagepoi.ImageSource = "lts";
+
+                    imagepoi.CopyRight = image.copyright;
+                    imagepoi.License = image.license;
+
+                    imagepoi.ImageUrl = image.url;
+                    imagepoi.IsInGallery = true;
+
+                    imagepoi.Height = image.heightPixel;
+                    imagepoi.Width = image.widthPixel;
+                    
+                    imagepoi.ListPosition = image.order;
+
+                    imagegallerylist.Add(imagepoi);
+                }
+            }
+
+            venue.ImageGallery = imagegallerylist;
+            venue.ImageGallery.AddImageTagsToGallery();
+
 
             //Videos
 
@@ -267,6 +383,37 @@ namespace LTSAPI.Parser
 
                     venueroomdetail.Placement = ltshall.placement;
 
+                    //Images halls
+                    //Images
+                    List<ImageGallery> hallimagegallerylist = new List<ImageGallery>();
+
+                    if (ltshall.images != null)
+                    {
+                        foreach (var image in ltshall.images)
+                        {
+                            ImageGallery imagehall = new ImageGallery();
+
+                            imagehall.ImageName = image.rid;
+                            imagehall.ImageSource = "lts";
+
+                            imagehall.CopyRight = image.copyright;
+                            imagehall.License = image.license;
+
+                            imagehall.ImageUrl = image.url;
+                            imagehall.IsInGallery = true;
+
+                            imagehall.Height = image.heightPixel;
+                            imagehall.Width = image.widthPixel;
+
+                            imagehall.ListPosition = image.order;
+
+                            hallimagegallerylist.Add(imagehall);
+                        }
+                    }
+
+                    venueroomdetail.ImageGallery = hallimagegallerylist;                    
+
+
                     venue.RoomDetails.Add(venueroomdetail);
                 }
             }
@@ -281,6 +428,9 @@ namespace LTSAPI.Parser
 
             if (!String.IsNullOrEmpty(ltsvenue.accommodation?.rid))
                 ltsmapping.Add("accommodation", ltsvenue.accommodation.rid.ToString());
+
+            if (ltsvenue.district != null && !String.IsNullOrEmpty(ltsvenue.district.rid))
+                ltsmapping.Add("district", ltsvenue.district.rid);
 
             venue.Mapping.TryAddOrUpdate("lts", ltsmapping);
 

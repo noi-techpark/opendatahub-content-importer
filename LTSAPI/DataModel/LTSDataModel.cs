@@ -1223,15 +1223,21 @@ namespace LTSAPI
     {
         public string rid { get; set; }
         public GenericLTSRidResult accommodation { get; set; }
+        public GenericLTSRidResult category { get; set; }
+        public GenericLTSRidResult district { get; set; }
         public LTSVenueContact contact { get; set; }
         public LTSDescription[] descriptions { get; set; }
         public LTSHall[] halls { get; set; }
         public bool isActive { get; set; }
         public DateTime lastUpdate { get; set; }
         public IDictionary<string, string> name { get; set; }
-        public LTSOpeningtime[] openingTimes { get; set; }
+        public LTSOpeningschedule[] openingSchedules { get; set; }
         public LTSTourismorganization tourismOrganization { get; set; }
         public LTSPosition position { get; set; }
+
+        public LTSImage[] images { get; set; }
+
+        public IDictionary<string, string> location { get; set; }
     }
 
     public class LTSHall
@@ -1243,6 +1249,8 @@ namespace LTSAPI
         public string placement { get; set; }
         public LTSHallPurposesofuse[] purposesOfUse { get; set; }
         public string rid { get; set; }
+
+        public LTSImage[] images { get; set; }
     }
 
     public class LTSHallDimension
