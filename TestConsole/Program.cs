@@ -167,6 +167,18 @@ Settings settings = new Settings(config);
 //},
 //settings.LtsCredentialsOpen);
 
+
+
+await TestRequests.RetrieveAndParseVenue(settings, new List<string>() {
+    "1A2A4C7533FE47BC90F33325AA707292"
+},
+settings.LtsCredentials);
+
+await TestRequests.RetrieveAndParseVenue(settings, new List<string>() {
+    "1A2A4C7533FE47BC90F33325AA707292"
+},
+settings.LtsCredentialsOpen);
+
 await TestRequests.RetrieveAndParseGastronomy(settings, new List<string>() {
     "86DB9DE6547A11D3BBA90000E870A1E4"
 },
@@ -174,10 +186,6 @@ settings.LtsCredentialsOpen);
 
 
 
-await TestRequests.RetrieveAndParseVenue(settings, new List<string>() {
-    "0079E30758054687AB9F972888BB5BA5"
-},
-settings.LtsCredentials);
 
 await TestRequests.RetrieveAndParseVenue(settings, new List<string>() {
     "0079E30758054687AB9F972888BB5BA5"

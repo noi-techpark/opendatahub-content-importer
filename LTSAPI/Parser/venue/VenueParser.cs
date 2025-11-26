@@ -322,7 +322,7 @@ namespace LTSAPI.Parser
 
                         detail.Language = language;
 
-                        detail.Title = ltshall.name[language];
+                        detail.Title = ltshall.name != null && ltshall.name.ContainsKey(language) ? ltshall.name[language] : null;
                         detail.BaseText = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "generalDescription").FirstOrDefault()?.description.GetValue(language) : null;
                         detail.IntroText = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description.GetValue(language) : null;
                         detail.ParkingInfo = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "howToPark").FirstOrDefault()?.description.GetValue(language) : null;
