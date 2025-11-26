@@ -74,6 +74,18 @@ namespace LTSAPI.Parser
                     }
                 }
             }
+            else
+            {
+                //Use the last item seems this is the type "restaurant"
+                if (ltsgastronomy.contacts.LastOrDefault() != null && ltsgastronomy.contacts.LastOrDefault().address != null && ltsgastronomy.contacts.LastOrDefault().address.name != null)
+                {
+                    foreach (var desc in ltsgastronomy.contacts.LastOrDefault().address.name)
+                    {
+                        if (!String.IsNullOrEmpty(desc.Value) && !gastronomy.HasLanguage.Contains(desc.Key))
+                            gastronomy.HasLanguage.Add(desc.Key);
+                    }
+                }
+            }
 
             gastronomy.LocationInfo = new LocationInfoLinked();
             
@@ -219,18 +231,18 @@ namespace LTSAPI.Parser
                     contactinfo.Phonenumber = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().phone;
                     contactinfo.Url = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().website;
                 }
-                //on opendata no type is passed
+                //on opendata no type is passed take the last item seems this is the type "restaurant"
                 else
                 {
-                    contactinfo.CompanyName = ltsgastronomy.contacts.FirstOrDefault().address.name != null ? ltsgastronomy.contacts.FirstOrDefault().address.name.GetValue(language) : null;
-                    contactinfo.Address = ltsgastronomy.contacts.FirstOrDefault().address.street != null ? ltsgastronomy.contacts.FirstOrDefault().address.street.GetValue(language) : null;
-                    contactinfo.City = ltsgastronomy.contacts.FirstOrDefault().address.city != null ? ltsgastronomy.contacts.FirstOrDefault().address.city.GetValue(language) : null;
-                    contactinfo.CountryCode = ltsgastronomy.contacts.FirstOrDefault().address.country != null ? ltsgastronomy.contacts.FirstOrDefault().address.country : null;
+                    contactinfo.CompanyName = ltsgastronomy.contacts.LastOrDefault().address.name != null ? ltsgastronomy.contacts.LastOrDefault().address.name.GetValue(language) : null;
+                    contactinfo.Address = ltsgastronomy.contacts.LastOrDefault().address.street != null ? ltsgastronomy.contacts.LastOrDefault().address.street.GetValue(language) : null;
+                    contactinfo.City = ltsgastronomy.contacts.LastOrDefault().address.city != null ? ltsgastronomy.contacts.LastOrDefault().address.city.GetValue(language) : null;
+                    contactinfo.CountryCode = ltsgastronomy.contacts.LastOrDefault().address.country != null ? ltsgastronomy.contacts.LastOrDefault().address.country : null;
                     contactinfo.CountryName = ParserHelper.GetCountryName(language);
-                    contactinfo.ZipCode = ltsgastronomy.contacts.FirstOrDefault().postalCode != null ? ltsgastronomy.contacts.FirstOrDefault().address.postalCode : null;
-                    contactinfo.Email = ltsgastronomy.contacts.FirstOrDefault().email != null ? ltsgastronomy.contacts.FirstOrDefault().email : null;
-                    contactinfo.Phonenumber = ltsgastronomy.contacts.FirstOrDefault().phone != null ? ltsgastronomy.contacts.FirstOrDefault().phone : null;
-                    contactinfo.Url = ltsgastronomy.contacts.FirstOrDefault().website != null ? ltsgastronomy.contacts.FirstOrDefault().website : null;
+                    contactinfo.ZipCode = ltsgastronomy.contacts.LastOrDefault().postalCode != null ? ltsgastronomy.contacts.LastOrDefault().address.postalCode : null;
+                    contactinfo.Email = ltsgastronomy.contacts.LastOrDefault().email != null ? ltsgastronomy.contacts.LastOrDefault().email : null;
+                    contactinfo.Phonenumber = ltsgastronomy.contacts.LastOrDefault().phone != null ? ltsgastronomy.contacts.LastOrDefault().phone : null;
+                    contactinfo.Url = ltsgastronomy.contacts.LastOrDefault().website != null ? ltsgastronomy.contacts.LastOrDefault().website : null;
                 }
 
                 gastronomy.ContactInfos.TryAddOrUpdate(language, contactinfo);
@@ -309,7 +321,7 @@ namespace LTSAPI.Parser
                     detail.Title = ltsgastronomy.contacts.Where(x => x.type == "restaurant").FirstOrDefault().address.name.GetValue(language);
                 //on opendata no type is passed
                 else
-                    detail.Title = ltsgastronomy.contacts.FirstOrDefault().address.name.GetValue(language);
+                    detail.Title = ltsgastronomy.contacts.LastOrDefault().address.name.GetValue(language);
 
                 if (ltsgastronomy.description != null)
                     detail.BaseText = ltsgastronomy.description.GetValue(language);

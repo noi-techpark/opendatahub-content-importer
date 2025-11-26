@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -95,15 +96,23 @@ namespace TestConsole
             var parsedacco = AccommodationParser.ParseLTSAccommodation(ltsacco.FirstOrDefault().Value<JObject>(), false, xmlfiles, jsonfiles);
         }
 
-        public static async Task RetrieveAndParseGastronomy(Settings settings)
+        public static async Task RetrieveAndParseGastronomy(Settings settings, List<string> idlist, LTSCredentials ltscreds)
         {
-            LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
-            var ltsgastro = await ltsapi.GastronomyDetailRequest("724FDBF6CFC811D1BA6B444553540000", null);
-            var parsedgastro = GastronomyParser.ParseLTSGastronomy(ltsgastro.FirstOrDefault().Value<JObject>(), false, null);
+            foreach (var id in idlist)
+            {
+                LtsApi ltsapi = new LtsApi(ltscreds);
+                var ltsgastro = await ltsapi.GastronomyDetailRequest(id.ToUpper(), null);
+                var parsedgastro = GastronomyParser.ParseLTSGastronomy(ltsgastro.FirstOrDefault().Value<JObject>(), false, null);
 
-            //LtsApi ltsapi2 = new LtsApi(settings.LtsCredentials);
-            //var ltsgastro2 = await ltsapi2.GastronomyDetailRequest("9896159359D3CA450BBF0676D879CD9D", null);
-            //var parsedgastro2 = GastronomyParser.ParseLTSGastronomy(ltsgastro2.FirstOrDefault().Value<JObject>(), false, null);
+                // Create settings with alphabetical property ordering
+                var serializersettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new AlphabeticalContractResolver(),
+                    Formatting = Formatting.Indented // Optional: for pretty printing
+                };
+
+                Console.WriteLine(JsonConvert.SerializeObject(parsedgastro, serializersettings));
+            }
         }
 
         public static async Task RetrieveAndParseActivity(Settings settings, List<string> idlist, LTSCredentials ltscreds)
