@@ -130,7 +130,7 @@ namespace LTSAPI
         //Copyright holder of the image of the gallery
         public string copyright { get; set; }
         //Height of the image of the gallery in pixel
-        public int heightPixel { get; set; }
+        public int? heightPixel { get; set; }
         //Defines if the image of the gallery is active
         public bool isActive { get; set; }
         //License of the image of the gallery (see enums list for possible values in the schema definition) ("lts","cc0")
@@ -142,7 +142,7 @@ namespace LTSAPI
         //URL of the image of the gallery
         public string url { get; set; }
         //Width of the image of the gallery in pixel
-        public int widthPixel { get; set; }
+        public int? widthPixel { get; set; }
         //Localised name of the image
         public Dictionary<string, string>? name { get; set; }
         public bool? isMainImage { get; set; }
@@ -224,7 +224,7 @@ namespace LTSAPI
         //Unique identification number of the Accommodation in the HGV platform
         public string hgvId { get; set; }
         //Unique identification number of the Accommodation (A0R_ID)
-        public int id { get; set; }
+        public int? id { get; set; }
         public LTSImage[] images { get; set; }
         //"Defines if the Accommodation is an accommodation
         public bool isAccommodation { get; set; }
@@ -256,7 +256,7 @@ namespace LTSAPI
         public LTSSeason[] seasons { get; set; }
         public LTSTourismorganization tourismOrganization { get; set; }
         //Rating of the Accommodation on TrustYou platform
-        public int trustyouScore { get; set; }
+        public int? trustyouScore { get; set; }
         public LTSSuedtirolguestpass suedtirolGuestPass { get; set; }
         public LTSAccessibility accessibility { get; set; }
     }
@@ -302,25 +302,25 @@ namespace LTSAPI
     public class LTSCamping
     {
         //Maximum occupancy of the campsite
-        public int capacityPersons { get; set; }
+        public int? capacityPersons { get; set; }
         //Number of dishwashing spaces on the campsite
-        public int dishwashingSpaces { get; set; }
+        public int? dishwashingSpaces { get; set; }
         //Number of washrooms on the campsite
-        public int laundrySpaces { get; set; }
+        public int? laundrySpaces { get; set; }
         //Number of pitches on the campsite
-        public int pitches { get; set; }
+        public int? pitches { get; set; }
         //Number of showers on the campsite
-        public int showers { get; set; }
+        public int? showers { get; set; }
         //Number of toilets on the campsite
-        public int toilets { get; set; }
+        public int? toilets { get; set; }
     }
 
     public class LTSParkingspaces
     {
         //Number of garage parking spaces
-        public int garage { get; set; }
+        public int? garage { get; set; }
         //Number of outdoor parking spaces
-        public int outdoor { get; set; }
+        public int? outdoor { get; set; }
     }
 
     public class LTSTourismorganization
@@ -392,7 +392,7 @@ namespace LTSAPI
         //Defines if the gallery is active
         public bool isActive { get; set; }
         //Sorting number of the gallery
-        public int order { get; set; }
+        public int? order { get; set; }
         //Unique identifier of the gallery
         public string rid { get; set; }
     }
@@ -410,7 +410,7 @@ namespace LTSAPI
         //"Defines if reviews are active
         public bool isActive { get; set; }
         //Rating of the Accommodation
-        public float rating { get; set; }
+        public float? rating { get; set; }
         //Number of reviews for the Accommodation
         public int? reviewsQuantity { get; set; }
         //Defines the status of reviews (see enums list for possible values in the schema definition) ("notRated","underValued","rated")
@@ -423,7 +423,7 @@ namespace LTSAPI
     {
         public LTSAmenity[] amenities { get; set; }
         //Number of bathrooms of the room group
-        public int baths { get; set; }
+        public int? baths { get; set; }
         //Classification of the room group (see enums list for possible values in the schema definition) ("room","apartment","mobileHome","holidayHome","bungalow","pitch","tent","dorm","pitchOrTent")
         public string classification { get; set; }
         //Code of the room group
@@ -431,32 +431,32 @@ namespace LTSAPI
         //Localised description of the room group related to the type. Type of the description (see enums list for possible values in the schema definition) ("shortDescription","longDescription")
         public LTSDescription[] descriptions { get; set; }
         //Number of dining rooms
-        public int diningRooms { get; set; }
+        public int? diningRooms { get; set; }
         public LTSImage[] images { get; set; }
         //Defines if the room group is active
         public bool isActive { get; set; }
         //Date and time of last change
         public DateTime lastUpdate { get; set; }
         //Number of living rooms
-        public int livingRooms { get; set; }
+        public int? livingRooms { get; set; }
         //Min Amount (price from) per person per day for this roomgroup based on standard prices
-        public float minAmountPerPersonPerDay { get; set; }
+        public float? minAmountPerPersonPerDay { get; set; }
         //Min Amount (price from) per unit per day for this roomgroup based on standard prices
-        public float minAmountPerUnitPerDay { get; set; }
+        public float? minAmountPerUnitPerDay { get; set; }
         //Localised name of the room group
         public Dictionary<string, string>? name { get; set; }
         public LTSOccupancy occupancy { get; set; }
         //Unique identifier of the room group
         public string rid { get; set; }
         //Number of rooms
-        public int roomQuantity { get; set; }
+        public int? roomQuantity { get; set; }
         public LTSRoom[] rooms { get; set; }
         //Number of sleeping rooms
-        public int sleepingRooms { get; set; }
+        public int? sleepingRooms { get; set; }
         //Size in square metres
-        public float squareMeters { get; set; }
+        public float? squareMeters { get; set; }
         //Number of toilets
-        public int toilets { get; set; }
+        public int? toilets { get; set; }
         //Type of the room group (see enums list for possible values in the schema definition) ("apartment","pitches","restingPlaces","room","undefined")
         public string type { get; set; }
     }
@@ -464,13 +464,13 @@ namespace LTSAPI
     public class LTSOccupancy
     {
         //Maximum room occupancy
-        public int max { get; set; }
+        public int? max { get; set; }
         //Minimum room occupancy
-        public int min { get; set; }
+        public int? min { get; set; }
         //Minimum adult occupancy of the room
-        public int minAdults { get; set; }
+        public int? minAdults { get; set; }
         //Standard room occupancy
-        public int standard { get; set; }
+        public int? standard { get; set; }
     }
 
     public class LTSRoom
@@ -883,7 +883,7 @@ namespace LTSAPI
     public class LTSGastronomyData
     {
         public string rid { get; set; }
-        public int id { get; set; }
+        public int? id { get; set; }
         public DateTime lastUpdate { get; set; }
         public bool isActive { get; set; }
         //Representation mode of the Gastronomy (full, none)
@@ -891,7 +891,7 @@ namespace LTSAPI
         public LTSDistrict district { get; set; }
         public LTSTourismorganization tourismOrganization { get; set; }
         public LTSPosition position { get; set; }
-        public int maxSeatingCapacity { get; set; }
+        public int? maxSeatingCapacity { get; set; }
         public LTSAreamap areaMap { get; set; }
         public LTSCategory[] categories { get; set; }
         public LTSGastronomyContact[] contacts { get; set; }
@@ -907,9 +907,9 @@ namespace LTSAPI
     {
         public string rid { get; set; }
         public string url { get; set; }
-        public int widthPixel { get; set; }
-        public int heightPixel { get; set; }
-        public int order { get; set; }
+        public int? widthPixel { get; set; }
+        public int? heightPixel { get; set; }
+        public int? order { get; set; }
         public bool isMainImage { get; set; }
         public bool isCurrentMainImage { get; set; }
         public string applicableStartDate { get; set; }
@@ -952,7 +952,7 @@ namespace LTSAPI
     public class LTSCeremonyseatingcapacity
     {
         public LTSCeremony ceremony { get; set; }
-        public int maxSeatingCapacity { get; set; }
+        public int? maxSeatingCapacity { get; set; }
     }
 
     public class LTSCeremony
@@ -963,8 +963,8 @@ namespace LTSAPI
     public class LTSDishrate
     {
         public LTSDish dish { get; set; }
-        public float minAmount { get; set; }
-        public float maxAmount { get; set; }
+        public float? minAmount { get; set; }
+        public float? maxAmount { get; set; }
     }
 
     public class LTSDish
@@ -1065,16 +1065,16 @@ namespace LTSAPI
 
     public class LTSJumpsnumber
     {
-        public int blu { get; set; }
-        public int red { get; set; }
-        public int black { get; set; }
+        public int? blu { get; set; }
+        public int? red { get; set; }
+        public int? black { get; set; }
     }
 
     public class LTSLinesnumber
     {
-        public int blu { get; set; }
-        public int red { get; set; }
-        public int black { get; set; }
+        public int? blu { get; set; }
+        public int? red { get; set; }
+        public int? black { get; set; }
     }
 
     public class LTSGeodata
@@ -1265,7 +1265,7 @@ namespace LTSAPI
 
     public class LTSHallPurposesofuse
     {
-        public int maxCapacity { get; set; }
+        public int? maxCapacity { get; set; }
         public string type { get; set; }
     }
    
@@ -1353,7 +1353,7 @@ namespace LTSAPI
         //Date of the forecast
         public string date { get; set; }
         //Unique identification number of the icon of the forecast
-        public int iconId { get; set; }
+        public int? iconId { get; set; }
         //Localised description of the forecast
         public IDictionary<string, string> description { get; set; }
     }
@@ -1385,7 +1385,7 @@ namespace LTSAPI
         public DateTime lastUpdate { get; set; }
         public string code { get; set; }
         public string entityType { get; set; }
-        public int level { get; set; }
+        public int? level { get; set; }
         public string mainTagRid { get; set; }
         public string parentTagRid { get; set; }
         public bool isActive { get; set; }
@@ -1409,7 +1409,7 @@ namespace LTSAPI
 
         //public bool isActive { get; set; }
         public string code { get; set; }
-        public int order { get; set; }
+        public int? order { get; set; }
     }
 
     public class LTSAccommodationMealplanData
@@ -1423,7 +1423,7 @@ namespace LTSAPI
         //public bool isActive { get; set; }
         public string code { get; set; }
         public string additionalInfo { get; set; }
-        public int otaCode { get; set; }
+        public int? otaCode { get; set; }
     }
 
     public class LTSAccommodationRateplanData
@@ -1451,7 +1451,7 @@ namespace LTSAPI
 
         //public bool isActive { get; set; }
         public string code { get; set; }
-        public int order { get; set; }
+        public int? order { get; set; }
     }
 
     public class LTSAccommodationAmenityData

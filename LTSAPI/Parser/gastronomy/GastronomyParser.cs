@@ -145,8 +145,8 @@ namespace LTSAPI.Parser
                         gastronomy.DishRates.Add(new DishRatesLinked()
                         {
                             Id = dishcode.dish.rid,
-                            MaxAmount = dishcode.maxAmount,
-                            MinAmount = dishcode.minAmount,
+                            MaxAmount = dishcode.maxAmount != null ? dishcode.maxAmount.Value : 0,
+                            MinAmount = dishcode.minAmount != null ? dishcode.minAmount.Value : 0,
                             CurrencyCode = "EUR",
                             Shortname = dishrate != null && dishrate["TagName"] != null ? dishrate["TagName"]["de"].Value<string>() : ""
                         });
@@ -154,7 +154,7 @@ namespace LTSAPI.Parser
                         gastronomy.TagIds.Add(dishcode.dish.rid);
 
                         //Add Tags
-                        gastronomy.Tags.Add(new Tags() { Id = dishcode.dish.rid, TagEntry = new Dictionary<string, string>() { { "MaxAmount", dishcode.maxAmount.ToString() }, { "MinAmount", dishcode.minAmount.ToString() }, { "CurrencyCode", "EUR" } } });
+                        gastronomy.Tags.Add(new Tags() { Id = dishcode.dish.rid, TagEntry = new Dictionary<string, string>() { { "MaxAmount", dishcode.maxAmount.Value.ToString() }, { "MinAmount", dishcode.minAmount.Value.ToString() }, { "CurrencyCode", "EUR" } } });
                     }                        
                 }
             }
@@ -199,7 +199,7 @@ namespace LTSAPI.Parser
                         gastronomy.CapacityCeremony.Add(new CapacityCeremonyLinked()
                         {
                             Id = ceremonycode.ceremony.rid,
-                            MaxSeatingCapacity = ceremonycode.maxSeatingCapacity,
+                            MaxSeatingCapacity = ceremonycode.maxSeatingCapacity != null ? ceremonycode.maxSeatingCapacity.Value : 0,
                             Shortname = capacityceremony != null && capacityceremony["TagName"] != null ? capacityceremony["TagName"]["de"].Value<string>() : ""
                         });
                         //gastronomy.CategoryCodes.Add(new CapacityCeremonyV2() { Id = ceremonycode.ceremony.rid, MaxSeatingCapacity = ceremonycode.maxSeatingCapacity });
