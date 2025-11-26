@@ -266,7 +266,7 @@ namespace LTSAPI.Parser
                     if (venue.TagIds == null)
                         venue.TagIds = new List<string>();
 
-                    venue.TagIds.Add(ltsvenue.category.rid);
+                    venue.TagIds.Add("VEN" + ltsvenue.category.rid);
                 }
             }
 

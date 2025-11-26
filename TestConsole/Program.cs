@@ -167,6 +167,17 @@ await TestRequests.RetrieveAndParseGastronomy(settings);
 //},
 //settings.LtsCredentialsOpen);
 
+await TestRequests.RetrieveAndParseVenue(settings, new List<string>() {
+    "0079E30758054687AB9F972888BB5BA5"
+},
+settings.LtsCredentials);
+
+await TestRequests.RetrieveAndParseVenue(settings, new List<string>() {
+    "0079E30758054687AB9F972888BB5BA5"
+},
+settings.LtsCredentialsOpen);
+
+
 await TestRequests.RetrieveAndParseMeasuringpoint(settings, new List<string>() {
     "04AF7C73242FE23115FB6A120F5079D2"
 },
@@ -184,7 +195,7 @@ await TestRequests.RetrieveAndParseWebcam(settings, new List<string>() {
 settings.LtsCredentialsOpen);
 
 await TestRequests.RetrieveAndParseVenue(settings, new List<string>() {
-    "027AD1BA641C49F9B3D3A914E98416E1"
+    "0079E30758054687AB9F972888BB5BA5"
 },
 settings.LtsCredentialsOpen);
 
