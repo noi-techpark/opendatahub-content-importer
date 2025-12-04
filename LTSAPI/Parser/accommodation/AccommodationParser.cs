@@ -39,7 +39,7 @@ namespace LTSAPI.Parser
                     return ParseLTSAccommodation(accoltsdetail.data, reduced, xmlfiles, jsonfiles);
                 else
                 {
-                    Console.WriteLine(JsonConvert.SerializeObject(new { operation = "accommodation.parse", id = accoid, source = "lts", success = false, error = true, exception = "Data could not be retrieved from the Source" }));
+                    Console.WriteLine(JsonConvert.SerializeObject(new { operation = "accommodation.parse", id = accoid, source = "lts", success = false, error = true, exception = "Unable to retrieve data from the source" }));
 
                     return null;
                 }                
@@ -68,7 +68,11 @@ namespace LTSAPI.Parser
             accommodationlinked.Source = "lts";
 
             //Find out all languages the accommodation has, by using contacts.address.name
-            var haslanguage = accommodation.contacts.Where(x => x.type == "main").FirstOrDefault().address.name.Where(x => !String.IsNullOrEmpty(x.Value)).Select(x => x.Key).ToList();
+            //TODO the opendata instance has no type
+            var haslanguage =
+                accommodation.contacts.Where(x => x.type == "main").FirstOrDefault() != null ?
+                accommodation.contacts.Where(x => x.type == "main").FirstOrDefault().address.name.Where(x => !String.IsNullOrEmpty(x.Value)).Select(x => x.Key).ToList() :
+                accommodation.contacts.FirstOrDefault().address.name.Where(x => !String.IsNullOrEmpty(x.Value)).Select(x => x.Key).ToList();
 
             accommodationlinked.HasLanguage = haslanguage;
 
@@ -303,6 +307,9 @@ namespace LTSAPI.Parser
             {                
                 foreach (var cardtype in guestpass.cardTypes)
                 {
+                    if(accommodationlinked.TagIds == null)
+                        accommodationlinked.TagIds = new List<string>();
+
                     //? this needed
                     additionalfeaturestoadd.Add(cardtype.rid);
                     //Adding Guestcard To Tags
@@ -314,24 +321,38 @@ namespace LTSAPI.Parser
                 foreach (var guestcard in GetGuestCardIdMapping())
                 {
                     if (accommodation.amenities != null && accommodation.amenities.Select(x => x.rid).Contains(guestcard.Key))
+                    {
+                        if(accommodationlinked.SmgTags == null)
+                            accommodationlinked.SmgTags = new List<string>();
+
                         accommodationlinked.SmgTags.TryAddOrUpdateOnList(guestcard.Value);
+                    }                        
                     else
-                        accommodationlinked.SmgTags.TryRemoveOnList(guestcard.Value);
+                    {
+                        if (accommodationlinked.SmgTags != null)
+                            accommodationlinked.SmgTags.TryRemoveOnList(guestcard.Value);
+                    }                        
                 }
             }
 
             //IF guestcard active Add Tag "guestcard" else remove it if present
-            if (guestpass.isActive == false)
+            if (guestpass != null)
             {
-                accommodationlinked.SmgTags.TryRemoveOnList("guestcard");
-                accommodationlinked.TagIds.TryRemoveOnList("guestcard");
+                if (guestpass.isActive == false)
+                {
+                    if (accommodationlinked.SmgTags != null)
+                        accommodationlinked.SmgTags.TryRemoveOnList("guestcard");
+                    if (accommodationlinked.TagIds != null)
+                        accommodationlinked.TagIds.TryRemoveOnList("guestcard");
+                }
+                else
+                {
+                    if (accommodationlinked.SmgTags != null)
+                        accommodationlinked.SmgTags.TryAddOrUpdateOnList("guestcard");
+                    if (accommodationlinked.TagIds != null)
+                        accommodationlinked.TagIds.TryAddOrUpdateOnList("guestcard");
+                }
             }
-            else
-            {
-                accommodationlinked.SmgTags.TryAddOrUpdateOnList("guestcard");
-                accommodationlinked.TagIds.TryAddOrUpdateOnList("guestcard");
-            }
-
 
             //Address Groups (Adding to features)
             foreach (var addressgroup in accommodation.addressGroups)
@@ -395,6 +416,9 @@ namespace LTSAPI.Parser
 
                 foreach (string lang in haslanguage)
                 {
+                    if (accommodationlinked.AccoDetail == null)
+                            accommodationlinked.AccoDetail = new Dictionary<string, AccoDetail>();
+
                     AccoDetail mydetail = new AccoDetail();
 
                     if (contactinfo != null)
@@ -403,14 +427,14 @@ namespace LTSAPI.Parser
                         mydetail.Language = lang;
 
                         mydetail.CountryCode = contactinfo.address.country;                        
-                        mydetail.City = contactinfo.address.city[lang];
+                        mydetail.City = contactinfo.address != null && contactinfo.address.city != null ? contactinfo.address.city[lang] : null;
                         mydetail.Email = contactinfo.email;
-                        mydetail.Name = contactinfo.address.name[lang];
+                        mydetail.Name = contactinfo.address != null && contactinfo.address.name != null ? contactinfo.address.name[lang] : null;
 
-                        mydetail.Firstname = contactinfo.address.name2[lang];
-                        mydetail.Lastname = contactinfo.address.name2[lang];
+                        mydetail.Firstname = contactinfo.address != null && contactinfo.address.name2 != null ? contactinfo.address.name2[lang] : null;
+                        mydetail.Lastname = contactinfo.address != null && contactinfo.address.name2 != null ? contactinfo.address.name2[lang] : null;
 
-                        mydetail.Street = contactinfo.address.street[lang];
+                        mydetail.Street = contactinfo.address != null && contactinfo.address.street != null ? contactinfo.address.street[lang] : null;
 
                         mydetail.Fax = contactinfo.fax;
 
@@ -423,7 +447,7 @@ namespace LTSAPI.Parser
 
 
                         mydetail.Phone = contactinfo.phone;
-                        mydetail.Zip = contactinfo.address.postalCode;
+                        mydetail.Zip = contactinfo.address != null && !String.IsNullOrEmpty(contactinfo.address.postalCode) ? contactinfo.address.postalCode : null;
                         mydetail.Website = contactinfo.website;
                     }
 
@@ -662,6 +686,37 @@ namespace LTSAPI.Parser
             //TODO OwnerRID
 
             return accommodationlinked;
+        }
+
+        public static IEnumerable<AccommodationRoomV2> ParseLTSAccommodationRoom(
+            JObject accomodationdetail, bool reduced,
+            IDictionary<string, XDocument> xmlfiles,
+            IDictionary<string, JArray> jsonfiles)
+        {
+            string accoid = "";
+
+            try
+            {
+                accoid = accomodationdetail != null ? accomodationdetail["data"]["rid"].ToString() : "";
+
+                LTSAcco accoltsdetail = accomodationdetail.ToObject<LTSAcco>();
+
+                if (accoltsdetail != null && accoltsdetail.data != null)
+                    return ParseLTSAccommodationRoom(accoltsdetail.data, reduced, xmlfiles, jsonfiles);
+                else
+                {
+                    Console.WriteLine(JsonConvert.SerializeObject(new { operation = "accommodationroom.parse", id = accoid, source = "lts", success = false, error = true, exception = "Unable to retrieve data from the source" }));
+
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                //Generate Log Response on Error
+                Console.WriteLine(JsonConvert.SerializeObject(new { operation = "accommodationroom.parse", id = accoid, source = "lts", success = false, error = true, exception = ex.Message }));
+
+                return null;
+            }
         }
 
         public static IEnumerable<AccommodationRoomV2> ParseLTSAccommodationRoom(

@@ -19,4 +19,8 @@
     <ProjectReference Include="..\RabbitPusher\RabbitPusher.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="xml\" />
+  </ItemGroup>
+
 </Project>

@@ -25,19 +25,6 @@ namespace TestConsole
 {
     public class TestRequests
     {
-        public static async Task TestAccommodationSingle(Settings settings)
-        {
-            LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
-
-            DataImport dataimport = new DataImport(settings);
-
-            var qs = new LTSQueryStrings() { page_size = 1, filter_language = "de" };
-
-            await dataimport.ImportLTSAccommodationSingle("1DF9C17D6F24E87E4EDAAB3408588A6C");
-            await dataimport.ImportLTSAccommodationSingle("525B5D14566741D3B5910721027B5ED7");
-
-            var ltsacco = await ltsapi.AccommodationDetailRequest("525B5D14566741D3B5910721027B5ED7", null);
-        }
 
         public static async Task TestAvailabilitySearch(Settings settings)
         {
@@ -77,23 +64,60 @@ namespace TestConsole
             Console.ReadLine();
         }
 
-        public static async Task RetrieveAndParseEvent(Settings settings)
+        public static async Task RetrieveAndParseEvent(Settings settings, List<string> idlist, LTSCredentials ltscreds)
         {
-            LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
-            var ltsevent = await ltsapi.EventDetailRequest("5F53C72C7A5045BEBAE4099E3E60C033", null);
-            var parsedevent = EventParser.ParseLTSEventV1(ltsevent.FirstOrDefault().Value<JObject>(), false);
+            foreach (var id in idlist)
+            {
+                LtsApi ltsapi = new LtsApi(ltscreds);
+                var ltsevent = await ltsapi.EventDetailRequest("5F53C72C7A5045BEBAE4099E3E60C033", null);
+                var parsedevent = EventParser.ParseLTSEventV1(ltsevent.FirstOrDefault().Value<JObject>(), false);
+                // Create settings with alphabetical property ordering
+                var serializersettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new AlphabeticalContractResolver(),
+                    Formatting = Formatting.Indented // Optional: for pretty printing
+                };
+
+                Console.WriteLine(JsonConvert.SerializeObject(parsedevent, serializersettings));
+            }
         }
 
-        public static async Task RetrieveAndParseAccommodation(Settings settings)
+        public static async Task RetrieveAndParseAccommodation(Settings settings, List<string> idlist, LTSCredentials ltscreds)
         {
-            LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
-            var ltsacco = await ltsapi.AccommodationDetailRequest("06F7A0918A0F11D2B477006097AD12DB", null);
+            foreach (var id in idlist)
+            {
+                LtsApi ltsapi = new LtsApi(ltscreds);
+                var ltsacco = await ltsapi.AccommodationDetailRequest(id, null);
 
-            //Load all XDocuments
-            var xmlfiles = LoadXmlFiles(Path.Combine(".\\xml\\"));
-            var jsonfiles = await LoadJsonFiles("Features", Path.Combine(".\\json\\"));
+                // Get the bin/debug directory and navigate up to project root
+                var projectRoot = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName;                
 
-            var parsedacco = AccommodationParser.ParseLTSAccommodation(ltsacco.FirstOrDefault().Value<JObject>(), false, xmlfiles, jsonfiles);
+                //Load all XDocuments
+                var xmlfiles = LoadXmlFiles(Path.Combine(projectRoot, "xml\\"));
+                var jsonfiles = await LoadJsonFiles(Path.Combine(projectRoot, "json\\"), "Features");
+
+                var parsedacco = AccommodationParser.ParseLTSAccommodation(ltsacco.FirstOrDefault().Value<JObject>(), false, xmlfiles, jsonfiles);
+
+                // Create settings with alphabetical property ordering
+                var serializersettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new AlphabeticalContractResolver(),
+                    Formatting = Formatting.Indented // Optional: for pretty printing
+                };
+
+                Console.WriteLine(JsonConvert.SerializeObject(parsedacco, serializersettings));
+
+                var parsedaccorooms = AccommodationParser.ParseLTSAccommodationRoom(ltsacco.FirstOrDefault().Value<JObject>(), false, xmlfiles, jsonfiles);
+
+                // Create settings with alphabetical property ordering
+                var serializersettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new AlphabeticalContractResolver(),
+                    Formatting = Formatting.Indented // Optional: for pretty printing
+                };
+
+                Console.WriteLine(JsonConvert.SerializeObject(parsedacco, serializersettings));
+            }
         }
 
         public static async Task RetrieveAndParseGastronomy(Settings settings, List<string> idlist, LTSCredentials ltscreds)
@@ -191,7 +215,6 @@ namespace TestConsole
             }
         }
 
-
         public static async Task RetrieveAndParseWebcam(Settings settings, List<string> idlist, LTSCredentials ltscreds)
         {
             foreach (var id in idlist)
@@ -210,7 +233,6 @@ namespace TestConsole
                 Console.WriteLine(JsonConvert.SerializeObject(parsed, serializersettings));
             }
         }
-
 
         #region Accommodation Helper
 
