@@ -109,14 +109,7 @@ namespace TestConsole
 
                 var parsedaccorooms = AccommodationParser.ParseLTSAccommodationRoom(ltsacco.FirstOrDefault().Value<JObject>(), false, xmlfiles, jsonfiles);
 
-                // Create settings with alphabetical property ordering
-                var serializersettings = new JsonSerializerSettings
-                {
-                    ContractResolver = new AlphabeticalContractResolver(),
-                    Formatting = Formatting.Indented // Optional: for pretty printing
-                };
-
-                Console.WriteLine(JsonConvert.SerializeObject(parsedacco, serializersettings));
+                Console.WriteLine(JsonConvert.SerializeObject(parsedaccorooms, serializersettings));
             }
         }
 

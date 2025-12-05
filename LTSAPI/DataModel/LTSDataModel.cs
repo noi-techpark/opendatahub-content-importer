@@ -227,25 +227,25 @@ namespace LTSAPI
         public int? id { get; set; }
         public LTSImage[] images { get; set; }
         //"Defines if the Accommodation is an accommodation
-        public bool isAccommodation { get; set; }
+        public bool? isAccommodation { get; set; }
         //Defines if the Accommodation is active
-        public bool isActive { get; set; }
+        public bool? isActive { get; set; }
         //Defines if the Accommodation is bookable
-        public bool isBookable { get; set; }
+        public bool? isBookable { get; set; }
         //Defines if the Accommodation is a camping
-        public bool isCamping { get; set; }
+        public bool? isCamping { get; set; }
         //Defines if the Accommodation is member of IDM
-        public bool isSuedtirolInfoActive { get; set; }
+        public bool? isSuedtirolInfoActive { get; set; }
         //Defines if the Accommodation is member of an tourism organization
-        public bool isTourismOrganizationMember { get; set; }
+        public bool? isTourismOrganizationMember { get; set; }
         //CIN Code of Accommodation
         public string? cinCode { get; set; }
         //Date and time of last change
         public DateTime lastUpdate { get; set; }
         //Date and time of last change of the prices
-        public DateTime lastUpdatePrices { get; set; }
+        public DateTime? lastUpdatePrices { get; set; }
         //Date and time of last availability change
-        public DateTime lastUpdateAvailability { get; set; }
+        public DateTime? lastUpdateAvailability { get; set; }
         public LTSMealplan[] mealPlans { get; set; }
         public LTSOverview overview { get; set; }
         public LTSPosition position { get; set; }
