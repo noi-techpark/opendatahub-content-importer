@@ -326,13 +326,12 @@ namespace LTSAPI.Parser
                         }
                         else
                         {
-                            //TODO Error Log
-                            //tracesource.TraceEvent(TraceEventType.Error, 0, A0RID + " Error Tin: " + featuretoadd + " not found");
+                            //TODO Error Log                            
                         }
                     }
                     else
                     {
-                        //tracesource.TraceEvent(TraceEventType.Error, 0, A0RID + " Error Tin: " + tinrid + " not found");
+                        //TODO Error Log
                     }
                 }
             }
@@ -414,16 +413,14 @@ namespace LTSAPI.Parser
 
             foreach (var featuretoadd in additionalfeaturestoadd)
             {
-                var myfeature = xmlfiles["Features"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == featuretoadd).FirstOrDefault();
+                var myfeature = jsonfiles["Features"].Where(x => x["rid"].Value<string>() == featuretoadd).FirstOrDefault();
 
                 if (myfeature != null)
                 {
-                    var myfeatureparsed = myfeature.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault();
+                    var myfeatureparsed = myfeature["name"]["en"].Value<string>();
 
                     if (myfeatureparsed != null)
-                    {
-                        var myfeatureparsed2 = myfeatureparsed.Attribute("T1Des").Value;
-
+                    {                        
                         //Getting HGV ID if available
 
                         string hgvamenityid = "";
@@ -434,21 +431,52 @@ namespace LTSAPI.Parser
 
                         if (myamenity != null)
                             hgvamenityid = myamenity.Element("hgvid").Value;
-
-                        if (myfeatureparsed2 != null)
-                            featurelist.Add(new AccoFeatureLinked() { Id = featuretoadd, Name = myfeatureparsed2, HgvId = hgvamenityid });
+                        
+                        featurelist.Add(new AccoFeatureLinked() { Id = featuretoadd, Name = myfeatureparsed, HgvId = hgvamenityid });
                     }
                     else
                     {
-                        //TODO Add here the guestcard logic
-
-                       //tracesource.TraceEvent(TraceEventType.Error, 0, A0RID + " Error Tin: " + featuretoadd + " not found");
+                        //TODO Add here the guestcard logic                       
                     }
                 }
                 else
                 {
-                    //tracesource.TraceEvent(TraceEventType.Error, 0, A0RID + " Error Tin: " + featuretoadd + " not found");
+                    //Log Error
                 }
+
+                //var myfeature = xmlfiles["Features"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == featuretoadd).FirstOrDefault();
+
+                //if (myfeature != null)
+                //{
+                //    var myfeatureparsed = myfeature.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault();
+
+                //    if (myfeatureparsed != null)
+                //    {
+                //        var myfeatureparsed2 = myfeatureparsed.Attribute("T1Des").Value;
+
+                //        //Getting HGV ID if available
+
+                //        string hgvamenityid = "";
+
+                //        //var myamenity = roomamenitylist.Root.Elements("amenity").Elements("ltsrid").Where(x => x.Value == tinrid).FirstOrDefault();
+
+                //        var myamenity = xmlfiles["RoomAmenities"].Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == featuretoadd).FirstOrDefault();
+
+                //        if (myamenity != null)
+                //            hgvamenityid = myamenity.Element("hgvid").Value;
+
+                //        if (myfeatureparsed2 != null)
+                //            featurelist.Add(new AccoFeatureLinked() { Id = featuretoadd, Name = myfeatureparsed2, HgvId = hgvamenityid });
+                //    }
+                //    else
+                //    {
+                //        //TODO Add here the guestcard logic                       
+                //    }
+                //}
+                //else
+                //{          
+                //    //Log Error
+                //}
             }          
 
             accommodationlinked.Features = featurelist.ToList();
@@ -861,35 +889,43 @@ namespace LTSAPI.Parser
                     //Features
                     foreach (var amenity in accoroom.amenities)
                     {
-                        var myfeature = xmlfiles["Features"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == amenity.rid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value.ToUpper() == "EN").FirstOrDefault().Attribute("T1Des").Value;
+                        //Using Json File instead of xml file
+                        //var myfeature = xmlfiles["Features"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == amenity.rid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value.ToUpper() == "EN").FirstOrDefault().Attribute("T1Des").Value;
 
-                        //HGV ID Feature + OTA Code
-                        string hgvamenityid = "";
-                        string otacodes = "";
-
-                        var myamenity = xmlfiles["RoomAmenities"].Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == amenity.rid).FirstOrDefault();
-
-                        if (myamenity != null)
-                        {
-                            hgvamenityid = myamenity.Element("hgvid").Value;
-                            otacodes = myamenity.Element("ota_codes") != null ? myamenity.Element("ota_codes").Value : "";
-                        }
-
-                        List<int> amenitycodes = null;
-
-                        if (!String.IsNullOrEmpty(otacodes))
-                        {
-                            var otacodessplittet = otacodes.Split(',').ToList();
-                            amenitycodes = new List<int>();
-
-                            foreach (var otacodesplit in otacodessplittet)
-                            {
-                                amenitycodes.Add(Convert.ToInt32(otacodesplit));
-                            }
-                        }
+                        var myfeature = jsonfiles["Features"].Where(x => x["rid"].Value<string>() == amenity.rid).FirstOrDefault();
 
                         if (myfeature != null)
-                            featurelist.Add(new AccoFeatureLinked() { Id = amenity.rid, Name = myfeature, HgvId = hgvamenityid, OtaCodes = otacodes, RoomAmenityCodes = amenitycodes });
+                        {
+                            var myfeatureparsed = myfeature["name"]["en"].Value<string>();
+
+                            //HGV ID Feature + OTA Code
+                            string hgvamenityid = "";
+                            string otacodes = "";
+
+                            var myamenity = xmlfiles["RoomAmenities"].Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == amenity.rid).FirstOrDefault();
+
+                            if (myamenity != null)
+                            {
+                                hgvamenityid = myamenity.Element("hgvid").Value;
+                                otacodes = myamenity.Element("ota_codes") != null ? myamenity.Element("ota_codes").Value : "";
+                            }
+
+                            List<int> amenitycodes = null;
+
+                            if (!String.IsNullOrEmpty(otacodes))
+                            {
+                                var otacodessplittet = otacodes.Split(',').ToList();
+                                amenitycodes = new List<int>();
+
+                                foreach (var otacodesplit in otacodessplittet)
+                                {
+                                    amenitycodes.Add(Convert.ToInt32(otacodesplit));
+                                }
+                            }
+
+                            if (myfeature != null)
+                                featurelist.Add(new AccoFeatureLinked() { Id = amenity.rid, Name = myfeatureparsed, HgvId = hgvamenityid, OtaCodes = otacodes, RoomAmenityCodes = amenitycodes });
+                        }
                     }
                     room.Features = featurelist.ToList();
 

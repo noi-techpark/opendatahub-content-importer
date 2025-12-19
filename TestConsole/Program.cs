@@ -77,11 +77,9 @@ if (testcases.Contains("availabilitysearch"))
 
 if (testcases.Contains("accommodation"))
 {
-    //await TestRequests.RetrieveAndParseAccommodation(settings, new List<string>() { 
-    //    "1DF9C17D6F24E87E4EDAAB3408588A6C",
-    //    "C7518224544F11D2968200A0244EAF51",
-    //    "8582DBFD6BA04C7D91CDC7895DDD53FC"
-    //}, settings.LtsCredentials);
+    await TestRequests.RetrieveAndParseAccommodation(settings, new List<string>() {
+        "64FD5627B6FD441099D9F9418C147A97"
+    }, settings.LtsCredentials);
 
     await TestRequests.RetrieveAndParseAccommodation(settings, new List<string>() {
         "1DF9C17D6F24E87E4EDAAB3408588A6C",
