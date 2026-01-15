@@ -348,6 +348,8 @@ namespace LTSAPI
         public Dictionary<string, string>? website { get; set; }
         //Localised description of the accommodation's accessibility
         public Dictionary<string, string>? description { get; set; }
+
+        public Dictionary<string, string>? commitmentToAccessibilityUrl { get; set; }
     }
 
     public class LTSRateplan

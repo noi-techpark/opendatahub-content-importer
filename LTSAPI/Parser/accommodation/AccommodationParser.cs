@@ -684,8 +684,9 @@ namespace LTSAPI.Parser
                 {
                     IndependentDescription independentdetail = new IndependentDescription();
                     independentdetail.Language = lang;
-                    independentdetail.BacklinkUrl = accommodation.accessibility.website[lang];
-                    independentdetail.Description = accommodation.accessibility.website[lang];
+                    independentdetail.BacklinkUrl = accommodation.accessibility.website.ContainsKey(lang) ? accommodation.accessibility.website[lang] : null;
+                    independentdetail.Description = accommodation.accessibility.description.ContainsKey(lang) ? accommodation.accessibility.description[lang] : null;
+                    independentdetail.CommitmentToAccessibilityUrl = accommodation.accessibility.commitmentToAccessibilityUrl.ContainsKey(lang) ? accommodation.accessibility.commitmentToAccessibilityUrl[lang] : null;
 
                     independentdata.IndependentDescription.TryAddOrUpdate(lang, independentdetail);
                 }
