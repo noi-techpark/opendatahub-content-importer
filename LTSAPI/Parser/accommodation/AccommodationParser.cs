@@ -656,6 +656,8 @@ namespace LTSAPI.Parser
                 review.ReviewId = trustyourating.id;
                 review.Results = trustyourating.reviewsQuantity != null ? trustyourating.reviewsQuantity.Value : 0;
 
+                //to check in the past trustyouscore was passed "TrustYouScore": 950, instead of 95.0
+
                 review.Score = trustyourating.rating;
                 review.Active = trustyourating.isActive;
 
@@ -763,7 +765,9 @@ namespace LTSAPI.Parser
             UpdateThemes(accommodationlinked, xmlfiles["Wine"], xmlfiles["City"], xmlfiles["NearSkiArea"], xmlfiles["Mediterranean"], xmlfiles["Dolomites"], xmlfiles["Alpine"]);
             //tracesource.TraceEvent(TraceEventType.Information, 0, A0RID + " Themeinformation created");
             UpdateBadges(accommodationlinked, xmlfiles["Vinum"]);
-            //tracesource.TraceEvent(TraceEventType.Information, 0, A0RID + " Badgeinformation created");
+            
+
+            //TO CHECK IF THIS Works
             UpdateAusstattungToSmgTags(accommodationlinked);
             //tracesource.TraceEvent(TraceEventType.Information, 0, A0RID + " Ausstattunginformation created");
 
@@ -1736,7 +1740,7 @@ namespace LTSAPI.Parser
                     }
                 }
             }
-            if (myacco.SmgTags != null)
+            else if (myacco.SmgTags != null)
             {
                 if (myacco.SmgTags.Contains(tagname))
                     myacco.SmgTags.Remove(tagname);

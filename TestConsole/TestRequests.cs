@@ -242,7 +242,7 @@ namespace TestConsole
             myxmlfiles.Add("Boards", XDocument.Load(directory + "Boards.xml"));
             myxmlfiles.Add("City", XDocument.Load(directory + "City.xml"));
             myxmlfiles.Add("Dolomites", XDocument.Load(directory + "Dolomites.xml"));
-            myxmlfiles.Add("Features", XDocument.Load(directory + "Features.xml"));
+            //myxmlfiles.Add("Features", XDocument.Load(directory + "Features.xml")); using json file
             myxmlfiles.Add("Mediterranean", XDocument.Load(directory + "Mediterranean.xml"));
             myxmlfiles.Add("NearSkiArea", XDocument.Load(directory + "NearSkiArea.xml"));
             myxmlfiles.Add("RoomAmenities", XDocument.Load(directory + "RoomAmenities.xml"));
