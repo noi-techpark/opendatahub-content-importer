@@ -674,16 +674,23 @@ namespace LTSAPI.Parser
             
             //Accessibility Independent Data
             IndependentData independentdata = new IndependentData();
+            bool hasindependentdata = false;
 
             var independentrating = accommodation.reviews != null ? accommodation.reviews.Where(x => x.type == "independent").FirstOrDefault() : null;
 
             if(independentrating != null)
             {
+                hasindependentdata = true;
                 independentdata.Enabled = independentrating.isActive;
-                independentdata.IndependentRating = Convert.ToInt32(independentrating.rating);
-                
+                independentdata.IndependentRating = Convert.ToInt32(independentrating.rating);                                
+            }
+
+            if (accommodation.accessibility != null)
+            {
                 foreach (var lang in haslanguage)
                 {
+                    hasindependentdata = true;
+
                     IndependentDescription independentdetail = new IndependentDescription();
                     independentdetail.Language = lang;
                     independentdetail.BacklinkUrl = accommodation.accessibility.website.ContainsKey(lang) ? accommodation.accessibility.website[lang] : null;
@@ -693,6 +700,9 @@ namespace LTSAPI.Parser
                     independentdata.IndependentDescription.TryAddOrUpdate(lang, independentdetail);
                 }
             }
+
+            if(hasindependentdata)
+                accommodationlinked.IndependentData = independentdata;
 
             //Seasons
             if (accommodation.seasons != null)
