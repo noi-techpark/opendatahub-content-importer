@@ -258,12 +258,13 @@ namespace LTSAPI.Parser
             {
                 //Accommodation Category
                 var mycategory = xmlfiles["AccoCategories"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == accommodation.category.rid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault().Attribute("T1Des").Value;
-                accommodationlinked.AccoCategoryId = accommodation.category.rid;
+                accommodationlinked.AccoCategoryId = mycategory;
                 additionalfeaturestoadd.Add(accommodation.category.rid);  //to check
 
                 //Add also to TagIds
                 if (accommodationlinked.TagIds == null)
                     accommodationlinked.TagIds = new List<string>();
+
                 accommodationlinked.TagIds.Add(accommodation.category.rid);
             }
 
@@ -287,7 +288,12 @@ namespace LTSAPI.Parser
                 //Add also to TagIds
                 if (accommodationlinked.TagIds == null)
                     accommodationlinked.TagIds = new List<string>();
-                accommodationlinked.TagIds.TryAddOrUpdateOnList(accoboardings.ToList());
+
+                //Adding Board RID
+                foreach (var myboardelement in accommodation.mealPlans)
+                {
+                    accommodationlinked.TagIds.Add(myboardelement.rid);
+                }
             }
 
 
@@ -405,9 +411,9 @@ namespace LTSAPI.Parser
             if (accommodation.addressGroups != null)
             {
                 accommodationlinked.MarketingGroupIds = new List<string>();
-                foreach (var addressgroup in accommodation.addressGroups)
+                foreach (var mgroup in accommodation.marketingGroups)
                 {
-                    accommodationlinked.MarketingGroupIds.Add(addressgroup.rid);
+                    accommodationlinked.MarketingGroupIds.Add(mgroup.rid);
                 }
             }
 
@@ -704,6 +710,27 @@ namespace LTSAPI.Parser
             if(hasindependentdata)
                 accommodationlinked.IndependentData = independentdata;
 
+            //Adding Reviews To Accommodation
+            if (accommodation.reviews != null)
+            {
+                foreach(var review in accommodation.reviews)
+                {
+                    if (accommodationlinked.Review == null)
+                        accommodationlinked.Review = new Dictionary<string, Review>();
+
+                    Review rev = new Review();
+                    rev.Active = review.isActive;
+                    rev.ReviewId = review.id;
+                    rev.Provider = review.type;
+                    rev.Results = review.reviewsQuantity;
+                    rev.Score = review.rating;
+                    rev.State = review.status;
+
+                    if (!String.IsNullOrEmpty(review.type))
+                        accommodationlinked.Review.TryAddOrUpdate(review.type, rev);
+                }
+            }
+            
             //Seasons
             if (accommodation.seasons != null)
             {
@@ -1619,7 +1646,7 @@ namespace LTSAPI.Parser
 
                 if (guestcard > 0)
                 {
-                    myacco.SpecialFeaturesIds.Add("guestcard");
+                    myacco.SpecialFeaturesIds.Add("Guestcard");
                 }
             }
         }
