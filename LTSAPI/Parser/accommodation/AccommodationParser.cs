@@ -654,29 +654,28 @@ namespace LTSAPI.Parser
                 accommodationlinked.DistrictId = accommodation.district.rid;
 
             //Reviews
-            var trustyourating = accommodation.reviews != null ? accommodation.reviews.Where(x => x.type == "trustyou").FirstOrDefault() : null;
-            if(trustyourating != null)
-            {
-                var review = new DataModel.Review();
+            //var trustyourating = accommodation.reviews != null ? accommodation.reviews.Where(x => x.type == "trustyou").FirstOrDefault() : null;
+            //if(trustyourating != null)
+            //{
+            //    var review = new DataModel.Review();
 
-                review.ReviewId = trustyourating.id;
-                review.Results = trustyourating.reviewsQuantity != null ? trustyourating.reviewsQuantity.Value : 0;
+            //    review.ReviewId = trustyourating.id;
+            //    review.Results = trustyourating.reviewsQuantity != null ? trustyourating.reviewsQuantity.Value : 0;
 
-                //to check in the past trustyouscore was passed "TrustYouScore": 950, instead of 95.0
+              
+            //    review.Score = trustyourating.rating;
+            //    review.Active = trustyourating.isActive;
 
-                review.Score = trustyourating.rating;
-                review.Active = trustyourating.isActive;
+            //    review.State = trustyourating.status;
+            //    review.StateInteger = GetTrustYouState(trustyourating.status);
 
-                review.State = trustyourating.status;
-                review.StateInteger = GetTrustYouState(trustyourating.status);
+            //    review.Provider = "trustyou";
 
-                review.Provider = "trustyou";
+            //    if(accommodationlinked.Review == null)
+            //        accommodationlinked.Review = new Dictionary<string, DataModel.Review>();
 
-                if(accommodationlinked.Review == null)
-                    accommodationlinked.Review = new Dictionary<string, DataModel.Review>();
-
-                accommodationlinked.Review.TryAddOrUpdate("trustyou", review);
-            }
+            //    accommodationlinked.Review.TryAddOrUpdate("trustyou", review);
+            //}
             
             //Accessibility Independent Data
             IndependentData independentdata = new IndependentData();
@@ -723,8 +722,14 @@ namespace LTSAPI.Parser
                     rev.ReviewId = review.id;
                     rev.Provider = review.type;
                     rev.Results = review.reviewsQuantity;
+
+                    //to check in the past trustyouscore was passed "TrustYouScore": 950, instead of 95.0
                     rev.Score = review.rating;
                     rev.State = review.status;
+
+                    if(review.type == "trustyou")
+                        rev.StateInteger = GetTrustYouState(review.status);
+
 
                     if (!String.IsNullOrEmpty(review.type))
                         accommodationlinked.Review.TryAddOrUpdate(review.type, rev);
