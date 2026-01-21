@@ -5,9 +5,6 @@
 using DataModel;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -447,7 +444,9 @@ namespace LTSAPI.Parser
                 }
                 else
                 {
-                    //Log Error
+                    //Also Category, Board and Type are no more in the Features json what about this
+
+                    
                 }
 
                 //var myfeature = xmlfiles["Features"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == featuretoadd).FirstOrDefault();
