@@ -876,10 +876,7 @@ namespace LTSAPI.Parser
 
                     //if there is no name hack to add de,it,en
                     if (room.HasLanguage.Count() == 0)
-                        room.HasLanguage.Add("de", "it", "en");
-
-
-                    //Ensure de,it,en is synced?
+                        room.HasLanguage = new List<string>() { "de", "it", "en" };
 
                     room.Active = accoroom.isActive;
 
