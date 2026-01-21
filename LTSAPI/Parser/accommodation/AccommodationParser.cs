@@ -650,7 +650,7 @@ namespace LTSAPI.Parser
             }
 
             //District
-            if (accommodationlinked.DistrictId != null)                        
+            if (accommodation.district != null && !String.IsNullOrEmpty(accommodation.district.rid))                        
                 accommodationlinked.DistrictId = accommodation.district.rid;
 
             //Reviews
@@ -710,7 +710,7 @@ namespace LTSAPI.Parser
                 accommodationlinked.IndependentData = independentdata;
 
             //Adding Reviews To Accommodation
-            if (accommodation.reviews != null)
+            if (accommodation.reviews != null && accommodation.reviews.Count() == 0)
             {
                 foreach(var review in accommodation.reviews)
                 {
@@ -737,7 +737,7 @@ namespace LTSAPI.Parser
             }
             
             //Seasons
-            if (accommodation.seasons != null)
+            if (accommodation.seasons != null && accommodation.seasons.Count() == 0)
             {
                 List<OperationSchedule> operationschedules = new List<OperationSchedule>();
 
@@ -871,21 +871,28 @@ namespace LTSAPI.Parser
                     //room.Id = accoroom.; TO CHECK
                     room.Roomtype = GetRoomTypeFromType(accoroom.type);  //GetRoomType() not needed, type is room/apartment
 
-                    if (accoroom.isActive)
-                    {
-                        if (room.PublishedOn == null)
-                            room.PublishedOn = new List<string>();
+                    room.HasLanguage = accoroom.name != null ? accoroom.name.Where(x => x.Value != null).Select(x => x.Key).ToList() : new List<string>() { };
+                    
+                    //Ensure de,it,en is synced?
 
-                        room.Active = true;
-                        //adding room.Active
-                        room.PublishedOn.TryAddOrUpdateOnList("idm-marketplace");
-                    }
-                    else
-                    {
-                        room.Active = false;
-                        if (room.PublishedOn != null)
-                            room.PublishedOn.TryRemoveOnList("idm-marketplace");
-                    }
+                    room.Active = accoroom.isActive;
+
+                    //This has to be done by the publishedon Helper
+                    //if (accoroom.isActive)
+                    //{
+                    //    if (room.PublishedOn == null)
+                    //        room.PublishedOn = new List<string>();
+
+                    //    room.Active = true;
+                    //    //adding room.Active
+                    //    room.PublishedOn.TryAddOrUpdateOnList("idm-marketplace");
+                    //}
+                    //else
+                    //{
+                    //    room.Active = false;
+                    //    if (room.PublishedOn != null)
+                    //        room.PublishedOn.TryRemoveOnList("idm-marketplace");
+                    //}
 
                     room.RoomtypeInt = GetRoomType(room.Roomtype);
                     room.RoomClassificationCodes = AlpineBitsHelper.GetRoomClassificationCode(room.Roomtype);
@@ -896,39 +903,36 @@ namespace LTSAPI.Parser
                     room.HGVId = "";
 
                     room.RoomCode = accoroom.code;
-                    room.PriceFrom = accoroom.minAmountPerPersonPerDay;  //TO CHECK IF THIS IS THE RIGHT field
+                    room.PriceFrom = accoroom.minAmountPerPersonPerDay;
+                    room.PriceFromPerUnit = accoroom.minAmountPerUnitPerDay;
 
                     ////Room Numbers
                     room.RoomNumbers = accoroom.rooms.Select(x => x.code).ToList();
-                    room.Roommax = accoroom.occupancy.max;
-                    room.Roommin = accoroom.occupancy.min;
-                    room.Roomstd = accoroom.occupancy.standard;
+                    room.Roommax = accoroom.occupancy != null ? accoroom.occupancy.max : null;
+                    room.Roommin = accoroom.occupancy != null ? accoroom.occupancy.min : null;
+                    room.Roomstd = accoroom.occupancy != null ? accoroom.occupancy.standard : null;
                     //room.Roomminadults = accoroom.occupancy.minAdults; new field
 
                     room.RoomQuantity = accoroom.roomQuantity;
+                    
+                    room.Shortname =  accoroom.name != null && accoroom.name.ContainsKey("de") ? accoroom.name["de"] : null;
 
-                    room.HasLanguage = accoroom.name.Keys.ToList();
 
-                    room.Shortname = accoroom.name["de"];
-
-                    //TODO
-
+                    //Room Properties
+                    //squareMeters
                     //baths
                     //diningRooms
                     //livingRooms
                     //sleepingRooms
                     //toilets
-
-
-                    //classification (room, apartment?)
-
-                    //lastUpdate
-
-                    //minAmountPerPersonPerDay
-                    //minAmountPerUnitPerDay
-                    //rooms.availability
-                    //squareMeters
-                    //type
+                    room.Properties = new AccommodationRoomProperties();
+                    room.Properties.Baths = accoroom.baths;
+                    room.Properties.SquareMeters = accoroom.squareMeters;
+                    room.Properties.LivingRooms = accoroom.livingRooms;
+                    room.Properties.SleepingRooms = accoroom.sleepingRooms;
+                    room.Properties.DiningRooms = accoroom.diningRooms;
+                    room.Properties.Toilets = accoroom.toilets;
+                   
 
                     //Amenities parsing                
                     List<AccoFeatureLinked> featurelist = new List<AccoFeatureLinked>();
@@ -1013,7 +1017,26 @@ namespace LTSAPI.Parser
                     }
 
                     room.ImageGallery = imagegallerylist.ToList();
-                    room.LastChange = DateTime.Now;
+                    room.LastChange = accoroom.lastUpdate;
+
+                    //Resort HasLanguage
+                    room.HasLanguage = room.HasLanguage.OrderBy(x => x).ToList();
+                                        
+                    //minAmountPerPersonPerDay
+                    //minAmountPerUnitPerDay
+                    //rooms.availability
+                    
+                    //type
+                    var ltsriddict = new Dictionary<string, string>() { { "rid", accoroom.rid } };
+                    if (accoroom.occupancy != null && accoroom.occupancy.minAdults != null)
+                        ltsriddict.TryAddOrUpdate("occupancy.minAdults", accoroom.occupancy.minAdults.ToString());
+
+                    if (accoroom.classification != null)
+                        ltsriddict.TryAddOrUpdate("classification", accoroom.classification);
+                    if (accoroom.type != null)
+                        ltsriddict.TryAddOrUpdate("type", accoroom.type);                    
+
+                    room.Mapping.TryAddOrUpdate("lts", ltsriddict);
 
                     roomlist.Add(room);
                 }

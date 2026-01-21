@@ -81,9 +81,9 @@ if (testcases.Contains("accommodation"))
         "9BB0774FE7EAADE46D2DC44188E7A94C"
     }, settings.LtsCredentials);
 
-    await TestRequests.RetrieveAndParseAccommodation(settings, new List<string>() {
-        "9BB0774FE7EAADE46D2DC44188E7A94C"        
-    }, settings.LtsCredentialsOpen);
+    //await TestRequests.RetrieveAndParseAccommodation(settings, new List<string>() {
+    //    "9BB0774FE7EAADE46D2DC44188E7A94C"        
+    //}, settings.LtsCredentialsOpen);
 
 
     //TEST accommodation Parsing
