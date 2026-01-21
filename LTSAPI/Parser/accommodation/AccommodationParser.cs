@@ -640,6 +640,7 @@ namespace LTSAPI.Parser
                     }
                 }
             }
+            
             accommodationlinked.ImageGallery = imagegallerylist.ToList();
             accommodationlinked.ImageGallery.AddImageTagsToGallery();
 
@@ -710,7 +711,7 @@ namespace LTSAPI.Parser
                 accommodationlinked.IndependentData = independentdata;
 
             //Adding Reviews To Accommodation
-            if (accommodation.reviews != null && accommodation.reviews.Count() == 0)
+            if (accommodation.reviews != null && accommodation.reviews.Count() > 0)
             {
                 foreach(var review in accommodation.reviews)
                 {
@@ -737,7 +738,7 @@ namespace LTSAPI.Parser
             }
             
             //Seasons
-            if (accommodation.seasons != null && accommodation.seasons.Count() == 0)
+            if (accommodation.seasons != null && accommodation.seasons.Count() > 0)
             {
                 List<OperationSchedule> operationschedules = new List<OperationSchedule>();
 
@@ -761,7 +762,7 @@ namespace LTSAPI.Parser
 
             //Rate Plans
           
-            if (accommodation.ratePlans != null)
+            if (accommodation.ratePlans != null && accommodation.ratePlans.Count() > 0)
             {
                 List<RatePlan> rateplans = new List<RatePlan>();
 
@@ -816,7 +817,7 @@ namespace LTSAPI.Parser
             //IF Badge Behindertengerecht is present add it as Tag NEW: Additional Check is done 
             UpdateBadgesToSmgTags(accommodationlinked, "Behindertengerecht", "barrier-free");
 
-            //TODO Create AccoRoomInfo
+            //TODO Create AccoRoomInfo LTS already here ???
             //TODO OwnerRID
 
             return accommodationlinked;
@@ -872,7 +873,12 @@ namespace LTSAPI.Parser
                     room.Roomtype = GetRoomTypeFromType(accoroom.type);  //GetRoomType() not needed, type is room/apartment
 
                     room.HasLanguage = accoroom.name != null ? accoroom.name.Where(x => x.Value != null).Select(x => x.Key).ToList() : new List<string>() { };
-                    
+
+                    //if there is no name hack to add de,it,en
+                    if (room.HasLanguage.Count() == 0)
+                        room.HasLanguage.Add("de", "it", "en");
+
+
                     //Ensure de,it,en is synced?
 
                     room.Active = accoroom.isActive;
@@ -998,25 +1004,29 @@ namespace LTSAPI.Parser
 
                     //Image Parsing
                     List<ImageGallery> imagegallerylist = new List<ImageGallery>();
-                    foreach (var image in accoroom.images)
+                    if (accoroom.images != null && accoroom.images.Count() > 0)
                     {
-                        ImageGallery mainimage = new ImageGallery();
+                        foreach (var image in accoroom.images)
+                        {
+                            ImageGallery mainimage = new ImageGallery();
 
-                        mainimage.ImageUrl = image.url;
-                        mainimage.Height = image.heightPixel;
-                        mainimage.Width = image.widthPixel;
-                        mainimage.ImageSource = "lts";
-                        mainimage.ListPosition = image.order;
+                            mainimage.ImageUrl = image.url;
+                            mainimage.Height = image.heightPixel;
+                            mainimage.Width = image.widthPixel;
+                            mainimage.ImageSource = "lts";
+                            mainimage.ListPosition = image.order;
 
-                        mainimage.CopyRight = image.copyright;
-                        mainimage.License = image.license;
+                            mainimage.CopyRight = image.copyright;
+                            mainimage.License = image.license;
 
-                        mainimage.ImageTitle = image.name;
+                            mainimage.ImageTitle = image.name;
 
-                        imagegallerylist.Add(mainimage);
+                            imagegallerylist.Add(mainimage);
+                        }
+
+                        room.ImageGallery = imagegallerylist.ToList();
                     }
-
-                    room.ImageGallery = imagegallerylist.ToList();
+                    
                     room.LastChange = accoroom.lastUpdate;
 
                     //Resort HasLanguage
