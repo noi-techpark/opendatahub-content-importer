@@ -462,7 +462,9 @@ namespace LTSAPI.Parser
             //Mapping
             var ltsmapping = new Dictionary<string, string>();
             ltsmapping.Add("rid", ltsgastronomy.rid);
-            ltsmapping.Add("id", ltsgastronomy.id.ToString());
+
+            if(ltsgastronomy.id != null)
+                ltsmapping.Add("id", ltsgastronomy.id.ToString());
 
             if (ltsgastronomy.representationMode != null)
                 ltsmapping.Add("representationMode", ltsgastronomy.representationMode);
