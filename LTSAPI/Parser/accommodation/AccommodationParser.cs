@@ -814,7 +814,7 @@ namespace LTSAPI.Parser
             //tracesource.TraceEvent(TraceEventType.Information, 0, A0RID + " Ausstattunginformation created");
 
             //IF Badge Behindertengerecht is present add it as Tag NEW: Additional Check is done 
-            UpdateBadgesToSmgTags(accommodationlinked, "Behindertengerecht", "barrier-free");
+            //UpdateBadgesToSmgTags(accommodationlinked, "Behindertengerecht", "barrier-free");
 
             //TODO Create AccoRoomInfo LTS already here ???
             //TODO OwnerRID
@@ -1087,9 +1087,9 @@ namespace LTSAPI.Parser
                 if (badge4 > 0)
                     myacco.BadgeIds.Add("Bauernhof");
 
-                var badge5 = myacco.MarketingGroupIds.Where(x => x == "476007E6DF974CFC98BBBEDD8787EC81").Count();
-                if (badge5 > 0)
-                    myacco.BadgeIds.Add("Behindertengerecht");
+                //var badge5 = myacco.MarketingGroupIds.Where(x => x == "476007E6DF974CFC98BBBEDD8787EC81").Count();
+                //if (badge5 > 0)
+                //    myacco.BadgeIds.Add("Behindertengerecht");
 
                 var badge6 = myacco.MarketingGroupIds.Where(x => x == "3EA6116A6103498799B642C9C56D8301").Count();
                 if (badge6 > 0)
@@ -1590,13 +1590,13 @@ namespace LTSAPI.Parser
                 }
 
 
-                //SpecialFeature 8
-                //Barrierefrei SpecialFeatures = B7E9EE4A91544849B69D5A5564DDCDFB            
-                var barriere = myacco.Features.Where(x => x.Id == "B7E9EE4A91544849B69D5A5564DDCDFB").Count();
-                if (barriere > 0)
-                {
-                    myacco.SpecialFeaturesIds.Add("Barrierefrei");
-                }
+                ////SpecialFeature 8
+                ////Barrierefrei SpecialFeatures = B7E9EE4A91544849B69D5A5564DDCDFB            
+                //var barriere = myacco.Features.Where(x => x.Id == "B7E9EE4A91544849B69D5A5564DDCDFB").Count();
+                //if (barriere > 0)
+                //{
+                //    myacco.SpecialFeaturesIds.Add("Barrierefrei");
+                //}
 
                 //SpecialFeature 9
                 //Allergikerküche SpecialFeatures = 71A7D4A821F7437EA1DC05CEE9655A5A OR 11A6BEA7EEFC4716BDF8FBD5E15C0CFB
