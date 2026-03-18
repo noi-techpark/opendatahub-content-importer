@@ -587,6 +587,9 @@ namespace LTSAPI.Parser
                     mainimage.CopyRight = image.copyright;
                     mainimage.License = image.license;
 
+                    mainimage.ImageTitle = image.name;
+                    mainimage.ImageTitle.RemoveNullValues();
+
                     //New Check date and give Image Tag
                     //if (mainimage.ValidFrom != null && mainimage.ValidTo != null)
                     //{
@@ -633,7 +636,8 @@ namespace LTSAPI.Parser
                         mygallery.CopyRight = image.copyright;
                         mygallery.License = image.license;
 
-                        //TODO Image Descriptions not in Interface?
+                        mygallery.ImageTitle = image.name;
+                        mygallery.ImageTitle.RemoveNullValues();
 
                         imagegallerylist.Add(mygallery);
 
