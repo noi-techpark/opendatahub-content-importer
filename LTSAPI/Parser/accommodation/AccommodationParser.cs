@@ -590,6 +590,8 @@ namespace LTSAPI.Parser
                     mainimage.ImageTitle = image.name;
                     mainimage.ImageTitle.RemoveNullValues();
 
+                    mainimage.ImageName = image.rid;
+
                     //New Check date and give Image Tag
                     //if (mainimage.ValidFrom != null && mainimage.ValidTo != null)
                     //{
@@ -638,6 +640,8 @@ namespace LTSAPI.Parser
 
                         mygallery.ImageTitle = image.name;
                         mygallery.ImageTitle.RemoveNullValues();
+
+                        mygallery.ImageName = image.rid;
 
                         imagegallerylist.Add(mygallery);
 
