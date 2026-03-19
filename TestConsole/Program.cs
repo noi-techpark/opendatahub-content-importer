@@ -78,7 +78,7 @@ if (testcases.Contains("availabilitysearch"))
 if (testcases.Contains("accommodation"))
 {
     await TestRequests.RetrieveAndParseAccommodation(settings, new List<string>() {
-        "9BB0774FE7EAADE46D2DC44188E7A94C"
+        "BC7F7112A93D4A08B1640C528830B634"
     }, settings.LtsCredentials);
 
     //await TestRequests.RetrieveAndParseAccommodation(settings, new List<string>() {

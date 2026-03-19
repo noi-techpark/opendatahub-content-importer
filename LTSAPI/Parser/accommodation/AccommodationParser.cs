@@ -205,6 +205,10 @@ namespace LTSAPI.Parser
             if(!String.IsNullOrEmpty(accommodation.cinCode))
                 ltsriddict.TryAddOrUpdate("cincode", accommodation.cinCode);
 
+            //Add TourismOrganization
+            if (accommodation.tourismOrganization != null && !String.IsNullOrEmpty(accommodation.tourismOrganization.rid))
+                ltsriddict.TryAddOrUpdate("tourismOrganization.rid", accommodation.tourismOrganization.rid);
+
             //Add Mapping 
 
             accommodationlinked.Mapping.TryAddOrUpdate("lts", ltsriddict);
@@ -622,7 +626,7 @@ namespace LTSAPI.Parser
 
             if (accommodation.galeries != null)
             {
-                foreach (var gallery in accommodation.galeries.Where(x => x.isActive))
+                foreach (var gallery in accommodation.galeries.Where(x => x.isActive && x.images != null))
                 {
                     foreach (var image in gallery.images)
                     {
