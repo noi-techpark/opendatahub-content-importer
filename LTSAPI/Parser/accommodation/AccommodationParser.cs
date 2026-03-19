@@ -876,8 +876,7 @@ namespace LTSAPI.Parser
                 {
                     AccommodationRoomV2 room = new AccommodationRoomV2();
 
-                    room.A0RID = accoroom.rid;
-                    //room.Id = accoroom.; TO CHECK
+                    
                     room.Roomtype = GetRoomTypeFromType(accoroom.type);  //GetRoomType() not needed, type is room/apartment
 
                     room.HasLanguage = accoroom.name != null ? accoroom.name.Where(x => x.Value != null).Select(x => x.Key).ToList() : new List<string>() { };
@@ -910,6 +909,9 @@ namespace LTSAPI.Parser
 
                     //NEU
                     room.Source = "lts";
+
+                    room.A0RID = accommodation.rid;
+
                     room.LTSId = accoroom.rid;
                     room.HGVId = "";
 
@@ -1024,7 +1026,9 @@ namespace LTSAPI.Parser
                             mainimage.CopyRight = image.copyright;
                             mainimage.License = image.license;
 
+                            mainimage.ImageName = image.rid;
                             mainimage.ImageTitle = image.name;
+                            mainimage.ImageTitle.RemoveNullValues();
 
                             imagegallerylist.Add(mainimage);
                         }
