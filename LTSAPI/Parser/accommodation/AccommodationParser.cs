@@ -1144,9 +1144,7 @@ namespace LTSAPI.Parser
                 if (badge11 > 0)
                 {
                     myacco.BadgeIds.Add("SustainabilityLevel3");
-                }
-
-                Console.WriteLine("Badge Table info added!");
+                }                
             }
         }
 

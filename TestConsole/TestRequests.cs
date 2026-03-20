@@ -105,11 +105,11 @@ namespace TestConsole
                     Formatting = Formatting.Indented // Optional: for pretty printing
                 };
 
-                Console.WriteLine(JsonConvert.SerializeObject(parsedacco, serializersettings));
+                //Console.WriteLine(JsonConvert.SerializeObject(parsedacco, serializersettings));
 
                 var parsedaccorooms = AccommodationParser.ParseLTSAccommodationRoom(ltsacco.FirstOrDefault().Value<JObject>(), false, xmlfiles, jsonfiles);
 
-                Console.WriteLine(JsonConvert.SerializeObject(parsedaccorooms, serializersettings));
+                //Console.WriteLine(JsonConvert.SerializeObject(parsedaccorooms, serializersettings));
             }
         }
 
