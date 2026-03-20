@@ -2,17 +2,18 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using LTSAPI;
-using Microsoft.Extensions.Configuration;
-using RabbitPusher;
 using DataImportHelper;
 using GenericHelper;
-using System.Diagnostics;
-using Newtonsoft.Json.Linq;
+using LTSAPI;
 using LTSAPI.Parser;
+using Microsoft.AspNetCore.Http.Timeouts;
+using Microsoft.Extensions.Configuration;
+using MongoDB.Driver.Linq;
+using Newtonsoft.Json.Linq;
+using RabbitPusher;
+using System.Diagnostics;
 using System.Text.Json.Nodes;
 using TestConsole;
-using Microsoft.AspNetCore.Http.Timeouts;
 
 Console.WriteLine("Test!");
 var builder = new ConfigurationBuilder()
@@ -77,6 +78,18 @@ if (testcases.Contains("availabilitysearch"))
 
 if (testcases.Contains("accommodation"))
 {
+    //Acco List request
+    LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+
+    var qs = new LTSQueryStrings() { fields = "rid", filter_marketingGroupRids = "9E72B78AC5B14A9DB6BED6C2592483BF" };
+
+    qs.filter_lastUpdate = DateTime.Now.AddMinutes(15);
+    var dict = ltsapi.GetLTSQSDictionary(qs);
+
+    var result = await ltsapi.AccommodationDeleteRequest(dict, true);
+
+
+
     var idlistaccos = new List<string>()
     {
         "669CE6D35D7411D4AAFB0050DA6D1102"
