@@ -70,7 +70,11 @@ namespace LTSAPI.Parser
                     {
                         {
                             "lts",
-                            new Dictionary<string, string>() { { "rid", data.rid } }
+                            new Dictionary<string, string>() { 
+                                { "rid", data.rid },
+                                { "typeId", data.typeId != null ? data.typeId.ToString() : null },
+                                { "code", data.code }
+                            }
                         },
                     };
             ;

@@ -1369,7 +1369,7 @@ namespace LTSAPI
         public string rid { get; set; }
         public DateTime lastUpdate { get; set; }
         public IDictionary<string, string> name { get; set; }
-        public bool isActive { get; set; }
+        public bool isActive { get; set; }        
     }
 
     #endregion
@@ -1554,6 +1554,9 @@ namespace LTSAPI
         public DateTime lastUpdate { get; set; }
         public IDictionary<string, string> name { get; set; }
         public bool isActive { get; set; }
+        public string code { get; set; }
+        public int? typeId { get; set; }
+
     }
 
     public class LTSVenueCategoryData
