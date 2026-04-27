@@ -26,7 +26,7 @@ IConfiguration config = builder.Build();
 Settings settings = new Settings(config);
 
 
-List<string> testcases = new List<string>() { "accommodation" };
+List<string> testcases = new List<string>() { "event","venue" };
 
 
 
@@ -153,15 +153,15 @@ if (testcases.Contains("accommodation"))
 
 if (testcases.Contains("event"))
 {
-    //await TestRequests.RetrieveAndParseEvent(settings);
+    await TestRequests.RetrieveAndParseEvent(settings, new List<string>() {
+    "FA440216CBFD4DAD99389D584FC83B81"
+},
+    settings.LtsCredentials);
 
-    //var ltsevent = await ltsapi.EventDetailRequest("FA440216CBFD4DAD99389D584FC83B81", null);
-    //var parsedevent = EventParser.ParseLTSEventV1(ltsevent.FirstOrDefault().Value<JObject>(), false);
-
-
-    //var ltsevent = await ltsapi.EventDetailRequest("FA440216CBFD4DAD99389D584FC83B81", null);
-    //var parsedevent = EventParser.ParseLTSEventV1(ltsevent.FirstOrDefault().Value<JObject>(), false);
-
+    await TestRequests.RetrieveAndParseEvent(settings, new List<string>() {
+    "FA440216CBFD4DAD99389D584FC83B81"
+},
+    settings.LtsCredentials);
 }
 
 #endregion

@@ -379,8 +379,12 @@ namespace LTSAPI.Parser
                                 venueroomdetail.Tags.Add(new Tags() { Id = GetIDPurposeOfUse(purposesofuse.type), Source = "lts", Name = purposesofuse.type, TagEntry = new Dictionary<string, string>() { { "maxCapacity", purposesofuse.maxCapacity.ToString() } } });
                             }
                         }
+
+                        //Select the max capacity
+                        venueroomdetail.MaxCapacity = ltshall.purposesOfUse.Select(x => x.maxCapacity).Max();
                     }
 
+                    venueroomdetail.Active = true;
                     venueroomdetail.Placement = ltshall.placement;
 
                     //Images halls
