@@ -266,7 +266,7 @@ namespace LTSAPI.Parser
                     if (venue.TagIds == null)
                         venue.TagIds = new List<string>();
 
-                    venue.TagIds.Add("VEN" + ltsvenue.category.rid);
+                    venue.TagIds.Add(ltsvenue.category.rid);
                 }
             }
 
@@ -356,7 +356,7 @@ namespace LTSAPI.Parser
 
                         foreach(var feature in ltshall.features)
                         {
-                            venueroomdetail.TagIds.Add("VEN" + feature.rid);
+                            venueroomdetail.TagIds.Add(feature.rid);
                         }
                     }
 
