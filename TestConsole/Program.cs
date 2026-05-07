@@ -26,7 +26,7 @@ IConfiguration config = builder.Build();
 Settings settings = new Settings(config);
 
 
-List<string> testcases = new List<string>() { "event","venue" };
+List<string> testcases = new List<string>() { "event","venue", "accommodation" };
 
 
 
@@ -78,23 +78,23 @@ if (testcases.Contains("availabilitysearch"))
 
 if (testcases.Contains("accommodation"))
 {
-    LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
-    var qs = new LTSQueryStrings() { fields = "rid", filter_marketingGroupRids = "9E72B78AC5B14A9DB6BED6C2592483BF" };
-    qs.filter_lastUpdate = DateTime.Now.AddMinutes(-15);
+    //LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+    //var qs = new LTSQueryStrings() { fields = "rid", filter_marketingGroupRids = "9E72B78AC5B14A9DB6BED6C2592483BF" };
+    //qs.filter_lastUpdate = DateTime.Now.AddMinutes(-15);
 
-    //Acco List Requests LastChanged TEST
-    var dict = ltsapi.GetLTSQSDictionary(qs);
-    var resultchanged = await ltsapi.AccommodationListRequest(dict, true);
-    //Acco Deleted Requests TEST
-    qs.filter_lastUpdate = DateTime.Now.AddDays(-15);
-    var resultdeleted = await ltsapi.AccommodationDeleteRequest(dict, true);
+    ////Acco List Requests LastChanged TEST
+    //var dict = ltsapi.GetLTSQSDictionary(qs);
+    //var resultchanged = await ltsapi.AccommodationListRequest(dict, true);
+    ////Acco Deleted Requests TEST
+    //qs.filter_lastUpdate = DateTime.Now.AddDays(-15);
+    //var resultdeleted = await ltsapi.AccommodationDeleteRequest(dict, true);
 
 
     //Acco Single Requests TEST
     var idlistaccos = new List<string>()
     {
         //Insert all ids here to test
-        "669CE6D35D7411D4AAFB0050DA6D1102"
+        "2AAFF5576F167C4F3AED3498D8DABBF4"
     };
 
     int i = 0;

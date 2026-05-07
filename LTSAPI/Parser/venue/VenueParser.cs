@@ -318,21 +318,21 @@ namespace LTSAPI.Parser
                     //Detail Information
                     foreach (var language in venue.HasLanguage)
                     {
-                        Detail detail = new Detail();
+                        DetailGeneric detail = new DetailGeneric();
 
                         detail.Language = language;
 
                         detail.Title = ltshall.name != null && ltshall.name.ContainsKey(language) ? ltshall.name[language] : null;
-                        detail.BaseText = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "generalDescription").FirstOrDefault()?.description.GetValue(language) : null;
-                        detail.IntroText = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description.GetValue(language) : null;
-                        detail.ParkingInfo = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "howToPark").FirstOrDefault()?.description.GetValue(language) : null;
-                        detail.GetThereText = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "howToArrive").FirstOrDefault()?.description.GetValue(language) : null;
+                        //detail.BaseText = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "generalDescription").FirstOrDefault()?.description.GetValue(language) : null;
+                        //detail.IntroText = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description.GetValue(language) : null;
+                        //detail.ParkingInfo = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "howToPark").FirstOrDefault()?.description.GetValue(language) : null;
+                        //detail.GetThereText = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "howToArrive").FirstOrDefault()?.description.GetValue(language) : null;
 
-                        detail.AdditionalText = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "routeDescription").FirstOrDefault()?.description.GetValue(language) : null;
-                        detail.PublicTransportationInfo = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "publicTransport").FirstOrDefault()?.description.GetValue(language) : null;
-                        detail.AuthorTip = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "authorTip").FirstOrDefault()?.description.GetValue(language) : null;
-                        detail.SafetyInfo = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "safetyInstructions").FirstOrDefault()?.description.GetValue(language) : null;
-                        detail.EquipmentInfo = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "equipment").FirstOrDefault()?.description.GetValue(language) : null;
+                        //detail.AdditionalText = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "routeDescription").FirstOrDefault()?.description.GetValue(language) : null;
+                        //detail.PublicTransportationInfo = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "publicTransport").FirstOrDefault()?.description.GetValue(language) : null;
+                        //detail.AuthorTip = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "authorTip").FirstOrDefault()?.description.GetValue(language) : null;
+                        //detail.SafetyInfo = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "safetyInstructions").FirstOrDefault()?.description.GetValue(language) : null;
+                        //detail.EquipmentInfo = ltshall.descriptions != null ? ltshall.descriptions.Where(x => x.type == "equipment").FirstOrDefault()?.description.GetValue(language) : null;
 
                         venueroomdetail.Detail.TryAddOrUpdate(language, detail);
                     }
