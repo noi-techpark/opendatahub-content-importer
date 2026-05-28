@@ -1812,12 +1812,12 @@ namespace LTSAPI
         }
 
         public int id { get; set; }
-        public string isSelected { get; set; }
-        public string quantity { get; set; }
-        public string quantityOpen { get; set; }
-        public string quantityPrepared { get; set; }
-        public string quantityWithLight { get; set; }
-        public string quantityWithRentals { get; set; }
+        public bool isSelected { get; set; }
+        public int quantity { get; set; }
+        public int quantityOpen { get; set; }
+        public int quantityPrepared { get; set; }
+        public int quantityWithLight { get; set; }
+        public int quantityWithRentals { get; set; }
 
         public ICollection<string> rids { get; set; }
     }
