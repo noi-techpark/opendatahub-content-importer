@@ -66,7 +66,7 @@ namespace LTSAPI
             {
                 var querystring = parameters != null ? "?" + string.Join("&", parameters.Select(x => String.Join("=", x.Key, x.Value))) : "";
                 var serviceurl = baseurl + "/" + endpoint + querystring;
- 
+
                 using (var client = new HttpClient())
                 {
                     client.Timeout = TimeSpan.FromSeconds(60);
@@ -198,13 +198,24 @@ namespace LTSAPI
             return await RequestAndParseToJObject("POST");
         }
 
+        private async Task<List<JObject>> LTSRequestMethod<T>(string _endpoint, IDictionary<string, string>? _parameters, bool _getallpages, ICollection<string> fields, T _body)
+        {
+            endpoint = _endpoint;
+            parameters = _parameters == null ? new Dictionary<string, string>() : _parameters;
+            getallpages = _getallpages;
+            var postbody = new LTSPostBodyWithFields<T>() { parameters = _body, fields = fields };
+            //body = JsonContent.Create(postbody);
+            body = new StringContent(JsonConvert.SerializeObject(postbody), Encoding.UTF8, "application/json");
+
+            return await RequestAndParseToJObject("POST");
+        }
+
         #region AccommodationAvailability
 
         public async Task<List<JObject>> AccommodationAvailabilitySearchRequest(IDictionary<string, string>? _parameters, LTSAvailabilitySearchRequestBody _body)
         {
             return await LTSRequestMethod<LTSAvailabilitySearchRequestBody>("accommodations/availabilities/search", _parameters, false, _body);
         }
-
 
         #endregion
 
@@ -327,6 +338,15 @@ namespace LTSAPI
         public async Task<List<JObject>> ActivityDeletedRequest(IDictionary<string, string>? _parameters, bool _getallpages)
         {
             return await LTSRequestMethod("activities/deleted", _parameters, _getallpages);
+        }
+
+        #endregion
+
+        #region SnowReport
+
+        public async Task<List<JObject>> ActivitySearchRequest(IDictionary<string, string>? _parameters, List<string> fields, LTSActivitySearchRequestBody _body)
+        {
+            return await LTSRequestMethod<LTSActivitySearchRequestBody>("activities/search", _parameters, false, fields, _body);
         }
 
         #endregion
@@ -897,7 +917,14 @@ namespace LTSAPI
 
     public class LTSPostBody<T>
     {
+        public T parameters { get; set; }        
+    }
+
+    public class LTSPostBodyWithFields<T>
+    {
         public T parameters { get; set; }
+
+        public ICollection<string>? fields { get; set; }
     }
 
     public class LTSAvailabilitySearchRequestBody
@@ -926,7 +953,7 @@ namespace LTSAPI
         /// Indicates a specific meal plan as OTA MPT Code Type 1=allInclusive,3=bed&breakfast, 10=fullBoard, 12=halfBoard, 14=roomOnly
         /// </summary>
         public List<int> mealPlanCodes { get; set; }
-    }   
+    }
 
     public class LTSAvailabilitySearchRequestPaging
     {
@@ -945,4 +972,55 @@ namespace LTSAPI
         public ICollection<int> guestAges { get; set; }
     }
 
+    public class LTSActivitySearchRequestBody
+    {
+        public LTSActivitySearchRequestBody()
+        {
+            areaRids = new List<string>();
+        }
+
+        public ICollection<string> areaRids { get; set; }
+
+        public bool onlyActive { get; set; }        
+
+        public LTSActivitySearchBodyResultSet resultSet { get; set; }
+
+        public LTSAvailabilitySearchRequestPaging paging { get; set; }
+    }
+
+    public class LTSActivitySearchBodyResultSet
+    {
+        public LTSActivitySearchBodyResultSet()
+        {
+            filterAndSummaryGroups = new List<LTSActivitySearchBodyFilterAndSummaryGroups>();
+        }
+
+        public ICollection<LTSActivitySearchBodyFilterAndSummaryGroups> filterAndSummaryGroups { get; set; }
+    }
+
+    public class LTSActivitySearchBodyFilterAndSummaryGroups
+    {
+        public LTSActivitySearchBodyFilterAndSummaryGroups()
+        {
+            filters = new List<LTSActivitySearchBodyFilters>();
+        }
+
+        public int id { get; set; }
+        public string type {  get; set; }
+
+        public ICollection<LTSActivitySearchBodyFilters> filters { get; set; }
+    }
+
+    public class LTSActivitySearchBodyFilters
+    {
+        public LTSActivitySearchBodyFilters()
+        {
+            rids = new List<string>();
+        }
+
+        public int id { get; set; }
+        public bool isSelected { get; set; }
+
+        public ICollection<string> rids { get; set; }
+    }
 }

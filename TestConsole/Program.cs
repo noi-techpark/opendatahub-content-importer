@@ -26,7 +26,7 @@ IConfiguration config = builder.Build();
 Settings settings = new Settings(config);
 
 
-List<string> testcases = new List<string>() { "event","venue", "accommodation" };
+List<string> testcases = new List<string>() { "snowreport" };
 
 
 
@@ -293,5 +293,84 @@ if (testcases.Contains("webcam"))
 }
 
 #endregion
+
+#region SnowReport
+
+if(testcases.Contains("snowreport"))
+{
+
+
+    LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+
+    //Construct the post body
+    LTSActivitySearchRequestBody body = new LTSActivitySearchRequestBody();
+    body.areaRids = [
+            "65A480C2B81D441CBBC6BD05120A4DDE",
+            "CA2E54E09FC64DB4AB59CA4CEB82E1C9",
+            "E7D4023A77774CB69410BF265BE4E603",
+            "01788B57E7D2488DB39E3500137F3C08",
+            "D1D07C6316764A0E9401A7DC208C1242",
+            "432A27B52669427CB341920E8D14828A",
+            "BE8882107B724B8B98ACC591618BBCA4",
+            "9408E5F8327642DF9B40A68A70B74815",
+            "797B66B31C1B49EB871EEBDB0BE15A1F",
+            "3AAF79FA886C43E7B9FD1A15F1E8F8FA",
+            "ADC9CC8971AE4D1092F503C12AF90E51",
+            "8EF63837BF6E4F6B8C968C5E58A2495E",
+            "B19FAB3519888857FAE87472F0C0955F",
+            "80091720F545F09E6E874538210A4534"
+        ];
+
+    body.onlyActive = true;
+    body.paging = new LTSAvailabilitySearchRequestPaging() { pageNumber = 1, pageSize = 25 };
+
+    LTSActivitySearchBodyFilterAndSummaryGroups filterandsummarygroups = new LTSActivitySearchBodyFilterAndSummaryGroups();
+
+    filterandsummarygroups.id = 0;
+    filterandsummarygroups.type = "tag";
+    filterandsummarygroups.filters.Add(new LTSActivitySearchBodyFilters() { id = 0, isSelected = false, rids = [
+                                "EB5D6F10C0CB4797A2A04818088CD6AB", // Slopes
+                                "1D273A84DBCA4709B68D295C89A003E4", // Circuit
+                                "7CA6D68BF134495F865FDD47B94320C0", // Snowpark
+                                "6285F49DBBE04393BAD29E6EF219EB03" // Other slopes
+                            ] });
+
+    filterandsummarygroups.filters.Add(new LTSActivitySearchBodyFilters()
+    {
+        id = 1,
+        isSelected = false,
+        rids = [
+                                "D544A6312F8A47CF80CC4DFF8833FE50", // Cross-country ski-track
+                                "379E895958FD4693B04F5734A9CFAFAB", // Classic
+                                "E2B3F9B5B2F747A1968ECD033BED5D2B", // Skating
+                                "835EF4A6853F414DA9782607F01EEE48" // Classic and skating
+                            ]
+    });
+
+    filterandsummarygroups.filters.Add(new LTSActivitySearchBodyFilters()
+    {
+        id = 2,
+        isSelected = false,
+        rids = [
+                                "E23AA37B2AE3477F96D1C0782195AFDF", // Lifts
+                                "9CBAC00246A8467E93DD66F3A1A9C594" // Other Lifts
+                            ]
+    });
+
+
+
+    body.resultSet = new LTSActivitySearchBodyResultSet()
+    {
+        filterAndSummaryGroups = new List<LTSActivitySearchBodyFilterAndSummaryGroups>() { filterandsummarygroups }
+    };
+
+    var snowreportsearch = await ltsapi.ActivitySearchRequest(null, new List<string>() { "rid" }, body);
+
+    var parsedsnowreportsearch = snowreportsearch[0].ToObject<LTSActivitySearchResult>();
+
+}
+
+#endregion
+
 
 Console.ReadLine();

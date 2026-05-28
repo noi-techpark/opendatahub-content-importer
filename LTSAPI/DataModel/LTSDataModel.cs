@@ -1780,7 +1780,56 @@ namespace LTSAPI
 
     #endregion
 
+    #region SnowReport
 
+    public class LTSActivitySearchResult
+    {
+        public bool success { get; set; }
+        public LTSPaging paging { get; set; }
+        public LTSActivitySearchResultset resultSet { get; set; }
+        public LTSActivitySearchData[] data { get; set; }
+    }    
+
+    public class LTSActivitySearchResultset
+    {
+        public string rid { get; set; }
+        public ICollection<LTSActivitySearchFilterAndSummaryGroups> filterAndSummaryGroups { get; set; }
+        public float highestMaxAmount { get; set; }
+    }
+
+    public class LTSActivitySearchFilterAndSummaryGroups
+    {
+        public int id { get; set; }
+        public string type { get; set; }
+        public ICollection<LTSActivitySearchFilterObject> filters { get; set; }        
+    }
+
+    public class LTSActivitySearchFilterObject
+    {
+        public LTSActivitySearchFilterObject()
+        {
+            rids = new List<string>();
+        }
+
+        public int id { get; set; }
+        public string isSelected { get; set; }
+        public string quantity { get; set; }
+        public string quantityOpen { get; set; }
+        public string quantityPrepared { get; set; }
+        public string quantityWithLight { get; set; }
+        public string quantityWithRentals { get; set; }
+
+        public ICollection<string> rids { get; set; }
+    }
+
+    public class LTSActivitySearchData
+    {
+        public string rid { get; set; }
+    }
+
+   
+
+    #endregion
 
 
 
