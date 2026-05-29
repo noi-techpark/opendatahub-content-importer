@@ -26,7 +26,7 @@ IConfiguration config = builder.Build();
 Settings settings = new Settings(config);
 
 
-List<string> testcases = new List<string>() { "snowreport" };
+List<string> testcases = new List<string>() { "measuringpointlist" };
 
 
 
@@ -278,6 +278,49 @@ settings.LtsCredentials);
 
 }
 
+if (testcases.Contains("measuringpointlist"))
+{
+    LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+
+    ICollection<string> areas = [
+            "65A480C2B81D441CBBC6BD05120A4DDE",
+            "CA2E54E09FC64DB4AB59CA4CEB82E1C9",
+            "E7D4023A77774CB69410BF265BE4E603",
+            "01788B57E7D2488DB39E3500137F3C08",
+            "D1D07C6316764A0E9401A7DC208C1242",
+            "432A27B52669427CB341920E8D14828A",
+            "BE8882107B724B8B98ACC591618BBCA4",
+            "9408E5F8327642DF9B40A68A70B74815",
+            "797B66B31C1B49EB871EEBDB0BE15A1F",
+            "3AAF79FA886C43E7B9FD1A15F1E8F8FA",
+            "ADC9CC8971AE4D1092F503C12AF90E51",
+            "8EF63837BF6E4F6B8C968C5E58A2495E",
+            "B19FAB3519888857FAE87472F0C0955F",
+            "80091720F545F09E6E874538210A4534"
+        ];
+
+    var qs = new LTSQueryStrings() { page_size = 1, filter_onlyActive = true, filter_areaRids = string.Join(",", areas) };
+    var dict = ltsapi.GetLTSQSDictionary(qs);
+
+    var ltsdata = await ltsapi.WeatherSnowListRequest(dict, true);
+    List<LTSWeatherSnowsList> weathersnowdata = new List<LTSWeatherSnowsList>();
+
+    foreach (var ltsdatasingle in ltsdata)
+    {
+        weathersnowdata.Add(
+            ltsdatasingle.ToObject<LTSWeatherSnowsList>()
+        );
+    }
+
+    foreach (var data in weathersnowdata)
+    {
+        foreach(var data2 in data.data)
+        {
+            var measuringpointparsed = MeasuringpointParser.ParseLTSMeasuringpoint(data2, false);
+        }        
+    }
+
+}
 #endregion
 
 #region Webcam
@@ -298,7 +341,6 @@ if (testcases.Contains("webcam"))
 
 if(testcases.Contains("snowreport"))
 {
-
 
     LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
 

@@ -1301,6 +1301,11 @@ namespace LTSAPI
 
     #region WeatherSnow
 
+    public class LTSWeatherSnowsList : LTSData<LTSWeatherSnowsData>
+    {
+        public new ICollection<LTSWeatherSnowsData> data { get; set; }
+    }
+
     public class LTSWeatherSnows : LTSData<LTSWeatherSnowsData>
     {
         public new LTSWeatherSnowsData data { get; set; }

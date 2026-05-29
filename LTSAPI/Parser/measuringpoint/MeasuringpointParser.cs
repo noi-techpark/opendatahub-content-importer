@@ -21,6 +21,30 @@ namespace LTSAPI.Parser
 {
     public class MeasuringpointParser
     {
+        //List Method
+        public static ICollection<MeasuringpointV2> ParseLTSMeasuringpointList(
+            JObject weathersnowlts, bool reduced
+            )
+        {
+            try
+            {
+                LTSWeatherSnowsList ltsweathersnowlist = weathersnowlts.ToObject<LTSWeatherSnowsList>();
+                List<MeasuringpointV2> mesuringpointlist = new List<MeasuringpointV2>();
+
+                foreach(var ltsweathersnow in ltsweathersnowlist.data)
+                {
+                    mesuringpointlist.Add(ParseLTSMeasuringpoint(ltsweathersnow, reduced));
+                }
+
+                return mesuringpointlist;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        //Detail Method
         public static MeasuringpointV2 ParseLTSMeasuringpoint(
             JObject weathersnowlts, bool reduced
             )
