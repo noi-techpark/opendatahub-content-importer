@@ -121,24 +121,22 @@ namespace LTSAPI.Parser
                 eventv1.TagIds = new List<string>();
             if(eventv1.HasLanguage == null)
                 eventv1.HasLanguage = new List<string>();
+            if (eventv1.EventLanguages == null)
+                eventv1.EventLanguages = new List<string>();
 
             //Let's use the lts eventLanguage object
-            if(ltsevent.eventLanguages != null)
-                eventv1.HasLanguage = ltsevent.eventLanguages;
+            if (ltsevent.eventLanguages != null)
+                eventv1.EventLanguages = ltsevent.eventLanguages;
 
-            //Hack if the eventLanguages field is not provided use the name field
-            if(eventv1.HasLanguage.Count == 0)
+            //We use the name field to check what languages are available
+            if (ltsevent.name != null)
             {
-                if (ltsevent.name != null)
+                foreach (var kvp in ltsevent.name)
                 {
-                    foreach (var kvp in ltsevent.name)
-                    {
-                        if (!String.IsNullOrEmpty(kvp.Value))
-                            eventv1.HasLanguage.Add(kvp.Key);
-                    }
+                    if (!String.IsNullOrEmpty(kvp.Value))
+                        eventv1.HasLanguage.Add(kvp.Key);
                 }
             }
-
 
             //Topics
             if (ltsevent.categories != null)
