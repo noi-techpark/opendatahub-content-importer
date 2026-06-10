@@ -23,53 +23,7 @@ using Newtonsoft.Json;
 namespace LTSAPI.Parser
 {
     public class EventParser
-    {
-        public static (List<EventFlattened>, VenueFlattened) ParseLTSEvent(
-            JObject eventlts, bool reduced
-            )
-        {
-            try
-            {
-                LTSEvent eventltsdetail = eventlts.ToObject<LTSEvent>();
-
-                return ParseLTSEventFlattened(eventltsdetail.data, reduced);
-            }
-            catch(Exception ex)
-            {           
-                return (null, null);
-            }          
-        }
-
-        public static (List<EventFlattened>, VenueFlattened) ParseLTSEventFlattened(
-            LTSEventData eventlts, 
-            bool reduced)
-        {
-            EventFlattened eventv2 = new EventFlattened();
-
-            eventv2.Id = eventlts.rid;
-            eventv2._Meta = new Metadata() { Id = eventv2.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "event", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
-            eventv2.Source = "lts";
-
-            eventv2.LastChange = eventlts.lastUpdate;
-            
-            //Detail Information
-
-            //Contact Information
-
-            //Opening Schedules
-
-            //Tags
-
-            //Images
-
-            //Videos
-
-            //Custom Fields
-
-
-            return (new List<EventFlattened>() { eventv2 }, new VenueFlattened());
-        }
-
+    {        
         public static EventLinked ParseLTSEventV1(
            JObject eventlts, bool reduced
            )

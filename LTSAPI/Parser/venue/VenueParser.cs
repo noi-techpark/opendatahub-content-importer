@@ -20,55 +20,7 @@ using LTSAPI.Utils;
 namespace LTSAPI.Parser
 {
     public class VenueParser
-    {
-        public static VenueFlattened ParseLTSVenueFlattened(
-            JObject venuelts, bool reduced
-            )
-        {
-            try
-            {
-                LTSVenue ltsvenue = venuelts.ToObject<LTSVenue>();
-
-                return ParseLTSVenueVenueFlattened(ltsvenue.data, reduced);
-            }
-            catch(Exception ex)
-            {           
-                return null;
-            }          
-        }
-
-        public static VenueFlattened ParseLTSVenueVenueFlattened(
-            LTSVenueData ltsvenue, 
-            bool reduced)
-        {
-            VenueFlattened venue = new VenueFlattened();
-
-            venue.Id = ltsvenue.rid;
-            venue._Meta = new Metadata() { Id = venue.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "odhactivitypoi", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
-            venue.Source = "lts";
-
-            venue.LastChange = ltsvenue.lastUpdate;
-
-            //Tourism Organization
-
-            //Detail Information
-
-            //Contact Information
-
-            //Opening Schedules
-
-            //Tags
-
-            //Images
-
-            //Videos
-
-            //Custom Fields
-
-
-            return venue;
-        }
-
+    {             
         public static VenueV2 ParseLTSVenue(
             JObject venuelts, bool reduced
             )
