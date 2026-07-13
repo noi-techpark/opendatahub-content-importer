@@ -541,9 +541,8 @@ namespace LTSAPI
         //Defines if a ticket is required for participation
         public bool? isTicketRequired { get; set; }
         //Defines if the Event is included in Suedtirol Guest Pass
-        public bool? isIncludedInSuedtirolGuestPass { get; set; }
+        public bool? isIncludedInSuedtirolGuestPass { get; set; }        
 
-    
         public List<string>? eventLanguages { get; set; }
         //Date and time of last change
         public DateTime? lastUpdate { get; set; }

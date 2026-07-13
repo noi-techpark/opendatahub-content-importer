@@ -595,6 +595,9 @@ namespace LTSAPI.Parser
             if (ltsevent.classification != null)
                 ltsmapping.Add("classification_rid", ltsevent.classification.rid);
 
+            if (ltsevent.classification != null)
+                ltsmapping.Add("classification_rid", ltsevent.classification.rid);
+
             eventv1.Mapping.TryAddOrUpdate("lts", ltsmapping);
 
 
