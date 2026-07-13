@@ -40,6 +40,7 @@ namespace TestConsole
                 //marketingGroupRids = new List<string>() { "" },
                 startDate = "2025-11-07",
                 endDate = "2025-11-10",
+                language = "de",
                 paging = new LTSAvailabilitySearchRequestPaging() { pageNumber = 1, pageSize = 10000 },
                 cacheLifeTimeInSeconds = 300,
                 onlySuedtirolInfoActive = true,
@@ -64,6 +65,44 @@ namespace TestConsole
             Console.ReadLine();
         }
 
+        public static async Task TestAvailabilitySearchSingle(Settings settings)
+        {
+            Stopwatch watch = Stopwatch.StartNew();
+
+            LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+           
+            LTSAvailabilitySearchRequestBody body = new LTSAvailabilitySearchRequestBody()
+            {
+                accommodationRids = new List<string>() { "AE6264CBBDB111D1BAAA00805A13E75D" },
+                //marketingGroupRids = new List<string>() { "" },
+                language = "de",
+                startDate = "2026-06-15",
+                endDate = "2026-06-18",
+                paging = new LTSAvailabilitySearchRequestPaging() { pageNumber = 1, pageSize = 10000 },
+                cacheLifeTimeInSeconds = 300,
+                onlySuedtirolInfoActive = true,
+                roomOptions = new List<LTSAvailabilitySearchRequestRoomoption>() { new LTSAvailabilitySearchRequestRoomoption() { id = 1, guests = 2, guestAges = new List<int>() { 18, 18 } } }
+            };
+
+
+            var ltsavailablilitysearch = await ltsapi.AccommodationAvailabilitySearchRequest(null, body);
+
+            var parsedavailabilitysearch = ltsavailablilitysearch[0].ToObject<LTSAvailabilitySearchResult>();
+
+            var mssresult = AccommodationSearchResultParser.ParseLTSAccommodation(ltsavailablilitysearch.FirstOrDefault(), 1);
+
+            //var testlts = await ltsapi.AccommodationDetailRequest("2657B7CBCb85380B253D2fBE28AF100E", null);
+
+            Console.WriteLine(parsedavailabilitysearch.success);
+
+            watch.Stop();
+
+            Console.WriteLine("elapsed time: " + watch.ElapsedMilliseconds);
+
+            Console.ReadLine();
+        }
+
+        
         public static async Task RetrieveAndParseEvent(Settings settings, List<string> idlist, LTSCredentials ltscreds)
         {
             foreach (var id in idlist)

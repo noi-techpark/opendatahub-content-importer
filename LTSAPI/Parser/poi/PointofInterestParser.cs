@@ -307,10 +307,10 @@ namespace LTSAPI.Parser
                             openingtime.Timecode = 1;
 
                             operationschedule.OperationScheduleTime.Add(openingtime);
-                        }
-
-                        operationschedulelist.Add(operationschedule);
+                        }                        
                     }
+                    
+                    operationschedulelist.Add(operationschedule);
                 }
                 odhactivitypoi.OperationSchedule = operationschedulelist;
             }

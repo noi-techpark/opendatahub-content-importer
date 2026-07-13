@@ -26,7 +26,7 @@ IConfiguration config = builder.Build();
 Settings settings = new Settings(config);
 
 
-List<string> testcases = new List<string>() { "measuringpointlist" };
+List<string> testcases = new List<string>() { "poi" };
 
 
 
@@ -34,42 +34,9 @@ List<string> testcases = new List<string>() { "measuringpointlist" };
 
 if (testcases.Contains("availabilitysearch"))
 {
-    //await TestRequests.TestAvailabilitySearch(settings);
+    await TestRequests.TestAvailabilitySearchSingle(settings);
 
-
-    //LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
-
-    //https://tourism.api.opendatahub.bz.it/v1/Accommodation?pagenumber=1&pagesize=10000&arrival=2025-02-03&departure=2025-02-10&roominfo=0-18%2C18&language=de&availabilitychecklanguage=de&availabilitycheck=true&removenullvalues=false&bookablefilter=true&fields=Id%2CMssResponseShort&idfilter=FF050E6BE1F245FAD5E61495E17522D2&bokfilter=lts
-
-    //LTSAvailabilitySearchRequestBody body = new LTSAvailabilitySearchRequestBody() {
-    //    accommodationRids = new List<string>() { "FF050E6BE1F245FAD5E61495E17522D2" },
-    //    //marketingGroupRids = new List<string>() { "" },
-    //    startDate = "2025-02-03",
-    //    endDate = "2025-02-10",
-    //    paging = new LTSAvailabilitySearchRequestPaging() { pageNumber = 1, pageSize = 10000 },
-    //    cacheLifeTimeInSeconds = 300,    
-    //    onlySuedtirolInfoActive = true,
-    //    roomOptions = new List<LTSAvailabilitySearchRequestRoomoption>() { new LTSAvailabilitySearchRequestRoomoption() { id = 1, guests = 2, guestAges = new List<int>() { 18, 18 } } }
-    //};
-
-    //var ltsavailablilitysearch = await ltsapi.AccommodationAvailabilitySearchRequest(null, body);
-
-    //var parsedavailabilitysearch = ltsavailablilitysearch[0].ToObject<LTSAvailabilitySearchResult>();
-
-    //var ltsamenities = await ltsapi.AccommodationAmenitiesRequest(null, true);
-    //rabbitsend.Send("lts/accommodationamenities", ltsamenities);
-
-    //var ltscategories = await ltsapi.AccommodationCategoriesRequest(null, true);
-    //rabbitsend.Send("lts/accommodationcategories", ltscategories);
-
-    //var ltstypes = await ltsapi.AccommodationTypesRequest(null, true);
-    //rabbitsend.Send("lts/accommodationtypes", ltstypes);
-
-    //var ltsacco = await ltsapi.AccommodationDetailRequest("525B5D14566741D3B5910721027B5ED7", null);
-    //rabbitsend.Send("lts/accommodationdetail", ltsacco);
-
-    //var ltsacco2 = await ltsapi.AccommodationDetailRequest("2657B7CBCb85380B253D2fBE28AF100E", null);
-    //rabbitsend.Send("lts/accommodationdetail", ltsacco2);
+    await TestRequests.TestAvailabilitySearch(settings);
 }
 
 #endregion
@@ -170,27 +137,19 @@ if (testcases.Contains("event"))
 
 if (testcases.Contains("poi"))
 {
-    await TestRequests.RetrieveAndParsePoi(settings, new List<string>() { "3931c131da2923919105e403361a4cd0",
-        "3361695701cccc5de1effcba2487245c",
-        "a152e6bb003c43ae896cc0d146e3ff61",
-        "3b52338426f97883a80b9de864af24f9",
-        "deb6e4f3bdcc3855eb2bf1f5a98a7f8e",
-        "5a22f7103afd3511e3ee39c200aec6d3",
-        "c32182c4c64a23181cb6b127047ecfda",
-        "94d61c67ecf788f21b6793e4262e04d7",
-        "663a538db4088691ea0abbf04239db4d"
-    },
-    settings.LtsCredentialsOpen);
-
-    await TestRequests.RetrieveAndParsePoi(settings, new List<string>() {
-        "4DB4B03B746FB952B4525C691E04A125"
-    },
-    settings.LtsCredentialsOpen);
-
-    await TestRequests.RetrieveAndParsePoi(settings, new List<string>() {
-        "4DB4B03B746FB952B4525C691E04A125"
+    await TestRequests.RetrieveAndParsePoi(settings, new List<string>() { "E6784AC192B04E2B83BC5684B51986F0"
     },
     settings.LtsCredentials);
+
+    //await TestRequests.RetrieveAndParsePoi(settings, new List<string>() {
+    //    "4DB4B03B746FB952B4525C691E04A125"
+    //},
+    //settings.LtsCredentialsOpen);
+
+    //await TestRequests.RetrieveAndParsePoi(settings, new List<string>() {
+    //    "4DB4B03B746FB952B4525C691E04A125"
+    //},
+    //settings.LtsCredentials);
 
     //var ltspoi = await ltsapi.PoiDetailRequest("3741EF2230FC909CA46A925D3BBA3B45", null);
     //var parsedpoi = PointofInterestParser.ParseLTSPointofInterest(ltspoi.FirstOrDefault().Value<JObject>(), false);
