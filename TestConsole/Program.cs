@@ -26,7 +26,7 @@ IConfiguration config = builder.Build();
 Settings settings = new Settings(config);
 
 
-List<string> testcases = new List<string>() { "poi" };
+List<string> testcases = new List<string>() { "accommodation" };
 
 
 
@@ -61,7 +61,7 @@ if (testcases.Contains("accommodation"))
     var idlistaccos = new List<string>()
     {
         //Insert all ids here to test
-        "2AAFF5576F167C4F3AED3498D8DABBF4"
+        "824D850929E711D599D20050DA7125DB"
     };
 
     int i = 0;
@@ -186,7 +186,7 @@ if (testcases.Contains("activity"))
 if (testcases.Contains("venue"))
 {
     await TestRequests.RetrieveAndParseVenue(settings, new List<string>() {
-    "1A2A4C7533FE47BC90F33325AA707292"
+    "2811168C78DB41DFB8B8DE2A4517FB51"
 },
     settings.LtsCredentials);
 

@@ -387,6 +387,8 @@ namespace LTSAPI.Parser
                         accommodationlinked.SmgTags.TryRemoveOnList("guestcard");
                     if (accommodationlinked.TagIds != null)
                         accommodationlinked.TagIds.TryRemoveOnList("guestcard");
+                    if (accommodationlinked.SpecialFeaturesIds != null)
+                        accommodationlinked.SpecialFeaturesIds.TryRemoveOnList("Guestcard");
                 }
                 else
                 {
@@ -399,6 +401,11 @@ namespace LTSAPI.Parser
                         accommodationlinked.TagIds = new List<string>();
 
                     accommodationlinked.TagIds.TryAddOrUpdateOnList("guestcard");
+
+                    if (accommodationlinked.SpecialFeaturesIds == null)
+                        accommodationlinked.SpecialFeaturesIds = new List<string>();
+
+                    accommodationlinked.SpecialFeaturesIds.TryAddOrUpdateOnList("Guestcard");
                 }
             }
 
@@ -1529,7 +1536,8 @@ namespace LTSAPI.Parser
         {           
             if (myacco.Features != null)
             {
-                myacco.SpecialFeaturesIds = new List<string>();
+                if(myacco.SpecialFeaturesIds == null)
+                    myacco.SpecialFeaturesIds = new List<string>();
 
                 //SpecialFeature 1
                 //Ruhig gelegen SpecialFeatures = B6BD3F6011E5488DBF802B0C58F87AA1 
@@ -1684,19 +1692,20 @@ namespace LTSAPI.Parser
                 //F4D3B02B107843C894ED517FC7DC8A39,suedtirolguestpass_mobilcard
                 //895C9B57E0D54B449C82F035538D4A79,suedtirolguestpass_museumobilcard
 
-                var guestcard = myacco.Features.Where(x => x.Id == "035577098B254201A865684EF050C851" || x.Id == "CEE3703E4E3B44E3BD1BEE3F559DD31C" || x.Id == "C7758584EFDE47B398FADB6BDBD0F198" ||
-                                                           x.Id == "C3C7ABEB0F374A0F811788B775D96AC0" || x.Id == "3D703D2EA16645BD9EA3273069A0B918" || x.Id == "D02AE2F641A4496AB1D2C4871475293D" ||
-                                                           x.Id == "DA4CAD333B8D45448AAEA9E966C68380" || x.Id == "500AEFA8868748899BEC826B5E81951C" ||
-                                                           x.Id == "49E9FF69F86846BD9915A115988C5484" || x.Id == "FAEB6769EC564CBF982D454DCEEBCB27" || x.Id == "3FD7253E3F6340E1AF642EA3DE005128" ||
-                                                           x.Id == "24E475F20FF64D748EBE7033C2DBC3A8" || x.Id == "056486AFBEC4471EA32B3DB658A96D48" || x.Id == "8192350ABF6B41DA89B255B340003991" ||
-                                                           x.Id == "3CB7D42AD51C4E2BA061CF9838A3735D" || x.Id == "9C8140EB332F46E794DFDDB240F9A9E4" || x.Id == "C414648944CE49D38506D176C5B58486" ||
-                                                           x.Id == "6ACF61213EA347C6B1EB409D4A473B6D" || x.Id == "99803FF36D51415CAFF64183CC26F736" ||
-                                                           x.Id == "B69F991C1E45422B9D457F716DEAA82B" || x.Id == "F4D3B02B107843C894ED517FC7DC8A39" || x.Id == "895C9B57E0D54B449C82F035538D4A79").Count();
+                //Disable and use the guestcard added on tags
+                //var guestcard = myacco.Features.Where(x => x.Id == "035577098B254201A865684EF050C851" || x.Id == "CEE3703E4E3B44E3BD1BEE3F559DD31C" || x.Id == "C7758584EFDE47B398FADB6BDBD0F198" ||
+                //                                           x.Id == "C3C7ABEB0F374A0F811788B775D96AC0" || x.Id == "3D703D2EA16645BD9EA3273069A0B918" || x.Id == "D02AE2F641A4496AB1D2C4871475293D" ||
+                //                                           x.Id == "DA4CAD333B8D45448AAEA9E966C68380" || x.Id == "500AEFA8868748899BEC826B5E81951C" ||
+                //                                           x.Id == "49E9FF69F86846BD9915A115988C5484" || x.Id == "FAEB6769EC564CBF982D454DCEEBCB27" || x.Id == "3FD7253E3F6340E1AF642EA3DE005128" ||
+                //                                           x.Id == "24E475F20FF64D748EBE7033C2DBC3A8" || x.Id == "056486AFBEC4471EA32B3DB658A96D48" || x.Id == "8192350ABF6B41DA89B255B340003991" ||
+                //                                           x.Id == "3CB7D42AD51C4E2BA061CF9838A3735D" || x.Id == "9C8140EB332F46E794DFDDB240F9A9E4" || x.Id == "C414648944CE49D38506D176C5B58486" ||
+                //                                           x.Id == "6ACF61213EA347C6B1EB409D4A473B6D" || x.Id == "99803FF36D51415CAFF64183CC26F736" ||
+                //                                           x.Id == "B69F991C1E45422B9D457F716DEAA82B" || x.Id == "F4D3B02B107843C894ED517FC7DC8A39" || x.Id == "895C9B57E0D54B449C82F035538D4A79").Count();
 
-                if (guestcard > 0)
-                {
-                    myacco.SpecialFeaturesIds.Add("Guestcard");
-                }
+                //if (guestcard > 0)
+                //{
+                //    myacco.SpecialFeaturesIds.Add("Guestcard");
+                //}
             }
         }
 
