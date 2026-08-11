@@ -69,7 +69,8 @@ namespace LTSAPI.Parser
             eventv1.LastChange = ltsevent.lastUpdate;
             eventv1.FirstImport = ltsevent.createdAt;
 
-            eventv1.Active = ltsevent.isActive != null ? ltsevent.isActive.Value : false;
+            //Opendata has no Active field so fallback when it is not passed is to set is as active            
+            eventv1.Active = ltsevent.isActive != null ? ltsevent.isActive.Value : true;
 
             if (eventv1.TagIds == null)
                 eventv1.TagIds = new List<string>();

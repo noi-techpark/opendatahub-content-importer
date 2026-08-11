@@ -49,7 +49,9 @@ namespace LTSAPI.Parser
 
             webcam.LastChange = ltswebcam.lastUpdate;
             
-            webcam.Active = ltswebcam.isActive;
+            //Opendata has no Active field so fallback when it is not passed is to set is as active
+            webcam.Active = ltswebcam.isActive == null ? true : ltswebcam.isActive.Value;
+
             webcam.AreaIds = ltswebcam.areas != null ? ltswebcam.areas.Select(x => x.rid).ToList() : null;
 
             //Webcam Details

@@ -206,8 +206,10 @@ namespace LTSAPI.Parser
             odhactivitypoi.ImageGallery = imagegallerylist;
             odhactivitypoi.ImageGallery.AddImageTagsToGallery();
 
-            //Properties
-            odhactivitypoi.Active = ltspoi.isActive;
+            //Properties            
+            //Opendata has no Active field so fallback when it is not passed is to set is as active
+            odhactivitypoi.Active = ltspoi.isActive == null ? true : ltspoi.isActive.Value;
+
             odhactivitypoi.HasFreeEntrance = ltspoi.hasFreeEntry;
             odhactivitypoi.IsOpen = ltspoi.isOpen;
             odhactivitypoi.IsPrepared = null;

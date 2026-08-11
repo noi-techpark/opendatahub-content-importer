@@ -49,7 +49,8 @@ namespace LTSAPI.Parser
 
             venue.LastChange = ltsvenue.lastUpdate;
 
-            venue.Active = ltsvenue.isActive;
+            //Opendata has no Active field so fallback when it is not passed is to set is as active
+            venue.Active = ltsvenue.isActive == null ? true : ltsvenue.isActive.Value;            
 
             //Gps
             if (ltsvenue.position != null && ltsvenue.position.coordinates.Length == 2)

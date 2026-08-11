@@ -58,7 +58,9 @@ namespace LTSAPI.Parser
             gastronomy.Source = "lts";            
 
             gastronomy.LastChange = ltsgastronomy.lastUpdate;
-            gastronomy.Active = ltsgastronomy.isActive;
+
+            //Opendata has no Active field so fallback when it is not passed is to set is as active
+            gastronomy.Active = ltsgastronomy.isActive == null ? true : ltsgastronomy.isActive.Value;            
 
             gastronomy.HasLanguage = new List<string>();
 

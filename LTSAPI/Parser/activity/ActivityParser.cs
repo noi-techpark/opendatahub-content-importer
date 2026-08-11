@@ -341,10 +341,12 @@ namespace LTSAPI.Parser
                 {
                     odhactivitypoi.AreaId.Add(area.rid);
                 }
-            }            
+            }
 
             //Custom Fields
-            odhactivitypoi.Active = ltsactivity.isActive;
+            //Opendata has no Active field so fallback when it is not passed is to set is as active
+            odhactivitypoi.Active = ltsactivity.isActive == null ? true : ltsactivity.isActive.Value;
+
             odhactivitypoi.RunToValley = ltsactivity.isPossibleRunToValley;
             odhactivitypoi.IsPrepared = ltsactivity.isPrepared;
             odhactivitypoi.HasRentals = ltsactivity.hasRental;

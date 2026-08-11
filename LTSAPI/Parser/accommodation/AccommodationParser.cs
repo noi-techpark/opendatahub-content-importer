@@ -74,6 +74,7 @@ namespace LTSAPI.Parser
             accommodationlinked.HasLanguage = haslanguage;
 
             //General Data
+            //Opendata has no Active field so fallback when it is not passed is to set is as active
             accommodationlinked.Active = accommodation.isActive == null ? true : accommodation.isActive.Value;
             accommodationlinked.TourismVereinId = accommodation.tourismOrganization != null ? accommodation.tourismOrganization.rid : null;
 
@@ -896,7 +897,8 @@ namespace LTSAPI.Parser
                     if (room.HasLanguage.Count() == 0)
                         room.HasLanguage = new List<string>() { "de", "it", "en" };
 
-                    room.Active = accoroom.isActive;
+                    //Opendata has no Active field so fallback when it is not passed is to set is as active
+                    room.Active = accoroom.isActive == null ? true : accoroom.isActive.Value;
 
                     //This has to be done by the publishedon Helper
                     //if (accoroom.isActive)

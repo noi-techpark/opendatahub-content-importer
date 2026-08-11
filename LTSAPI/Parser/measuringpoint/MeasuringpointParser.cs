@@ -71,7 +71,11 @@ namespace LTSAPI.Parser
 
             measuringpoint._Meta = new Metadata() { Id = measuringpoint.Id, LastUpdate = DateTime.Now, Reduced = reduced, Source = "lts", Type = "measuringpoint", UpdateInfo = new UpdateInfo() { UpdatedBy = "importer.v2", UpdateSource = "lts.interface.v2" } };
             measuringpoint.Source = "lts";
-            measuringpoint.Active = ltsweathersnow.isActive;
+                        
+            //Opendata has no Active field so fallback when it is not passed is to set is as active
+            measuringpoint.Active = ltsweathersnow.isActive == null ? true : ltsweathersnow.isActive.Value;
+
+
             measuringpoint.LastChange = ltsweathersnow.lastUpdate;
             measuringpoint.LastUpdate = ltsweathersnow.lastUpdate;            
 

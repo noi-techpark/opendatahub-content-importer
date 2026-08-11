@@ -436,7 +436,7 @@ namespace LTSAPI
         public int? diningRooms { get; set; }
         public LTSImage[] images { get; set; }
         //Defines if the room group is active
-        public bool isActive { get; set; }
+        public bool? isActive { get; set; }
         //Date and time of last change
         public DateTime lastUpdate { get; set; }
         //Number of living rooms
@@ -886,7 +886,7 @@ namespace LTSAPI
         public string rid { get; set; }
         public int? id { get; set; }
         public DateTime lastUpdate { get; set; }
-        public bool isActive { get; set; }
+        public bool? isActive { get; set; }
         //Representation mode of the Gastronomy (full, none)
         public string representationMode { get; set; }
         public LTSDistrict district { get; set; }
@@ -1009,7 +1009,7 @@ namespace LTSAPI
         public bool? hasBikeTransport { get; set; }
         public string minRopeLength { get; set; }
         public string quantityQuickDraws { get; set; }
-        public bool isActive { get; set; }
+        public bool? isActive { get; set; }
         public bool isOpen { get; set; }
         public bool isPrepared { get; set; }
         public bool hasCopyright { get; set; }
@@ -1192,7 +1192,7 @@ namespace LTSAPI
         public LTSDescription[] descriptions { get; set; }
         public IDictionary<string, string> location { get; set; }
         public LTSArea[] areas { get; set; }
-        public bool isActive { get; set; }
+        public bool? isActive { get; set; }
         public bool isOpen { get; set; }
         public bool isReadOnly { get; set; }
         public bool hasFreeEntry { get; set; }
@@ -1229,7 +1229,7 @@ namespace LTSAPI
         public LTSVenueContact contact { get; set; }
         public LTSDescription[] descriptions { get; set; }
         public LTSHall[] halls { get; set; }
-        public bool isActive { get; set; }
+        public bool? isActive { get; set; }
         public DateTime lastUpdate { get; set; }
         public IDictionary<string, string> name { get; set; }
         public LTSOpeningschedule[] openingSchedules { get; set; }
@@ -1287,7 +1287,7 @@ namespace LTSAPI
         public string previewUrl { get; set; }
         public string streamUrl { get; set; }
         public LTSTourismorganization tourismOrganization { get; set; }
-        public bool isActive { get; set; }
+        public bool? isActive { get; set; }
         public bool? hasCopyright { get; set; }
         public bool? isOutOfOrder { get; set; }
         public bool? isReadOnly { get; set; }
@@ -1316,7 +1316,7 @@ namespace LTSAPI
         public DateTime lastUpdate { get; set; }
         public LTSTourismorganization tourismOrganization { get; set; }
         //Defines if the WeatherSnow is active
-        public bool isActive { get; set; }
+        public bool? isActive { get; set; }
         //Defines if the WeatherSnow is out of order
         public bool isOutOfOrder { get; set; }
         //Defines if the WeatherSnow can only be read
