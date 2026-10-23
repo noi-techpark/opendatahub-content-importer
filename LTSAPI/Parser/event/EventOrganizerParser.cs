@@ -32,7 +32,20 @@ namespace LTSAPI.Parser
 
             try
             {
-                organizerid = eventorganizerlts != null ? eventorganizerlts["data"]["rid"].ToString() : "";
+                if (eventorganizerlts == null)
+                {
+                    Console.WriteLine(JsonConvert.SerializeObject(new { operation = "event.organizer.parse", id = organizerid, source = "lts", success = false, error = true, exception = "No data from the Source" }));
+                    return null;
+                }
+
+                //LTS Api error response (404, 403, 500...) contains no data
+                if (eventorganizerlts["data"] is not JObject)
+                {
+                    Console.WriteLine(JsonConvert.SerializeObject(new { operation = "event.organizer.parse", id = organizerid, source = "lts", success = false, error = true, exception = (string?)eventorganizerlts["message"] ?? "No data from the Source", status = (string?)eventorganizerlts["status"] }));
+                    return null;
+                }
+
+                organizerid = eventorganizerlts["data"]["rid"]?.ToString() ?? "";
 
                 LTSEventOrganizer eventorganizerltsdetail = eventorganizerlts.ToObject<LTSEventOrganizer>();
 
@@ -60,6 +73,9 @@ namespace LTSAPI.Parser
 
 
             Dictionary<string, ContactInfos> eventorganizer = new Dictionary<string, ContactInfos>();
+
+            if (ltseventorganizer.name == null)
+                return eventorganizer;
 
             //Let's find out for which languages there is a name
             foreach (var name in ltseventorganizer.name)

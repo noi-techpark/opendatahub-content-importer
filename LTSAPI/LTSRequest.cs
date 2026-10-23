@@ -228,7 +228,7 @@ namespace LTSAPI
 
         public async Task<List<JObject>> AccommodationAmenityDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("accommodations/amenities" + id, _parameters, false);
+            return await LTSRequestMethod("accommodations/amenities/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> AccommodationCategoryRequest(IDictionary<string, string>? _parameters, bool _getallpages)
@@ -238,7 +238,7 @@ namespace LTSAPI
 
         public async Task<List<JObject>> AccommodationCategorysDetailRequest(string id, IDictionary<string, string>? _parameters)
         {
-            return await LTSRequestMethod("accommodations/categories" + id, _parameters, false);
+            return await LTSRequestMethod("accommodations/categories/" + id, _parameters, false);
         }
 
         public async Task<List<JObject>> AccommodationTypeRequest(IDictionary<string, string>? _parameters, bool _getallpages)

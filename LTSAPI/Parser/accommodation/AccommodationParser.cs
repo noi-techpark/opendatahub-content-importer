@@ -418,7 +418,7 @@ namespace LTSAPI.Parser
             }
 
             //TO Check adding Address Groups as Marketinggroups
-            if (accommodation.addressGroups != null)
+            if (accommodation.marketingGroups != null)
             {
                 accommodationlinked.MarketingGroupIds = new List<string>();
                 foreach (var mgroup in accommodation.marketingGroups)
@@ -524,7 +524,7 @@ namespace LTSAPI.Parser
                             //De Adress
                             mydetail.Language = lang;
 
-                            mydetail.CountryCode = contactinfo.address.country;
+                            mydetail.CountryCode = contactinfo.address != null && contactinfo.address.country != null ? contactinfo.address.country : null;
                             mydetail.City = contactinfo.address != null && contactinfo.address.city != null ? contactinfo.address.city[lang] : null;
                             mydetail.Email = contactinfo.email;
                             mydetail.Name = contactinfo.address != null && contactinfo.address.name != null ? contactinfo.address.name[lang] : null;
@@ -550,9 +550,9 @@ namespace LTSAPI.Parser
                         }
 
                         mydetail.Longdesc = accommodation.descriptions != null && accommodation.descriptions.Where(x => x.type == "longDescription").Count() > 0
-                            ? accommodation.descriptions.Where(x => x.type == "longDescription").FirstOrDefault()?.description[lang] : null;
+                            ? accommodation.descriptions.Where(x => x.type == "longDescription").FirstOrDefault()?.description?.GetValue(lang) : null;
                         mydetail.Shortdesc = accommodation.descriptions != null && accommodation.descriptions.Where(x => x.type == "shortDescription").Count() > 0
-                            ? accommodation.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description[lang] : null;
+                            ? accommodation.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description?.GetValue(lang) : null;
 
                         accommodationlinked.AccoDetail.TryAddOrUpdate(lang, mydetail);
                     }
@@ -794,8 +794,8 @@ namespace LTSAPI.Parser
 
                     //rateplan.Description = rateplanlts.descriptions;
 
-                    rateplan.LongDescription = rateplanlts.descriptions.Where(x => x.type == "longDescription").FirstOrDefault()?.description;
-                    rateplan.ShortDescription = rateplanlts.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description;
+                    rateplan.LongDescription = rateplanlts.descriptions?.Where(x => x.type == "longDescription").FirstOrDefault()?.description;
+                    rateplan.ShortDescription = rateplanlts.descriptions?.Where(x => x.type == "shortDescription").FirstOrDefault()?.description;
 
                     rateplan.Visibility = rateplanlts.visibility;
                     rateplan.Code = rateplanlts.code;
@@ -810,7 +810,7 @@ namespace LTSAPI.Parser
 
             //Take the German Shortname if available otherwise use the first available
             accommodationlinked.Shortname = accommodationlinked.AccoDetail != null && accommodationlinked.AccoDetail.Count() > 0 ?
-                        accommodationlinked.AccoDetail.ContainsKey("de") && String.IsNullOrEmpty(accommodationlinked.AccoDetail["de"].Name) ? accommodationlinked.AccoDetail["de"].Name :
+                        accommodationlinked.AccoDetail.ContainsKey("de") && !String.IsNullOrEmpty(accommodationlinked.AccoDetail["de"].Name) ? accommodationlinked.AccoDetail["de"].Name :
                     accommodationlinked.AccoDetail.FirstOrDefault().Value.Name
                     : null;
 
@@ -1016,8 +1016,8 @@ namespace LTSAPI.Parser
                         mydetail.Language = lang;
                         mydetail.Name = accoroom.name[lang];
 
-                        mydetail.Longdesc = accoroom.descriptions.Where(x => x.type == "longDescription").FirstOrDefault()?.description[lang];
-                        mydetail.Shortdesc = accoroom.descriptions.Where(x => x.type == "shortDescription").FirstOrDefault()?.description[lang];
+                        mydetail.Longdesc = accoroom.descriptions?.Where(x => x.type == "longDescription").FirstOrDefault()?.description?.GetValue(lang);
+                        mydetail.Shortdesc = accoroom.descriptions?.Where(x => x.type == "shortDescription").FirstOrDefault()?.description?.GetValue(lang);
 
                         room.AccoRoomDetail.TryAddOrUpdate(lang, mydetail);
                     }
