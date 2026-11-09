@@ -66,10 +66,12 @@ namespace LTSAPI.Parser
 
             //Find out all languages the accommodation has, by using contacts.address.name
             //TODO the opendata instance has no type
+            //Contacts / address / name can be missing on newly created accommodations (first push)
+            var haslanguagecontact = accommodation.contacts?.Where(x => x.type == "main").FirstOrDefault() ?? accommodation.contacts?.FirstOrDefault();
             var haslanguage =
-                accommodation.contacts.Where(x => x.type == "main").FirstOrDefault() != null ?
-                accommodation.contacts.Where(x => x.type == "main").FirstOrDefault().address.name.Where(x => !String.IsNullOrEmpty(x.Value)).Select(x => x.Key).ToList() :
-                accommodation.contacts.FirstOrDefault().address.name.Where(x => !String.IsNullOrEmpty(x.Value)).Select(x => x.Key).ToList();
+                haslanguagecontact?.address?.name != null ?
+                haslanguagecontact.address.name.Where(x => !String.IsNullOrEmpty(x.Value)).Select(x => x.Key).ToList() :
+                new List<string>();
 
             accommodationlinked.HasLanguage = haslanguage;
 
@@ -140,8 +142,8 @@ namespace LTSAPI.Parser
 
                 //--> REMOVED BY LTS
                
-                accooverview.OutdoorParkings = accommodation.overview.parkingSpaces.outdoor;
-                accooverview.GarageParkings = accommodation.overview.parkingSpaces.garage;
+                accooverview.OutdoorParkings = accommodation.overview.parkingSpaces?.outdoor;
+                accooverview.GarageParkings = accommodation.overview.parkingSpaces?.garage;
 
                 //TO check
                 TimeSpan.TryParse(accommodation.overview.checkInStartTime, out TimeSpan checkinfrom);
@@ -177,17 +179,17 @@ namespace LTSAPI.Parser
                 accooverview.BaggageServiceTo = baggageserviceto;
 
                 
-                accooverview.CampingUnits = accommodation.overview.camping.pitches;
+                accooverview.CampingUnits = accommodation.overview.camping?.pitches;
 
-                accooverview.CampingWashrooms = accommodation.overview.camping.laundrySpaces;
-               
-                accooverview.CampingDouches = accommodation.overview.camping.showers;
+                accooverview.CampingWashrooms = accommodation.overview.camping?.laundrySpaces;
 
-                accooverview.CampingToilettes = accommodation.overview.camping.toilets;
+                accooverview.CampingDouches = accommodation.overview.camping?.showers;
 
-                accooverview.CampingWashingstands = accommodation.overview.camping.dishwashingSpaces;
+                accooverview.CampingToilettes = accommodation.overview.camping?.toilets;
 
-                accooverview.ApartmentRoomSize = accommodation.overview.camping.capacityPersons; //? to check
+                accooverview.CampingWashingstands = accommodation.overview.camping?.dishwashingSpaces;
+
+                accooverview.ApartmentRoomSize = accommodation.overview.camping?.capacityPersons; //? to check
 
                 accommodationlinked.AccoOverview = accooverview;
             }
@@ -243,10 +245,10 @@ namespace LTSAPI.Parser
             //List used to add certain ids to the features list
             List<string> additionalfeaturestoadd = new List<string>();
 
-            if (accommodation.type != null)
+            if (accommodation.type != null && !String.IsNullOrEmpty(accommodation.type.rid))
             {
                 //Accommodation Type
-                var mytype = xmlfiles["AccoTypes"].Root.Elements("AccoType").Where(x => x.Attribute("RID").Value == accommodation.type.rid).FirstOrDefault().Attribute("SmgType").Value;
+                var mytype = xmlfiles["AccoTypes"].Root.Elements("AccoType").Where(x => x.Attribute("RID").Value == accommodation.type.rid).FirstOrDefault()?.Attribute("SmgType")?.Value;
                 accommodationlinked.AccoTypeId = mytype;
                 additionalfeaturestoadd.Add(accommodation.type.rid);
 
@@ -256,10 +258,10 @@ namespace LTSAPI.Parser
                 accommodationlinked.TagIds.Add(accommodation.type.rid);
             }
 
-            if (accommodation.category != null)
+            if (accommodation.category != null && !String.IsNullOrEmpty(accommodation.category.rid))
             {
                 //Accommodation Category
-                var mycategory = xmlfiles["AccoCategories"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == accommodation.category.rid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault().Attribute("T1Des").Value;
+                var mycategory = xmlfiles["AccoCategories"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == accommodation.category.rid).FirstOrDefault()?.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault()?.Attribute("T1Des")?.Value;
                 accommodationlinked.AccoCategoryId = mycategory;
                 additionalfeaturestoadd.Add(accommodation.category.rid);  //to check
 
@@ -280,7 +282,7 @@ namespace LTSAPI.Parser
                 {
                     additionalfeaturestoadd.Add(myboardelement.rid);
 
-                    var myboard = xmlfiles["Boards"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == myboardelement.rid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault().Attribute("T1Des").Value;
+                    var myboard = xmlfiles["Boards"].Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == myboardelement.rid).FirstOrDefault()?.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault()?.Attribute("T1Des")?.Value;
 
                     if (myboard != null)
                         accoboardings.Add(myboard);
@@ -348,8 +350,8 @@ namespace LTSAPI.Parser
             //GuestPass (Adding to features, to check if we should add it to Tags)
             var guestpass = accommodation.suedtirolGuestPass;
             if(guestpass != null && guestpass.isActive)
-            {                
-                foreach (var cardtype in guestpass.cardTypes)
+            {
+                foreach (var cardtype in guestpass.cardTypes ?? Array.Empty<LTSCardtype>())
                 {
                     if(accommodationlinked.TagIds == null)
                         accommodationlinked.TagIds = new List<string>();
@@ -559,7 +561,7 @@ namespace LTSAPI.Parser
                 }
             }
             //GPS Info
-            if(accommodation.position != null)
+            if(accommodation.position != null && accommodation.position.coordinates != null && accommodation.position.coordinates.Length >= 2)
             {
                 accommodationlinked.GpsInfo = new List<GpsInfo>();
 
