@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -24,7 +24,7 @@
   <ItemGroup>
     <PackageReference Include="Combinatorics" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="opendatahub-datamodel-tourism" Version="2.0.2" />
+    <PackageReference Include="opendatahub-datamodel-tourism" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
