@@ -831,6 +831,10 @@ namespace LTSAPI.Parser
             //tracesource.TraceEvent(TraceEventType.Information, 0, A0RID + " Themeinformation created");
             UpdateBadges(accommodationlinked, xmlfiles["Vinum"]);
 
+            //Themes are not part of the opendata (reduced) record
+            if (reduced)
+                accommodationlinked.ThemeIds = null;
+
             //Add the idm Tags for AccoTypeId, BadgeIds, ThemeIds, SpecialFeaturesIds to TagIds (static mapping, Tags created by Content Api DataModify AccommodationTypesToTags)
             AccommodationIdmTagMapping.AssignTags(accommodationlinked);
             
