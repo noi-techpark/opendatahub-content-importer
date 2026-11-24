@@ -830,6 +830,9 @@ namespace LTSAPI.Parser
             UpdateThemes(accommodationlinked, xmlfiles["Wine"], xmlfiles["City"], xmlfiles["NearSkiArea"], xmlfiles["Mediterranean"], xmlfiles["Dolomites"], xmlfiles["Alpine"]);
             //tracesource.TraceEvent(TraceEventType.Information, 0, A0RID + " Themeinformation created");
             UpdateBadges(accommodationlinked, xmlfiles["Vinum"]);
+
+            //Add the idm Tags for AccoTypeId, BadgeIds, ThemeIds, SpecialFeaturesIds to TagIds (static mapping, Tags created by Content Api DataModify AccommodationTypesToTags)
+            AccommodationIdmTagMapping.AssignTags(accommodationlinked);
             
 
             //TO CHECK IF THIS Works
