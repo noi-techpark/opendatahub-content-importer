@@ -835,7 +835,7 @@ namespace LTSAPI.Parser
             if (reduced)
                 accommodationlinked.ThemeIds = null;
 
-            //Add the idm Tags for AccoTypeId, BadgeIds, ThemeIds, SpecialFeaturesIds to TagIds (static mapping, Tags created by Content Api DataModify AccommodationTypesToTags)
+            //Add the idm Tags for AccoTypeId, AccoCategoryId, BoardIds, BadgeIds, ThemeIds, SpecialFeaturesIds to TagIds (static mapping, Tags created by Content Api DataModify AccommodationTypesToTags)
             AccommodationIdmTagMapping.AssignTags(accommodationlinked);
             
 
